@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}my site{% endblock %}</title>
+    {#  css  #}
+    {% include 'includes/css_link.html' %}
+    {% include 'includes/js_link.html' %}
+</head>
+<body>
+{# header #}
+{% include 'includes/header.html' %}
+
+<!-- Main Content -->
+{% block content %}
+{% endblock %}
+
+{# footer #}
+{% include 'includes/footer.html' %}
+
+{# js #}
+{% include 'includes/js_link.html' %}
+{% include 'includes/product_js.html' %}
+
+</body>
+</html>
