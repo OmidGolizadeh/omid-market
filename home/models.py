@@ -4,6 +4,7 @@ from django.db import models
 # Create your models here.
 
 class About_the_store(models.Model):
+    description = models.TextField(null=True, blank=True, verbose_name='توضیح')
     short_description = models.TextField(null=True, blank=True, verbose_name='توضیح کوتاه')
     phone = models.CharField(max_length=11, null=True, blank=True, verbose_name='شماره تلفن')
     map_address = models.URLField(blank=True, null=True, verbose_name='آدرس نقشه')
@@ -35,6 +36,7 @@ class Team(models.Model):
     full_name = models.CharField(max_length=30, verbose_name='نام کامل')
     expertise = models.CharField(max_length=30, verbose_name='تخصص')
     position = models.CharField(max_length=50, verbose_name='مقام')
+    image = models.ImageField(upload_to='images/teams', null=True, blank=True, verbose_name='تصویر')
 
     def __str__(self):
         return self.full_name

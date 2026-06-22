@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} درباره ما {% endblock %}
+
+{% block content %}
+    <section class="inner-page" id="contact-page">
+    <div class="container-fluid" id="page-hero">
+        <div class="row">
+            <div class="col-12">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 px-0">
+                            <h1>درباره ما</h1>
+                            <p>با ما بیشتر آشنا شوید.</p>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="index.html">صفحه نخست</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">درباره ما</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-12 col-lg-7">
+                            <div class="title">معرفی فروشگاه</div>
+                            <p>{{ about. }}</p>
+                        </div>
+                        <div class="col-12 col-lg-5 align-self-center h-100">
+                            <img src="{% static 'images/about-us.jpg' %}" alt="about-us.jpg">
+                        </div>
+                    </div>
+                    <!-- Team -->
+                    <div class="row pt-5">
+                        <div class="col-12 text-center pt-4 pb-3">
+                            <h2 class="center-title">تیم ما</h2>
+                            <span class="sub-title">با تیم ما بیشتر آشنا شوید.</span>
+                        </div>
+                        {% for i in object_list %}
+                            <div class="col-12 col-sm-6 col-lg-3">
+                            <!-- Person Box -->
+                            <figure class="team-person">
+                                <div class="profile-image"><img src="{{ i.image.url }}" alt="{{ i.full_name }}" /></div>
+                                <figcaption>
+                                    <h3>{{ i.full_name }}</h3>
+                                    <h4>{{ i.expertise }}</h4>
+                                    <p>{{ i.position }}</p>
+                                    <div class="icons"><a href="#"><i class="ion-social-reddit"></i></a>
+                                        <a href="#"> <i class="ion-social-twitter"></i></a>
+                                        <a href="#"> <i class="ion-social-vimeo"></i></a>
+                                    </div>
+                                </figcaption>
+                            </figure>
+                            <!-- /Person Box -->
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Team -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
