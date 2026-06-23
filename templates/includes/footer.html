@@ -7,12 +7,12 @@
                 <div class="title">دسترسی سریع</div>
                 <ul>
                     <li><a href="blog.html">بلاگ آموزشی</a></li>
-                    <li><a href="faq.html">راهنمای خرید</a></li>
-                    <li><a href="faq.html">شیوه های پرداخت</a></li>
-                    <li><a href="contact.html">پیگیری سفارش</a></li>
-                    <li><a href="faq.html">سوالات متداول</a></li>
+                    <li><a href="{% url 'home:faq' %}">راهنمای خرید</a></li>
+                    <li><a href="{% url 'home:faq' %}">شیوه های پرداخت</a></li>
+                    <li><a href="{% url 'home:contact' %}">پیگیری سفارش</a></li>
+                    <li><a href="{% url 'home:faq' %}">سوالات متداول</a></li>
                     <li><a href="{% url 'home:about' %}">درباره ما</a></li>
-                    <li><a href="contact.html">تماس با ما</a></li>
+                    <li><a href="{% url 'home:contact' %}">تماس با ما</a></li>
                 </ul>
             </div>
             <div class="col-6 col-sm-4 col-lg-2">

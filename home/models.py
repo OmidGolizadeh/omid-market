@@ -8,6 +8,8 @@ class About_the_store(models.Model):
     short_description = models.TextField(null=True, blank=True, verbose_name='توضیح کوتاه')
     phone = models.CharField(max_length=11, null=True, blank=True, verbose_name='شماره تلفن')
     map_address = models.URLField(blank=True, null=True, verbose_name='آدرس نقشه')
+    address = models.CharField(max_length=20, null=True, blank=True, verbose_name='آدرس')
+    email = models.CharField(null=True, blank=True, verbose_name='ایمیل')
 
     def __str__(self):
         return self.short_description[:30]
@@ -22,7 +24,7 @@ class Contact_us(models.Model):
     phone = models.CharField(max_length=11, verbose_name='شماره تلفن')
     email = models.EmailField(verbose_name='ایمیل')
     title = models.CharField(max_length=15, verbose_name='عنوان')
-    Message = models.TextField(verbose_name='پیام')
+    message = models.TextField(verbose_name='پیام')
 
     def __str__(self):
         return f'{self.name} -  {self.title}'

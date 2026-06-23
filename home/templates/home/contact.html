@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} تماس با ما    {% endblock %}
+
+{% block content %}
+    <section class="inner-page" id="contact-page">
+        <div class="container-fluid" id="page-hero">
+            <div class="row">
+                <div class="col-12">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 px-0">
+                                <h1>تماس با ما</h1>
+                                <p>با ما در ارتباط باشید.</p>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="{% url 'home:home' %}">صفحه نخست</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">تماس با ما</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="content p-0 p-sm-3">
+                        <div class="row">
+                            <div class="col-12 col-lg-5 text-center" id="contact-page-info">
+                                <div class="info">
+                                    {% for i in object_list %}
+                                    <i class="fa fa-map-marked"></i>
+                                    <div class="title">آدرس فروشگاه:</div>
+                                    <div>{{ i.address }}</div>
+                                </div>
+                                <div class="info">
+                                    <i class="fa fa-phone"></i>
+                                    <div class="title">تلفن تماس:</div>
+
+                                    <div>{{ i.phone }}</div>
+
+
+                                </div>
+                                <div class="info">
+                                    <i class="fa fa-envelope"></i>
+                                    <div class="title">پست الکترونیک:</div>
+                                    <div>{{ i.email }}</div>
+                                </div>
+                                 {% endfor %}
+                            </div>
+                            <div class="col-12 col-lg-7 p-4">
+                                <div class="title">ارسال پیام</div>
+                                <p>نظرات، پیشنهادات و انتقادات سازنده خود را از طریق فرم زیر با ما در میان بگذارید. ما
+                                    در این فروشگاه اینترنتی همواره برای بهبود خدمات خود در تلاش هستیم.</p>
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="name">نام شما :</label>
+                                        {{ form.name }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tel">تلفن تماس :</label>
+                                        {{ form.phone }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">پست الکترونیک :</label>
+                                        {{ form.email }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="subject">موضوع پیام :</label>
+                                        {{ form.title }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message">متن پیام :</label>
+                                        {{ form.message }}
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="submit" value="ارسال پیام" class="btn btn-success">
+                                    </div>
+                                </form>
+
+                            </div>
+                            <div class="col-12 mt-4 px-0">
+                                {% for i in object_list %}
+                                <iframe src="{{ i.map_address }}"
+                                        width="100%" height="400" class="rounded"></iframe>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

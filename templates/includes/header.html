@@ -9,7 +9,7 @@
                     <ul>
                         <li><a href="{% url 'home:home' %}">صفحه نخست</a></li>
                         <li><a href="{% url 'home:about' %}">درباره ما</a></li>
-                        <li><a href="contact.html">تماس با ما</a></li>
+                        <li><a href="{% url 'home:contact' %}">تماس با ما</a></li>
                     </ul>
                 </div>
                 <div class="col-12 col-md-4 text-center text-md-end" id="top-encode43vfbb65gtabfb">
@@ -291,10 +291,10 @@
                                                 </ul>
                                             </li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href="contact.html" aria-expanded="false">تماس با فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <a href="{% url 'home:contact' %}" aria-expanded="false">تماس با فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
-                                                    <li><a href="faq.html">سوالات متداول</a></li>
-                                                    <li><a href="contact.html">تماس با ما</a></li>
+                                                    <li><a href="{% url 'home:faq' %}">سوالات متداول</a></li>
+                                                    <li><a href="{% url 'home:contact' %}">تماس با ما</a></li>
                                                 </ul>
                                             </li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
