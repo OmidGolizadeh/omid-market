@@ -9,7 +9,7 @@ class show_Team(admin.ModelAdmin):
 
     def show_image_team(self, obj):
         if obj.image:  # بررسی وجود تصویر
-            return format_html('<img src="{}" width="50px" height="50px" />', obj.image.url)
+            return format_html('<img src="{}" width="100px" height="50px" />', obj.image.url)
         return "بدون تصویر"  # یا می‌توانید یک جایگزین نمایش دهید
 
     show_image_team.short_description = "تصویر"  # عنوان ستونتصویر'
