@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     # my app
     'home.apps.HomeConfig',
+    'accounts.apps.AccountsConfig',
 
 ]
 
