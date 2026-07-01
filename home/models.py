@@ -1,4 +1,5 @@
 from django.db import models
+from django_jalali.db import models as jmodels
 
 
 # Create your models here.
@@ -25,6 +26,7 @@ class Contact_us(models.Model):
     email = models.EmailField(verbose_name='ایمیل')
     title = models.CharField(max_length=15, verbose_name='عنوان')
     message = models.TextField(verbose_name='پیام')
+    created_at = jmodels.jDateTimeField(auto_now_add=True, null=True, blank=True, verbose_name='زمان دریافت پیام')
 
     def __str__(self):
         return f'{self.name} -  {self.title}'

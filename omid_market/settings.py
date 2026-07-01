@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cleanup.apps.CleanupConfig',
     'django.contrib.humanize',
+    'django_jalali',
     # my app
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',

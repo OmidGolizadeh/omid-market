@@ -12,12 +12,13 @@ class UserAdmin(BaseUserAdmin):
     add_form = UserCreationForm
     list_display = ['show_image_user', 'username', 'full_name', 'email', 'is_admin']
     list_filter = ['is_admin']
+    readonly_fields = ('created_at',)
     fieldsets = (
         ('کاربر', {
             'fields': ('username', 'email', 'password')}),
         ('اطلاعات شخصی', {'fields': ('full_name', 'image', 'date_of_birth',)}),
         ('اطلاعات تماس', {'fields': ('phone_number', 'landline',)}),
-        ('اطلاعات هویتی', {'fields': ('national_code', 'card_number',)}),
+        ('اطلاعات هویتی', {'fields': ('national_code', 'card_number','created_at')}),
         ('دسترسی‌ها', {'fields': ('is_active', 'is_admin', 'is_superuser', 'groups', 'user_permissions')}),)
     add_fieldsets = (
         (None, {'classes': ('wide',), 'fields': ('username', 'email', 'password1', 'password2',), }),
@@ -34,7 +35,6 @@ class UserAdmin(BaseUserAdmin):
         return "بدون تصویر"
 
     show_image_user.short_description = "تصویر"
-
 
 
 admin.site.unregister(Group)

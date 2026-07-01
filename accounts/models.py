@@ -1,4 +1,5 @@
 from django.db import models
+from django_jalali.db import models as jmodels
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
 
@@ -35,12 +36,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True, null=True, blank=True, verbose_name='ایمیل')
     phone_number = models.CharField(max_length=11, null=True, blank=True, verbose_name='شماره تلفن')
     image = models.ImageField(upload_to='images/users', null=True, blank=True, verbose_name='تصویر')
-    date_of_birth = models.DateTimeField(null=True, blank=True, verbose_name='تاریخ تولد ')
+    date_of_birth = jmodels.jDateField(null=True, blank=True, verbose_name='تاریخ تولد ')
     landline = models.CharField(max_length=11, null=True, blank=True, verbose_name='تلفن ثابث')
     card_number = models.CharField(max_length=16, unique=True, null=True, blank=True, verbose_name='شماره کارت  ')
     national_code = models.CharField(max_length=10, unique=True, null=True, blank=True, verbose_name='کد ملی ')
     is_active = models.BooleanField(default=True, verbose_name='فعال')
     is_admin = models.BooleanField(default=False, verbose_name='ادمین')
+    created_at = jmodels.jDateTimeField(auto_now_add=True, null=True, blank=True, verbose_name='تاریخ ایجاد احساب')
 
     objects = UserManager()
     USERNAME_FIELD = 'username'

@@ -31,6 +31,7 @@ class About_site(admin.ModelAdmin):
 @admin.register(Contact_us)
 class Contact(admin.ModelAdmin):
     list_display = ['name', 'phone', 'title']
+    list_filter = ['created_at']
 
 
 @admin.register(Link)
