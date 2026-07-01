@@ -34,7 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255, unique=True, verbose_name='نام کاربری ')
     full_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='نام کامل')
     email = models.EmailField(max_length=255, unique=True, null=True, blank=True, verbose_name='ایمیل')
-    phone_number = models.CharField(max_length=11, null=True, blank=True, verbose_name='شماره تلفن')
+    phone_number = models.CharField(max_length=11, unique=True, null=True, blank=True, verbose_name='شماره تلفن')
     image = models.ImageField(upload_to='images/users', null=True, blank=True, verbose_name='تصویر')
     date_of_birth = jmodels.jDateField(null=True, blank=True, verbose_name='تاریخ تولد ')
     landline = models.CharField(max_length=11, null=True, blank=True, verbose_name='تلفن ثابث')
