@@ -1,3 +1,25 @@
+from django.contrib import messages
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import FormView
+from .forms import LoginForm
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
+
+class UserLoginView(LoginView):
+    template_name = "accounts/login.html"
+    authentication_form = LoginForm
+    next_page = reverse_lazy('home:home')
+
+
+    def form_valid(self, form):
+        # user = form.get_user()
+        messages.success(self.request,'کاربر وارد شد')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.warning(self.request,'یک مشکل به وجود امد دوباره تلاش کنید')
+        return super().form_invalid(form)
