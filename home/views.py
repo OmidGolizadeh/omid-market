@@ -33,5 +33,6 @@ class Contact(FormView):
         context['object_list'] = About_the_store.objects.all()
         return context
 
+
 class Fag(TemplateView):
     template_name = 'home/faq.html'

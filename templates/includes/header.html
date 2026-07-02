@@ -41,7 +41,7 @@
                                 <a class="text-danger" href="{% url 'accounts:logout' %}">خروج از احساب</a>
                             {% else %}
                                 <a href="{% url 'accounts:login' %}">ورود</a> /
-                                <a href="register.html">عضویت</a>
+                                <a href="{% url 'accounts:register' %}">عضویت</a>
                             {% endif %}
                         </div>
                         <div class="col-12 col-md-5 col-lg-6">
@@ -56,6 +56,21 @@
             </div>
         </div>
     </div>
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% elif message.tags == 'error' %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
     <!-- /Search NavBar -->
     <!-- Main NavBar -->
     <div id="main-nav">

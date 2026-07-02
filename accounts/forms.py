@@ -44,3 +44,46 @@ class LoginForm(AuthenticationForm):
     password = forms.CharField(max_length=255, widget=forms.PasswordInput(attrs={
         'class': 'form-control', 'name': 'password', 'id': 'password', 'placeholder': 'رمز عبور'
     }))
+
+
+class RegisterForm(forms.Form):
+    username = forms.CharField(max_length=255, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'name': 'username', 'id': 'username', 'placeholder': 'نام کاربری'
+    }))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={
+        'class': 'form-control', 'name': 'email', 'id': 'email', 'placeholder': 'ایمیل'
+    }))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-control', 'name': 'password1', 'id': 'password1', 'placeholder': 'رمز عبور '
+    }))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-control', 'name': 'password2', 'id': 'password2', 'placeholder': 'تکرار رمز عبور '
+    }))
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise ValidationError('این نام کاربری قبلاً ثبت شده است.', code='username_taken')
+
+        if username and len(username) < 4:
+            raise ValidationError('نام کاربری باید حداقل 4 کاراکتر باشد.', code='username_too_short')
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError('این ایمیل قبلاً ثبت شده است.', code='email_taken')
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if password1 and password2:
+            if password1 != password2:
+                raise ValidationError('رمزهای عبور یکسان نیستند.', code='password_taken')
+            if len(password1) < 4:
+                raise ValidationError('رمز عبور باید حداقل ۴ کاراکتر باشد.', code='password_len_taken')
+
+        return cleaned_data
