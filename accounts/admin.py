@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.utils.html import format_html
-from accounts.models import User
+from accounts.models import User, Otp
 from accounts.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+import jdatetime
 
 
 @admin.register(User)
@@ -18,7 +19,7 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('username', 'email', 'password')}),
         ('اطلاعات شخصی', {'fields': ('full_name', 'image', 'date_of_birth',)}),
         ('اطلاعات تماس', {'fields': ('phone_number', 'landline',)}),
-        ('اطلاعات هویتی', {'fields': ('national_code', 'card_number','created_at')}),
+        ('اطلاعات هویتی', {'fields': ('national_code', 'card_number', 'created_at')}),
         ('دسترسی‌ها', {'fields': ('is_active', 'is_admin', 'is_superuser', 'groups', 'user_permissions')}),)
     add_fieldsets = (
         (None, {'classes': ('wide',), 'fields': ('username', 'email', 'password1', 'password2',), }),
@@ -35,6 +36,16 @@ class UserAdmin(BaseUserAdmin):
         return "بدون تصویر"
 
     show_image_user.short_description = "تصویر"
+
+
+@admin.register(Otp)
+class Otp_show(admin.ModelAdmin):
+    list_display = ['username', 'code', 'token', 'expiration_date_show']
+
+    def expiration_date_show(self, obj):
+        return obj.expiration_date.strftime(f"تاریخ %Y/%m/%d | ساعت %H:%M")
+
+    expiration_date_show.short_description = 'تاریخ'
 
 
 admin.site.unregister(Group)

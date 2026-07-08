@@ -58,3 +58,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_staff(self):
         return self.is_admin
+
+
+class Otp(models.Model):
+    token = models.CharField(max_length=200, null=True, verbose_name='توکن')
+    username = models.CharField(max_length=255, verbose_name='نام کاربری')
+    code = models.SmallIntegerField(verbose_name='کد')
+    expiration_date = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
+
+    class Meta:
+        verbose_name = 'کد یک بار مصرف'
+        verbose_name_plural = 'کد ها یک بار مصرف'
+
+    def __str__(self):
+        return self.username

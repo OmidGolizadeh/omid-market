@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import About_the_store, Contact_us, Team, Link
+import jdatetime
 
 
 @admin.register(Team)
@@ -30,8 +31,13 @@ class About_site(admin.ModelAdmin):
 
 @admin.register(Contact_us)
 class Contact(admin.ModelAdmin):
-    list_display = ['name', 'phone', 'title']
+    list_display = ['name', 'phone', 'title', 'created_at_show']
     list_filter = ['created_at']
+
+    def created_at_show(self, obj):
+        return obj.created_at.strftime(f"تاریخ %Y/%m/%d | ساعت %H:%M")
+
+    created_at_show.short_description = 'تاریخ'
 
 
 @admin.register(Link)

@@ -128,4 +128,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'accounts.User' 
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'testwebsite265@gmail.com'
+EMAIL_HOST_PASSWORD = 'slhd vwri hzda fabj'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

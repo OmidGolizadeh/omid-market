@@ -28,6 +28,7 @@ class UserLoginView(LoginView):
 
 def UserLogout(request):
     logout(request)
+    messages.error(request, 'کاربر خارج شد.')
     return redirect('home:home')
 
 
