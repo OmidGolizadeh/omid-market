@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField, AuthenticationForm
 from django.core.exceptions import ValidationError
 from accounts.models import User
+from django.core import validators
 
 
 class UserCreationForm(forms.ModelForm):
@@ -51,7 +52,8 @@ class RegisterForm(forms.Form):
         'class': 'form-control', 'name': 'username', 'id': 'username', 'placeholder': 'نام کاربری'
     }))
     email = forms.EmailField(widget=forms.EmailInput(attrs={
-        'class': 'form-control', 'name': 'email', 'id': 'email', 'placeholder': 'ایمیل'
+        'class': 'form-control', 'name': 'email', 'id': 'email', 'placeholder': 'ایمیل',
+        'style': 'text-align: right; direction: rtl;',
     }))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control', 'name': 'password1', 'id': 'password1', 'placeholder': 'رمز عبور '
@@ -87,3 +89,9 @@ class RegisterForm(forms.Form):
                 raise ValidationError('رمز عبور باید حداقل ۴ کاراکتر باشد.', code='password_len_taken')
 
         return cleaned_data
+
+
+class CheckOtpForm(forms.Form):
+    code = forms.CharField(max_length=255, widget=forms.TextInput(attrs={
+        'class': 'form-control', 'name': 'code', 'id': 'code', 'placeholder': 'کد'
+    }), validators=[validators.MaxLengthValidator(4)])

@@ -40,7 +40,7 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(Otp)
 class Otp_show(admin.ModelAdmin):
-    list_display = ['username', 'code', 'token', 'expiration_date_show']
+    list_display = ['username', 'email', 'code', 'token', 'expiration_date_show']
 
     def expiration_date_show(self, obj):
         return obj.expiration_date.strftime(f"تاریخ %Y/%m/%d | ساعت %H:%M")
