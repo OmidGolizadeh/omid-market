@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # my app
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
+    'products.apps.ProductsConfig',
 
 ]
 
@@ -128,7 +129,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-AUTH_USER_MODEL = 'accounts.User' 
+AUTH_USER_MODEL = 'accounts.User'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
