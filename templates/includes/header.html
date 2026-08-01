@@ -340,13 +340,13 @@
                                             <li><a href="{% url 'home:about' %}">درباره ما<em
                                                     class="droopmenu-topanim"></em></a></li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href="products.html" aria-expanded="false">صفحات فروشگاه<em
+                                                <a href="{% url 'products:product' %}" aria-expanded="false">صفحات فروشگاه<em
                                                         class="droopmenu-topanim"></em></a>
                                                 <div class="dm-arrow"></div>
                                                 <ul style="">
-                                                    <li><a href="products.html">محصولات <sup>(کاشی کاری)</sup></a></li>
-                                                    <li><a href="products-list.html">محصولات <sup>(لیست)</sup></a></li>
-                                                    <li><a href="products.html">جزئیات محصول</a></li>
+                                                    <li><a href="{% url 'products:product' %}">محصولات <sup>(کاشی کاری)</sup></a></li>
+                                                    <li><a href="{% url 'products:product_list' %}">محصولات <sup>(لیست)</sup></a></li>
+{#                                                    <li><a href="products.html">جزئیات محصول</a></li>#}
                                                 </ul>
                                             </li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
