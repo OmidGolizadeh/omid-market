@@ -11,6 +11,7 @@ class Product_view(TemplateView):
         context['object_list'] = Product.objects.all()
         context['category'] = Category.objects.all()
         context['brand'] = Category_brand.objects.all()
+        context['latest_products'] = Product.objects.order_by('-created_at')[:3]
         return context
 
 
@@ -22,4 +23,5 @@ class Product_list(TemplateView):
         context['object_list'] = Product.objects.all()
         context['category'] = Category.objects.all()
         context['brand'] = Category_brand.objects.all()
+        context['latest_products'] = Product.objects.order_by('-created_at')[:3]
         return context

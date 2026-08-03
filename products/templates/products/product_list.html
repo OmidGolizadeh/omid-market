@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %} لیست محصولات{% endblock %}
 
@@ -147,81 +148,33 @@
                                              aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
                                                 <div class="row">
-                                                    <!-- Side Product -->
-                                                    <div class="col-12 col-md-4 col-lg-12 px-0 mt-2">
-                                                        <a href="product.html">
-                                                            <div class="side-product">
-                                                                <div class="row pl-3">
-                                                                    <div class="col-3 pl-2">
-                                                                        <div class="image"
-                                                                             style="background-image: url('assets/images/products/p100.png')"></div>
-                                                                    </div>
-                                                                    <div class="col-9 pr-0">
-                                                                        <h2>گوشی موبایل سامسونگ مدل Galaxy A51</h2>
-                                                                        <div class="row">
-                                                                            <div class="col-7 pl-0">
-                                                                                <span class="encode4365gbf265g43d">320.000 تومان</span>
-                                                                            </div>
-                                                                            <div class="col-5 pr-0 text-end">
-                                                                                <span class="views">321 بازدید</span>
+                                                    {% for i in latest_products %}
+                                                        <!-- Side Product -->
+                                                        <div class="col-12 col-md-4 col-lg-12 px-0 mt-2">
+                                                            <a href="product.html">
+                                                                <div class="side-product">
+                                                                    <div class="row pl-3">
+                                                                        <div class="col-3 pl-2">
+                                                                            <div class="image"
+                                                                                 style="background-image: url({{ i.images.url }})"></div>
+                                                                        </div>
+                                                                        <div class="col-9 pr-0">
+                                                                            <h2>{{ i.title }}</h2>
+                                                                            <div class="row">
+                                                                                <div class="col-7 pl-0">
+                                                                                    <span class="encode4365gbf265g43d">{{ i.price|toman }} تومان</span>
+                                                                                </div>
+                                                                                <div class="col-5 pr-0 text-end">
+                                                                                    <span class="views">321 بازدید</span>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                    <!-- Side Product -->
-                                                    <!-- Side Product -->
-                                                    <div class="col-12 col-md-4 col-lg-12 px-0 mt-2">
-                                                        <a href="product.html">
-                                                            <div class="side-product">
-                                                                <div class="row pl-3">
-                                                                    <div class="col-3 pl-2">
-                                                                        <div class="image"
-                                                                             style="background-image: url('assets/images/products/p100.png')"></div>
-                                                                    </div>
-                                                                    <div class="col-9 pr-0">
-                                                                        <h2>گوشی موبایل سامسونگ مدل Galaxy A51</h2>
-                                                                        <div class="row">
-                                                                            <div class="col-7 pl-0">
-                                                                                <span class="encode4365gbf265g43d">320.000 تومان</span>
-                                                                            </div>
-                                                                            <div class="col-5 pr-0 text-end">
-                                                                                <span class="views">321 بازدید</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                    <!-- Side Product -->
-                                                    <!-- Side Product -->
-                                                    <div class="col-12 col-md-4 col-lg-12 px-0 mt-2">
-                                                        <a href="product.html">
-                                                            <div class="side-product">
-                                                                <div class="row pl-3">
-                                                                    <div class="col-3 pl-2">
-                                                                        <div class="image"
-                                                                             style="background-image: url('assets/images/products/p100.png')"></div>
-                                                                    </div>
-                                                                    <div class="col-9 pr-0">
-                                                                        <h2>گوشی موبایل سامسونگ مدل Galaxy A51</h2>
-                                                                        <div class="row">
-                                                                            <div class="col-7 pl-0">
-                                                                                <span class="encode4365gbf265g43d">320.000 تومان</span>
-                                                                            </div>
-                                                                            <div class="col-5 pr-0 text-end">
-                                                                                <span class="views">321 بازدید</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                    <!-- Side Product -->
+                                                            </a>
+                                                        </div>
+                                                        <!-- Side Product -->
+                                                    {% endfor %}
                                                 </div>
                                             </div>
                                         </div>
@@ -243,13 +196,14 @@
                                             </div>
                                             <div class="col-12 col-sm-2 pt-1 text-end">
                                             <span>
-                                                <a href="products-list.html" class="products-view-type active"><i
+                                                <a href="{% url 'products:product_list' %}"
+                                                   class="products-view-type active"><i
                                                         class="fa fa-th-list"></i></a>
-                                                <a href="products.html" class="products-view-type"><i
+                                                <a href="{% url 'products:product' %}" class="products-view-type"><i
                                                         class="fa fa-th"></i></a>
                                             </span>
                                                 &nbsp;|&nbsp;
-                                                <span>122 کالا</span>
+                                                <span>{{ object_list.count }} کالا</span>
                                             </div>
                                         </div>
                                     </div>
@@ -259,178 +213,47 @@
                                     <div class="container">
                                         <div class="row row-cols-1 gx-md-4">
                                             <!-- Products -->
-                                            <div class="col">
-                                                <!-- Product Box -->
-                                                <div class="encode4326654321vfb-row">
-                                                    <div class="row">
-                                                        <div class="col-12 col-md-4">
-                                                            <a href="product.html">
-                                                                <div class="image"
-                                                                     style="background-image: url('assets/images/products/p100.png')"></div>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-12 col-md-8">
-                                                            <div class="details py-3 px-3">
-                                                                <div class="category">
-                                                                    <a href="products.html">گوشی موبایل</a>
-                                                                    &nbsp;/&nbsp;
-                                                                    <a href="products.html">سامسونگ</a>
-                                                                </div>
-                                                                <a href="product.html"><h2>گوشی موبایل سامسونگ مدل
-                                                                    Galaxy A51 دو سیم کارت</h2></a>
-                                                                <div class="rate">
-                                                                    <i class="fa fa-star-half-alt"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <span class="encode43bf265g43d">(14 رای دهنده)</span>
-                                                                </div>
-                                                                <p>گوشی موبایل Galaxy A51 با رم 6 گیگابایتی روانه بازار
-                                                                    شده است. این محصول دارای صفحه‌نمایش سوپر آمولد است و
-                                                                    ظاهر زیبایی دارد. سامسونگ تلاش کرده است حاشیه را در
-                                                                    این تولید جدید خود تا حد امکان کم کند.</p>
-                                                                <div class="encode4365gbf265g43d mb-2">6.000.000 تومان
-                                                                </div>
-                                                                <a href="#">
-                                                                    <div class="btn btn-sm btn-success">مشاهده و خرید
-                                                                    </div>
+                                            {% for i in object_list %}
+                                                <div class="col">
+                                                    <!-- Product Box -->
+                                                    <div class="encode4326654321vfb-row">
+                                                        <div class="row">
+                                                            <div class="col-12 col-md-4">
+                                                                <a href="product.html">
+                                                                    <div class="image"
+                                                                         style="background-image: url({{ i.images.url }})"></div>
                                                                 </a>
+                                                            </div>
+                                                            <div class="col-12 col-md-8">
+                                                                <div class="details py-3 px-3">
+                                                                    <div class="category">
+                                                                        <a href="products.html">{{ i.Category }}</a>
+                                                                        &nbsp;/&nbsp;
+                                                                        <a href="products.html">{{ i.brand }}</a>
+                                                                    </div>
+                                                                    <a href="product.html">
+                                                                        <h2>{{ i.short_description|truncatewords:15 }}</h2>
+                                                                    </a>
+                                                                    <div class="rate">
+                                                                        {{ i.score|stars }}
+                                                                        <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                                                    </div>
+                                                                    <p>{{ i.description|truncatewords:15 }}</p>
+                                                                    <div class="encode4365gbf265g43d mb-2">{{ i.price|toman }}
+                                                                        تومان
+                                                                    </div>
+                                                                    <a href="#">
+                                                                        <div class="btn btn-sm btn-success">مشاهده و
+                                                                            خرید
+                                                                        </div>
+                                                                    </a>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <!-- /Product Box -->
                                                 </div>
-                                                <!-- /Product Box -->
-                                            </div>
-                                            <div class="col">
-                                                <!-- Product Box -->
-                                                <div class="encode4326654321vfb-row">
-                                                    <div class="row">
-                                                        <div class="col-12 col-md-4">
-                                                            <a href="product.html">
-                                                                <div class="image"
-                                                                     style="background-image: url('assets/images/products/p101.png')"></div>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-12 col-md-8">
-                                                            <div class="details py-3 px-3">
-                                                                <div class="category">
-                                                                    <a href="products.html">گوشی موبایل</a>
-                                                                    &nbsp;/&nbsp;
-                                                                    <a href="products.html">سامسونگ</a>
-                                                                </div>
-                                                                <a href="product.html"><h2>گوشی موبایل سامسونگ مدل
-                                                                    Galaxy A51 دو سیم کارت</h2></a>
-                                                                <div class="rate">
-                                                                    <i class="fa fa-star-half-alt"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <span class="encode43bf265g43d">(14 رای دهنده)</span>
-                                                                </div>
-                                                                <p>گوشی موبایل Galaxy A51 با رم 6 گیگابایتی روانه بازار
-                                                                    شده است. این محصول دارای صفحه‌نمایش سوپر آمولد است و
-                                                                    ظاهر زیبایی دارد. سامسونگ تلاش کرده است حاشیه را در
-                                                                    این تولید جدید خود تا حد امکان کم کند.</p>
-                                                                <div class="encode4365gbf265g43d mb-2">6.000.000 تومان
-                                                                </div>
-                                                                <a href="#">
-                                                                    <div class="btn btn-sm btn-success">مشاهده و خرید
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- /Product Box -->
-                                            </div>
-                                            <div class="col">
-                                                <!-- Product Box -->
-                                                <div class="encode4326654321vfb-row">
-                                                    <div class="row">
-                                                        <div class="col-12 col-md-4">
-                                                            <a href="product.html">
-                                                                <div class="image"
-                                                                     style="background-image: url('assets/images/products/p102.png')"></div>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-12 col-md-8">
-                                                            <div class="details py-3 px-3">
-                                                                <div class="category">
-                                                                    <a href="products.html">گوشی موبایل</a>
-                                                                    &nbsp;/&nbsp;
-                                                                    <a href="products.html">سامسونگ</a>
-                                                                </div>
-                                                                <a href="product.html"><h2>گوشی موبایل سامسونگ مدل
-                                                                    Galaxy A51 دو سیم کارت</h2></a>
-                                                                <div class="rate">
-                                                                    <i class="fa fa-star-half-alt"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <span class="encode43bf265g43d">(14 رای دهنده)</span>
-                                                                </div>
-                                                                <p>گوشی موبایل Galaxy A51 با رم 6 گیگابایتی روانه بازار
-                                                                    شده است. این محصول دارای صفحه‌نمایش سوپر آمولد است و
-                                                                    ظاهر زیبایی دارد. سامسونگ تلاش کرده است حاشیه را در
-                                                                    این تولید جدید خود تا حد امکان کم کند.</p>
-                                                                <div class="encode4365gbf265g43d mb-2">6.000.000 تومان
-                                                                </div>
-                                                                <a href="#">
-                                                                    <div class="btn btn-sm btn-success">مشاهده و خرید
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- /Product Box -->
-                                            </div>
-                                            <div class="col">
-                                                <!-- Product Box -->
-                                                <div class="encode4326654321vfb-row">
-                                                    <div class="row">
-                                                        <div class="col-12 col-md-4">
-                                                            <a href="product.html">
-                                                                <div class="image"
-                                                                     style="background-image: url('assets/images/products/p103.png')"></div>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-12 col-md-8">
-                                                            <div class="details py-3 px-3">
-                                                                <div class="category">
-                                                                    <a href="products.html">گوشی موبایل</a>
-                                                                    &nbsp;/&nbsp;
-                                                                    <a href="products.html">سامسونگ</a>
-                                                                </div>
-                                                                <a href="product.html"><h2>گوشی موبایل سامسونگ مدل
-                                                                    Galaxy A51 دو سیم کارت</h2></a>
-                                                                <div class="rate">
-                                                                    <i class="fa fa-star-half-alt"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <span class="encode43bf265g43d">(14 رای دهنده)</span>
-                                                                </div>
-                                                                <p>گوشی موبایل Galaxy A51 با رم 6 گیگابایتی روانه بازار
-                                                                    شده است. این محصول دارای صفحه‌نمایش سوپر آمولد است و
-                                                                    ظاهر زیبایی دارد. سامسونگ تلاش کرده است حاشیه را در
-                                                                    این تولید جدید خود تا حد امکان کم کند.</p>
-                                                                <div class="encode4365gbf265g43d mb-2">6.000.000 تومان
-                                                                </div>
-                                                                <a href="#">
-                                                                    <div class="btn btn-sm btn-success">مشاهده و خرید
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- /Product Box -->
-                                            </div>
+                                            {% endfor %}
                                             <!-- /Products -->
                                         </div>
                                     </div>

@@ -3,10 +3,17 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView
 from .models import Team, About_the_store
 from .forms import Contact_Form
+from products.models import Product,Category
 
 
 class Home(TemplateView):
     template_name = 'home/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product'] = Product.objects.all()
+        context['category'] = Category.objects.all()
+        return context
 
 
 class About(TemplateView):

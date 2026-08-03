@@ -61,7 +61,7 @@ class Product_Image_show(admin.ModelAdmin):
 
 @admin.register(ProductColor)
 class ProductColor_show(admin.ModelAdmin):
-    list_display = ['product', 'name_color', 'show_color']
+    list_display = ['product', 'name_color', 'show_color', 'number']
     readonly_fields = ('created_at',)
     ordering = ['product', 'created_at']
 
