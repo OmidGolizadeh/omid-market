@@ -40,19 +40,19 @@
                 <div class="col-12 col-md-3 mt-2 mt-sm-1 text-center text-sm-start" id="slider-side-banners">
                     <div class="row row-cols-1 row-cols-sm-3 row-cols-md-1 h-100 gy-2 g-sm-1 g-md-0">
                         <div class="col align-self-start" data-aos="fade-top" data-aos-duration="1000">
-                            <a href="products.html">
+                            <a href="{% url 'products:product' %}">
                                 <img src="{% static 'images/slider/side-slide1.jpg' %}" alt="side-slide1.jpg"
                                      width="100%">
                             </a>
                         </div>
                         <div class="col align-self-center" data-aos="fade-top" data-aos-duration="1100">
-                            <a href="products.html">
+                            <a href="{% url 'products:product' %}">
                                 <img src="{% static 'images/slider/side-slide2.jpg' %}" alt="side-slide2.jpg"
                                      width="100%">
                             </a>
                         </div>
                         <div class="col align-self-end" data-aos="fade-top" data-aos-duration="1200">
-                            <a href="products.html">
+                            <a href="{% url 'products:product' %}">
                                 <img src="{% static 'images/slider/side-slide3.jpg' %}" alt="side-slide3.jpg"
                                      width="100%">
                             </a>
@@ -104,7 +104,7 @@
                                         &nbsp;/&nbsp;
                                         <a href="products.html">{{ i.brand }}</a>
                                     </div>
-                                    <a href="product.html"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                    <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                     <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                     <div class="rate">
                                         {{ i.score|stars }}
@@ -137,7 +137,7 @@
                                         &nbsp;/&nbsp;
                                         <a href="products.html">{{ i.brand }}</a>
                                     </div>
-                                    <a href="product.html"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                    <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                     <div>
                                         <span class="discounted">{{ i.discount|toman }} تومان</span>
                                         <br class="d-sm-none">
@@ -180,7 +180,7 @@
                                         &nbsp;/&nbsp;
                                         <a href="products.html">{{ i.brand }}</a>
                                     </div>
-                                    <a href="product.html"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                    <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                     <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                     <div class="rate">
                                         {{ i.score|stars }}

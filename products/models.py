@@ -28,8 +28,21 @@ class Category(models.Model):
         return self.title
 
 
+class Warranty(models.Model):
+    title = models.CharField(max_length=255, blank=True, null=True, verbose_name='نام کارانتی')
+    created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
+
+    class Meta:
+        verbose_name = 'کارانتی'
+        verbose_name_plural = 'کارانتی ها'
+
+    def __str__(self):
+        return self.title
+
+
 class Product(models.Model):
     Product_Warranty = [
+        ('not_warranty', 'بدون گارانتی'),
         ('1_month_old', '1 ماهه'),
         ('6_month_old', '6 ماهه'),
         ('12_month_old', '12 ماهه'),
@@ -41,7 +54,7 @@ class Product(models.Model):
     discount = models.DecimalField(max_digits=11, blank=True, null=True, decimal_places=0, verbose_name='تخفیف')
     brand = models.ForeignKey(Category_brand, on_delete=models.CASCADE, null=True, verbose_name='برند ')
     Category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, verbose_name='توع محصول')
-    warranty = models.CharField(null=True, blank=True, choices=Product_Warranty, verbose_name='گارانتی')
+    warranty = models.ManyToManyField(Warranty, null=True, blank=True, verbose_name='گارانتی')
     slug = models.SlugField(unique=True, blank=True, verbose_name='اسلاگ')
     images = models.ImageField(upload_to='products/%Y/%m/%d/', null=True, blank=True, verbose_name='تصویر')
     score = models.FloatField(default=0.0, null=True, blank=True, verbose_name='امتیاز')

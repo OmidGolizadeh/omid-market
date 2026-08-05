@@ -7,8 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}my site{% endblock %}</title>
     {#  css  #}
-    {% include 'includes/css_link.html' %}
-{#    {% include 'includes/product_css.html' %}#}
+    {% if request.resolver_match.url_name != 'product_detail' %}
+        {% include 'includes/css_link.html' %}
+    {% endif %}
+    {#    {% include 'includes/product_css.html' %}#}
+    {% block extar_head %}{% endblock %}
 </head>
 <body>
 {# header #}
@@ -22,8 +25,12 @@
 {% include 'includes/footer.html' %}
 
 {# js #}
-{% include 'includes/js_link.html' %}
+{% if request.resolver_match.url_name != 'product_detail' %}
+    {% include 'includes/js_link.html' %}
+{% endif %}
 {#{% include 'includes/product_js.html' %}#}
+{% block extar_body %}{% endblock %}
+
 
 </body>
 </html>

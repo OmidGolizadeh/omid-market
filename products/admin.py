@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import Product, Category, Category_brand, ProductColor, Product_Image
+from .models import Product, Category, Category_brand, ProductColor, Product_Image, Warranty
 from django.utils.html import format_html
 
 
 @admin.register(Product)
 class Product_show(admin.ModelAdmin):
     list_display = (
-        'title', 'short_description_truncated', 'price', 'show_image_product', 'get_total_stock', 'warranty')
+        'title', 'short_description_truncated', 'price', 'show_image_product', 'get_total_stock', )
     readonly_fields = ('created_at',)
     ordering = ['title', 'created_at']
 
@@ -74,3 +74,9 @@ class ProductColor_show(admin.ModelAdmin):
         return "بدون رنگ"
 
     show_color.short_description = 'نمایش رنگ'
+
+
+@admin.register(Warranty)
+class Warranty_show(admin.ModelAdmin):
+    list_display = ['title']
+

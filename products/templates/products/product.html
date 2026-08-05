@@ -151,7 +151,7 @@
                                                 {% for i in latest_products %}
                                                 <!-- Side Product -->
                                                 <div class="col-12 col-md-4 col-lg-12 px-0 mt-2">
-                                                    <a href="product.html">
+                                                    <a href="{% url 'products:product_detail' i.slug %}">
                                                         <div class="side-product">
                                                             <div class="row pl-3">
                                                                 <div class="col-3 pl-2">
@@ -219,7 +219,7 @@
                                                 <div class="col">
                                                     <!-- Product Box -->
                                                     <div class="encode4326654321vfb">
-                                                        <a href="product.html">
+                                                        <a href="{% url 'products:product_detail' i.slug %}">
                                                             <div class="image"
                                                                  style="background-image: url({{ i.images.url }})"></div>
                                                         </a>
