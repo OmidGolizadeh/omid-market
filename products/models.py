@@ -58,6 +58,7 @@ class Product(models.Model):
     slug = models.SlugField(unique=True, blank=True, verbose_name='اسلاگ')
     images = models.ImageField(upload_to='products/%Y/%m/%d/', null=True, blank=True, verbose_name='تصویر')
     score = models.FloatField(default=0.0, null=True, blank=True, verbose_name='امتیاز')
+    view = models.PositiveIntegerField(default=0, verbose_name='تعداد بازدید')
     created_at = jmodels.jDateTimeField(auto_now_add=True, null=True, blank=True, verbose_name='تاریخ ایجاد محصول')
 
     class Meta:

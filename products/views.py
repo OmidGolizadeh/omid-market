@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, DetailView
 from .models import Product, Category, Category_brand
+from django.db.models import F
 
 
 class ProductView(TemplateView):
@@ -32,6 +33,12 @@ class ProductDetail(DetailView):
     template_name = 'products/product_detail.html'
     slug_url_kwarg = 'slug'
     context_object_name = 'product'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        Product.objects.filter(pk=obj.pk).update(view=F('view') + 1)
+        obj.refresh_from_db()
+        return obj
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

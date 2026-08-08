@@ -6,7 +6,7 @@ from django.utils.html import format_html
 @admin.register(Product)
 class Product_show(admin.ModelAdmin):
     list_display = (
-        'title', 'short_description_truncated', 'price', 'show_image_product', 'get_total_stock', )
+        'title', 'short_description_truncated', 'price', 'show_image_product', 'get_total_stock', 'view')
     readonly_fields = ('created_at',)
     ordering = ['title', 'created_at']
 
