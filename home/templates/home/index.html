@@ -90,7 +90,7 @@
                         <div class="col">
                             <!-- Product Box -->
                             <div class="encode4326654321vfb">
-                                <a href="product.html">
+                                <a href="{% url 'products:product_detail' i.slug %}">
                                     <div class="image"
                                          style="background-image: url({{ i.images.url }})"></div>
                                 </a>
@@ -126,7 +126,7 @@
                         <div class="col">
                             <!-- Product Box -->
                             <div class="encode4326654321vfb">
-                                <a href="product.html">
+                                <a href="{% url 'products:product_detail' i.slug %}">
                                     <div class="image" style="background-image: url({{ i.images.url }})">
                                         <span class="badge on-sale-badge">فروش ویژه</span>
                                     </div>
@@ -166,7 +166,7 @@
                         <div class="col">
                             <!-- Product Box -->
                             <div class="encode4326654321vfb">
-                                <a href="product.html">
+                                <a href="{% url 'products:product_detail' i.slug %}">
                                     <div class="image"
                                          style="background-image: url({{ i.images.url }})"></div>
                                 </a>
@@ -211,7 +211,7 @@
                              data-aos-duration="800">
                             <div class="row h-100">
                                 <div class="col-12 col-sm-4 col-lg-5">
-                                    <a href="product.html">
+                                    <a href="{% url 'products:product_detail' i.slug %}">
                                         <div class="image h-100"
                                              style="background-image: url({% static 'images/products/p1000.png' %})"></div>
                                     </a>
@@ -219,7 +219,7 @@
                                 <div class="col-12 col-sm-8 col-lg-7 py-3">
                                     <div class="encode4365gbf2vrf">محصول ویژه امروز</div>
                                     <div class="box-subtitle">فروش به مدت محدود</div>
-                                    <a href="product.html">
+                                    <a href="{% url 'products:product_detail' i.slug %}">
                                         <div class="product-title pt-4">گوشی موبایل سامسونگ مدل Galaxy A51 دو سیم کارت
                                         </div>
                                     </a>
@@ -229,7 +229,7 @@
                                         <span class="pre">4.800.000 تومان</span>
                                     </div>
                                     <div class="cta pt-2">
-                                        <a href="product.html" class="hvr-icon-back">همین حالا بخرید <i
+                                        <a href="{% url 'products:product_detail' i.slug %}" class="hvr-icon-back">همین حالا بخرید <i
                                                 class="fa fa-arrow-left hvr-icon"></i></a>
                                     </div>
                                     <div class="counter mt-3">
@@ -259,7 +259,7 @@
                     <div class="col-12 col-sm-6 col-lg-3">
                         <!-- Product Box -->
                         <div class="encode4326654321vfb">
-                            <a href="product.html">
+                            <a href="{% url 'products:product_detail' i.slug %}">
                                 <div class="image"
                                      style="background-image: url({% static 'images/products/p303.png' %})">
                                     <span class="badge on-sale-badge">فروش ویژه</span>
@@ -271,7 +271,7 @@
                                     &nbsp;/&nbsp;
                                     <a href="products.html">سامسونگ</a>
                                 </div>
-                                <a href="product.html"><h2>مودم روتر ADSL2 Plus بی‌ سیم N300 دی-لینک مدل DSL-2740U</h2>
+                                <a href="{% url 'products:product_detail' i.slug %}"><h2>مودم روتر ADSL2 Plus بی‌ سیم N300 دی-لینک مدل DSL-2740U</h2>
                                 </a>
                                 <div>
                                     <span class="discounted">4.500.000 تومان</span>
@@ -293,7 +293,7 @@
                     <div class="col-12 col-sm-6 col-lg-3">
                         <!-- Product Box -->
                         <div class="encode4326654321vfb">
-                            <a href="product.html">
+                            <a href="{% url 'products:product_detail' i.slug %}">
                                 <div class="image"
                                      style="background-image: url({% static 'images/products/p403.png' %})">
                                     <span class="badge on-sale-badge">فروش ویژه</span>
@@ -305,7 +305,7 @@
                                     &nbsp;/&nbsp;
                                     <a href="products.html">سامسونگ</a>
                                 </div>
-                                <a href="product.html"><h2>دوربین دیجیتال مدل AX6065</h2></a>
+                                <a href="{% url 'products:product_detail' i.slug %}"><h2>دوربین دیجیتال مدل AX6065</h2></a>
                                 <div>
                                     <span class="discounted">4.500.000 تومان</span>
                                     <br class="d-sm-none">
@@ -391,7 +391,7 @@
                             <div class="col">
                                 <!-- Product Box -->
                                 <div class="encode4326654321vfb">
-                                    <a href="product.html">
+                                    <a href="{% url 'products:product_detail' i.slug %}">
                                         <div class="image"
                                              style="background-image: url({{ i.images.url }})"></div>
                                     </a>
@@ -405,7 +405,7 @@
                                             &nbsp;/&nbsp;
                                             <a href="products.html">{{ i.brand }}</a>
                                         </div>
-                                        <a href="product.html"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                         <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                         <div class="rate">
                                             {{ i.score|stars }}
@@ -431,7 +431,7 @@
                             <div class="col">
                                 <!-- Product Box -->
                                 <div class="encode4326654321vfb">
-                                    <a href="product.html">
+                                    <a href="{% url 'products:product_detail' i.slug %}">
                                         <div class="image"
                                              style="background-image: url({{ i.images.url }})"></div>
                                     </a>
@@ -445,7 +445,7 @@
                                             &nbsp;/&nbsp;
                                             <a href="products.html">{{ i.brand }}</a>
                                         </div>
-                                        <a href="product.html"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                         <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                         <div class="rate">
                                             {{ i.score|stars }}
@@ -471,7 +471,7 @@
                             <div class="col">
                                 <!-- Product Box -->
                                 <div class="encode4326654321vfb">
-                                    <a href="product.html">
+                                    <a href="{% url 'products:product_detail' i.slug %}">
                                         <div class="image"
                                              style="background-image: url({{ i.images.url }})"></div>
                                     </a>
@@ -485,7 +485,7 @@
                                             &nbsp;/&nbsp;
                                             <a href="products.html">{{ i.brand }}</a>
                                         </div>
-                                        <a href="product.html"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                         <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                         <div class="rate">
                                             {{ i.score|stars }}
@@ -510,7 +510,7 @@
                             <div class="col">
                                 <!-- Product Box -->
                                 <div class="encode4326654321vfb">
-                                    <a href="product.html">
+                                    <a href="{% url 'products:product_detail' i.slug %}">
                                         <div class="image"
                                              style="background-image: url({{ i.images.url }})"></div>
                                     </a>
@@ -524,7 +524,7 @@
                                             &nbsp;/&nbsp;
                                             <a href="products.html">{{ i.brand }}</a>
                                         </div>
-                                        <a href="product.html"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                         <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                         <div class="rate">
                                             {{ i.score|stars }}

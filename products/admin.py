@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, Category_brand, ProductColor, Product_Image, Warranty
+from .models import Product, Category, Category_brand, ProductColor, Product_Image, Warranty, Comment
 from django.utils.html import format_html
 
 
@@ -80,3 +80,19 @@ class ProductColor_show(admin.ModelAdmin):
 class Warranty_show(admin.ModelAdmin):
     list_display = ['title']
 
+
+@admin.register(Comment)
+class Comment_show(admin.ModelAdmin):
+    list_display = ['user', 'product', 'parent_show', ]
+    ordering = ['user', 'created_at']
+    readonly_fields = ('created_at',)
+    list_filter = ['created_at']
+
+    def parent_show(self, obj):
+        parent = obj.parent
+        if not parent:
+            return 'هیج منبع وجود ندارد .'
+        else:
+            return parent
+
+    parent_show.short_description = 'منبع'

@@ -187,11 +187,14 @@
                                             src="{% static 'images/social/twitter.png' %}" alt="توئیتر"
                                             width="18px"></span></a>
                                     <a href="#" target="_blank"><span class="share-link"><img
-                                            src="{% static 'images/social/insta.png' %}" alt="اینستاگرام" width="18px"></span></a>
+                                            src="{% static 'images/social/insta.png' %}" alt="اینستاگرام"
+                                            width="18px"></span></a>
                                     <a href="#" target="_blank"><span class="share-link"><img
-                                            src="{% static 'images/social/linkedin.png' %}" alt="لینکدین" width="18px"></span></a>
+                                            src="{% static 'images/social/linkedin.png' %}" alt="لینکدین"
+                                            width="18px"></span></a>
                                     <a href="#" target="_blank"><span class="share-link"><img
-                                            src="{% static 'images/social/facebook.png' %}" alt="فیس بوک" width="18px"></span></a>
+                                            src="{% static 'images/social/facebook.png' %}" alt="فیس بوک"
+                                            width="18px"></span></a>
                                 </div>
                                 <!-- Share Links -->
                             </div>
@@ -209,7 +212,7 @@
                                                         onclick="openTab(event,'details-tab')">جدول مشخصات
                                                 </button>
                                                 <button class="tab-item tablink px-3"
-                                                        onclick="openTab(event,'comments-tab')">دیدگاه کاربران (2)
+                                                        onclick="openTab(event,'comments-tab')">دیدگاه کاربران ({{ product.comment.count }})
                                                 </button>
                                             </div>
                                         </div>
@@ -230,8 +233,8 @@
                                                     <!-- Detail Section -->
                                                     <div class="row">
                                                         <div class="col-12 my-2">
-                                                            <span class="detail-title"><i
-                                                                    class="fa fa-chevron-left small"></i> مشخصات کلی</span>
+                                            <span class="detail-title"><i
+                                                    class="fa fa-chevron-left small"></i> مشخصات کلی</span>
                                                         </div>
                                                     </div>
                                                     <div class="row mb-2">
@@ -262,8 +265,8 @@
                                                     <!-- Detail Section -->
                                                     <div class="row">
                                                         <div class="col-12 my-2">
-                                                            <span class="detail-title"><i
-                                                                    class="fa fa-chevron-left small"></i> صفحه نمایش</span>
+                                            <span class="detail-title"><i
+                                                    class="fa fa-chevron-left small"></i> صفحه نمایش</span>
                                                         </div>
                                                     </div>
                                                     <div class="row mb-2">
@@ -310,97 +313,91 @@
                                                             <div class="comments-container">
                                                                 <div class="container px-0">
                                                                     <div class="row">
-                                                                        <div class="col-12 pt-2">
-                                                                            <!-- Show Comments -->
-                                                                            <div class="comment p-3 my-2">
-                                                                                <div class="sender-details">
-                                                                                    <div class="row">
-                                                                                        <div class="col-3 col-sm-2 col-md-1 pl-md-0 pl-lg-2 pl-xl-3">
-                                                                                            <img src="assets/images/user-no-image.jpg"
-                                                                                                 alt="" class="rounded">
-                                                                                        </div>
-                                                                                        <div class="col-9 col-sm-10 col-md-11 pr-0 pr-md-2 pr-xl-0 pt-0 pt-lg-1">
-                                                                                            <div class="name">مصطفی
-                                                                                                کلانتری
-                                                                                            </div>
-                                                                                            <div class="date">ارسال شده
-                                                                                                در 18 تیر 1400
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="col-12">
-                                                                                            <p>این یک متن آزمایشی است که
-                                                                                                به زودی توسط نویسنده این
-                                                                                                سایت، تکمیل یا حذف خواهد
-                                                                                                شد. اگر شما نویسنده‌ی
-                                                                                                این سایت هستید، برای حذف
-                                                                                                یا ویرایش این صفحه، کافی
-                                                                                                است از طریق مرکز مدیریت
-                                                                                                سایت خود وارد بخش مربوطه
-                                                                                                شده و محتوای این صفحه را
-                                                                                                ویرایش یا حذف کنید.</p>
-                                                                                            <span class="reply"><img
-                                                                                                    src="assets/images/comment-reply.png"
-                                                                                                    alt=""> ارسال پاسخ</span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                <!-- Comment Reply -->
-                                                                                <div class="row justify-content-end">
-                                                                                    <div class="col-11 pt-2 pr-0">
-                                                                                        <div class="comment p-3">
+                                                                        {% if product.comment.all %}
+                                                                            {% for comment in product.comment.all %}
+                                                                                {% if comment.parent == None %}
+                                                                                    <div class="col-12 pt-2">
+                                                                                        <!-- Show Comments -->
+                                                                                        <div class="comment p-3 my-2">
                                                                                             <div class="sender-details">
                                                                                                 <div class="row">
                                                                                                     <div class="col-3 col-sm-2 col-md-1 pl-md-0 pl-lg-2 pl-xl-3">
-                                                                                                        <img src="assets/images/user-no-image.jpg"
-                                                                                                             alt=""
-                                                                                                             class="rounded">
+                                                                                                        {% if comment.user.image %}
+                                                                                                            <img src="{{ comment.user.image.url }}"
+                                                                                                                 alt="{{ comment.user.username }}"
+                                                                                                                 class="rounded">
+                                                                                                        {% else %}
+                                                                                                            <img src="{% static 'images/icons/profile-icon.webp' %}"
+                                                                                                                 alt="{{ comment.user.username }}"
+                                                                                                                 class="rounded">
+                                                                                                        {% endif %}
                                                                                                     </div>
                                                                                                     <div class="col-9 col-sm-10 col-md-11 pr-0 pr-md-2 pr-xl-0 pt-0 pt-lg-1">
                                                                                                         <div class="name">
-                                                                                                            امین کیانی
+                                                                                                            {{ comment.user.full_name }}
                                                                                                         </div>
                                                                                                         <div class="date">
-                                                                                                            ارسال شده در
-                                                                                                            18 تیر 1400
+                                                                                                            ارسال شده
+                                                                                                            در {{ comment.created_at|date:'Y/m/d' }}
                                                                                                         </div>
                                                                                                     </div>
                                                                                                     <div class="col-12">
-                                                                                                        <p>صفحات و
-                                                                                                            محتوای
-                                                                                                            آزمایشی
-                                                                                                            همیشه بخشی
-                                                                                                            از محتوای
-                                                                                                            پیش‌نمایش
-                                                                                                            قالب و
-                                                                                                            افزونه های
-                                                                                                            وب هستند که
-                                                                                                            شما بتوانید
-                                                                                                            ارتباط درستی
-                                                                                                            با پیش نمایش
-                                                                                                            قالب گرفته و
-                                                                                                            تصمیم مناسبی
-                                                                                                            بگیرید. این
-                                                                                                            صفحات معمولا
-                                                                                                            برای اطلاعات
-                                                                                                            کلی در مورد
-                                                                                                            سایت مثل
-                                                                                                            «درباره ما»،
-                                                                                                            «تماس با
-                                                                                                            ما»، «فهرست»
-                                                                                                            یا «نظرات
-                                                                                                            شما» مفید
-                                                                                                            هستند.</p>
+                                                                                                        <p> {{ comment.body }} </p>
+                                                                                                        <a href="javascript:void(0);" onclick="set_value({{ comment.id }})">
+                                                                            <span class="reply"><img
+                                                                                    src="{% static 'images/comment-reply.png' %}"
+                                                                                    alt=""> ارسال پاسخ</span>
+                                                                                                        </a>
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
+
+                                                                                            <!-- Comment Reply -->
+                                                                                            {% for reply in comment.replies.all %}
+                                                                                                <div class="row justify-content-end">
+                                                                                                    <div class="col-11 pt-2 pr-0">
+                                                                                                        <div class="comment p-3">
+                                                                                                            <div class="sender-details">
+                                                                                                                <div class="row">
+                                                                                                                    <div class="col-3 col-sm-2 col-md-1 pl-md-0 pl-lg-2 pl-xl-3">
+                                                                                                                        {% if reply.user.image %}
+                                                                                                                            <img src="{{ reply.user.image.url }}"
+                                                                                                                                 alt="{{ reply.user.username }}"
+                                                                                                                                 class="rounded">
+                                                                                                                        {% else %}
+                                                                                                                            <img src="{% static 'images/icons/profile-icon.webp' %}"
+                                                                                                                                 alt="{{ reply.user.username }}"
+                                                                                                                                 class="rounded">
+                                                                                                                        {% endif %}
+                                                                                                                    </div>
+                                                                                                                    <div class="col-9 col-sm-10 col-md-11 pr-0 pr-md-2 pr-xl-0 pt-0 pt-lg-1">
+                                                                                                                        <div class="name">
+                                                                                                                            {{ reply.user.full_name }}
+                                                                                                                        </div>
+                                                                                                                        <div class="date">
+                                                                                                                            ارسال
+                                                                                                                            شده
+                                                                                                                            در
+                                                                                                                            {{ reply.created_at|date:'Y/m/d' }}
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                    <div class="col-12">
+                                                                                                                        <p>{{ reply.body }}</p>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            {% endfor %}
+                                                                                            <!-- /Comment Reply -->
                                                                                         </div>
+                                                                                        <!-- /Show Comments -->
                                                                                     </div>
-                                                                                </div>
-                                                                                <!-- /Comment Reply -->
-                                                                            </div>
-                                                                            <!-- /Show Comments -->
-                                                                        </div>
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
+
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -414,73 +411,54 @@
                                                                 <div class="row">
                                                                     <div class="col-12 py-3">
                                                                         <form method="post"
-                                                                              action="https://rubik-market-html.wbrk.ir/">
+                                                                              action="#" name="comment">
+                                                                            {% csrf_token %}
                                                                             <div id="send-comment-form">
                                                                                 <p>نظر خود را برای این مطلب ارسال کنید.
                                                                                     نشانی ایمیل شما منتشر نخواهد شد.</p>
                                                                                 <div class="row">
-                                                                                    <div class="col-12 px-3 pl-md-1 col-md-6">
-                                                                                        <div class="form-group my-1">
-                                                                                            <input type="text"
-                                                                                                   class="form-control"
-                                                                                                   placeholder="* نام شما"
-                                                                                                   required
-                                                                                                   oninvalid="this.setCustomValidity('لطفا نام خود را وارد کنید')"
-                                                                                                   oninput="setCustomValidity('')">
-                                                                                        </div>
+                                                                                    {{ commentForm.parent }}
+                                                                                </div>
+
+                                                                                <div class="col-12">
+                                                                                    <div class="form-group my-1">
+                                                                                        {{ commentForm.body }}
                                                                                     </div>
-                                                                                    <div class="col-12 px-3 pr-md-1 col-md-6">
-                                                                                        <div class="form-group my-1">
-                                                                                            <input type="email"
-                                                                                                   class="form-control text-start"
-                                                                                                   placeholder="پست الکترونیک *"
-                                                                                                   required
-                                                                                                   oninvalid="this.setCustomValidity('لطفا پست الکترونیک خود را وارد کنید')"
-                                                                                                   oninput="setCustomValidity('')">
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="col-12">
-                                                                                        <div class="form-group my-1">
-                                                                                            <textarea
-                                                                                                    class="form-control"
-                                                                                                    id="" rows="4"
-                                                                                                    placeholder="متن دیدگاه"></textarea>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="col-12">
-                                                                                        <div class="form-group my-1">
-                                                                                            <input type="submit"
-                                                                                                   value="ارسال دیدگاه"
-                                                                                                   class="btn btn-success px-5">
-                                                                                        </div>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                    <div class="form-group my-1">
+                                                                                        <input type="submit"
+                                                                                               value="ارسال دیدگاه"
+                                                                                               class="btn btn-success px-5">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </form>
                                                                     </div>
+                                                                    </form>
                                                                 </div>
                                                             </div>
-                                                            <!-- /Send Comment Form -->
                                                         </div>
+                                                        <!-- /Send Comment Form -->
                                                     </div>
                                                 </div>
-                                                <!-- /Comments Tab -->
                                             </div>
+                                            <!-- /Comments Tab -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- /Nav Tabs -->
+                    </div>
+                    <!-- /Nav Tabs -->
 
-                        <!-- Suggested Products -->
-                        <div class="col-12 pt-5" id="suggested-products">
-                            <div class="title py-3 text-center">محصولات مرتبط</div>
-                            <div class="owl-carousel products-carousel">
-                                {% for i in product_offer %}
+                    <!-- Suggested Products -->
+                    <div class="col-12 pt-5" id="suggested-products">
+                        <div class="title py-3 text-center">محصولات مرتبط</div>
+                        <div class="owl-carousel products-carousel">
+                            {% for i in product_offer %}
                                 <!-- Product Item -->
                                 <div class="encode4326654321vfb item">
-                                    <a href="product.html">
+                                    <a href="{% url 'products:product_detail' i.slug %}">
                                         <div class="image"
                                              style="background-image: url({{ i.images.url }})"></div>
                                     </a>
@@ -490,7 +468,8 @@
                                             &nbsp;/&nbsp;
                                             <a href="products.html">{{ i.brand }}</a>
                                         </div>
-                                        <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}">
+                                            <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                         <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                         <div class="rate">
                                             {{ i.score|stars }}
@@ -499,18 +478,28 @@
                                     </div>
                                 </div>
                                 <!-- /Product Item -->
-                                {% endfor %}
+                            {% endfor %}
 
-                            </div>
                         </div>
-                        <!-- /Suggested Products -->
                     </div>
+                    <!-- /Suggested Products -->
                 </div>
             </div>
         </div>
         </div>
+        </div>
     </section>
 {% endblock %}
+
 {% block extar_body %}
     {% include 'includes/product_js.html' %}
+
+    <script>
+        document.getElementById('body').placeholder = 'متن کامنت';
+        function set_value(id) {
+            document.getElementById('parent_id').value = id;
+            window.location.href = '#body'
+
+        }
+    </script>
 {% endblock %}

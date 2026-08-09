@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from django_jalali.db import models as jmodels
 from django.db.models import Sum
+from accounts.models import User
 
 
 class Category_brand(models.Model):
@@ -114,3 +115,19 @@ class Product_Image(models.Model):
 
     def __str__(self):
         return self.product.title
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment', verbose_name='کاربر')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comment', verbose_name='محصول')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='replies',
+                               verbose_name='منبع')
+    body = models.TextField(verbose_name='پیام ارسال شده')
+    created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ ارسال')
+
+    class Meta:
+        verbose_name = 'کامنت'
+        verbose_name_plural = 'کامنت ها'
+
+    def __str__(self):
+        return f'{self.user} - {self.product} - {self.parent}'

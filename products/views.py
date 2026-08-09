@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, DetailView
-from .models import Product, Category, Category_brand
+from .models import Product, Category, Category_brand, Comment
 from django.db.models import F
+from .forms import CommentForm
 
 
 class ProductView(TemplateView):
@@ -44,4 +45,19 @@ class ProductDetail(DetailView):
         context = super().get_context_data(**kwargs)
         # context['product'] = Product.objects.all()
         context['product_offer'] = Product.objects.exclude(pk=self.object.pk)[:5]
+        context['commentForm'] = CommentForm
+        # context['comments'] =Comment.objects.all()
         return context
+
+    def post(self, request, *args, **kwargs):
+        product = self.get_object()
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.product = product
+            comment.save()
+            return redirect('products:product_detail', slug=product.slug)
+        context = self.get_context_data()
+        context['commentForm'] = form
+        return self.render_to_response(context)
