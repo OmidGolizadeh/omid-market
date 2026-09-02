@@ -170,9 +170,36 @@
                                                 </div>
                                             </a>
                                             <br class="d-sm-none">
-                                            <div class="btn btn-outline-secondary encode43243d mt-1 mt-sm-0"
-                                                 data-toggle="tooltip" data-placement="top"
-                                                 title="افزودن به علاقه‌مندی"></div>
+                                            <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+                                            <div style="padding: 7px;"
+                                                 onclick="like(event,'{{ product.slug }}',{{ product.id }})"
+                                                 class="btn btn-outline-secondary mt-1 mt-sm-0"
+                                                 data-toggle="tooltip"
+                                                 data-placement="top"
+                                                 title="افزودن به علاقه‌مندی">
+
+                                                <div style="width: 24px;height: 24px;display: flex;align-items: center;justify-content: center;">
+
+                                                    {% if like %}
+                                                        <img id="like"
+                                                             style="margin-top: -5px;"
+                                                             class="like-icon liked"
+                                                             src="{% static 'images/icons/heart.svg' %}"
+                                                             width="24"
+                                                             height="24"
+                                                             alt="like">
+                                                    {% else %}
+                                                        <img id="like"
+                                                             style="margin-top: 1px;"
+                                                             class="like-icon"
+                                                             src="{% static 'images/icons/heart-outline.svg' %}"
+                                                             width="24"
+                                                             height="24"
+                                                             alt="like">
+                                                    {% endif %}
+
+                                                </div>
+                                            </div>
                                             <a href="#">
                                                 <div class="btn btn-outline-secondary encode43bf243d mt-1 mt-sm-0"
                                                      data-toggle="tooltip" data-placement="top" title="مقایسه"></div>
@@ -212,7 +239,8 @@
                                                         onclick="openTab(event,'details-tab')">جدول مشخصات
                                                 </button>
                                                 <button class="tab-item tablink px-3"
-                                                        onclick="openTab(event,'comments-tab')">دیدگاه کاربران ({{ product.comment.count }})
+                                                        onclick="openTab(event,'comments-tab')">دیدگاه کاربران
+                                                    ({{ product.comment.count }})
                                                 </button>
                                             </div>
                                         </div>
@@ -343,7 +371,8 @@
                                                                                                     </div>
                                                                                                     <div class="col-12">
                                                                                                         <p> {{ comment.body }} </p>
-                                                                                                        <a href="javascript:void(0);" onclick="set_value({{ comment.id }})">
+                                                                                                        <a href="javascript:void(0);"
+                                                                                                           onclick="set_value({{ comment.id }})">
                                                                             <span class="reply"><img
                                                                                     src="{% static 'images/comment-reply.png' %}"
                                                                                     alt=""> ارسال پاسخ</span>
@@ -496,6 +525,7 @@
 
     <script>
         document.getElementById('body').placeholder = 'متن کامنت';
+
         function set_value(id) {
             document.getElementById('parent_id').value = id;
             window.location.href = '#body'

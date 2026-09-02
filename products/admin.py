@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, Category_brand, ProductColor, Product_Image, Warranty, Comment
+from .models import Product, Category, Category_brand, ProductColor, Product_Image, Warranty, Comment, Like
 from django.utils.html import format_html
 
 
@@ -96,3 +96,11 @@ class Comment_show(admin.ModelAdmin):
             return parent
 
     parent_show.short_description = 'منبع'
+
+
+@admin.register(Like)
+class Like_show(admin.ModelAdmin):
+    list_display = ['user', 'product', ]
+    ordering = ['user', 'created_at']
+    readonly_fields = ('created_at',)
+    list_filter = ['created_at']

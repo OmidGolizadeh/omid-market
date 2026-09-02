@@ -84,18 +84,56 @@
             <!-- Products -->
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-md-4 featured-product featured" data-aos="fade-up"
                  data-aos-duration="1000">
+                <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
                 {% for i in product %}
                     <div class="col">
                         <!-- Product Box -->
                         <div class="col">
                             <!-- Product Box -->
+
+
                             <div class="encode4326654321vfb">
                                 <a href="{% url 'products:product_detail' i.slug %}">
                                     <div class="image"
                                          style="background-image: url({{ i.images.url }})"></div>
                                 </a>
                                 <div class="icons">
-                                    <div class="btn btn-outline-secondary encode43243d"></div>
+
+                                    <div style="padding: 7px;"
+                                         onclick="likes_in_other_sections(event,'{{ i.slug }}',{{ i.id }}, this)"
+                                         class="btn btn-outline-secondary">
+
+                                        <div style="width: 24px;
+                                            height: 24px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;">
+
+                                            {% if i.id in liked_products %}
+
+                                                <img id="like-{{ i.id }}"
+                                                     style="margin-top: -5px;"
+                                                     class="like-icon liked"
+                                                     src="{% static 'images/icons/heart.svg' %}"
+                                                     width="24"
+                                                     height="24"
+                                                     alt="like">
+
+                                            {% else %}
+
+                                                <img id="like-{{ i.id }}"
+                                                     style="margin-top: 1px;"
+                                                     class="like-icon"
+                                                     src="{% static 'images/icons/heart-outline.svg' %}"
+                                                     width="24"
+                                                     height="24"
+                                                     alt="like">
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
                                     <div class="btn btn-outline-secondary encode43bf243d"></div>
                                 </div>
                                 <div class="details p-3">
@@ -104,11 +142,12 @@
                                         &nbsp;/&nbsp;
                                         <a href="products.html">{{ i.brand }}</a>
                                     </div>
-                                    <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                    <a href="{% url 'products:product_detail' i.slug %}">
+                                        <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                     <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                     <div class="rate">
                                         {{ i.score|stars }}
-                                        <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                        <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                     </div>
                                 </div>
                             </div>
@@ -137,7 +176,8 @@
                                         &nbsp;/&nbsp;
                                         <a href="products.html">{{ i.brand }}</a>
                                     </div>
-                                    <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                    <a href="{% url 'products:product_detail' i.slug %}">
+                                        <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                     <div>
                                         <span class="discounted">{{ i.discount|toman }} تومان</span>
                                         <br class="d-sm-none">
@@ -146,7 +186,7 @@
                                     <div class="rate">
                                         {{ i.score|stars }}
 
-                                        <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                        <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                     </div>
                                 </div>
                             </div>
@@ -160,7 +200,7 @@
             </div>
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-md-4 featured-product most-visited">
-                {% for i in product %}
+                {% for i in most_viewed_view %}
                     <div class="col">
                         <!-- Product Box -->
                         <div class="col">
@@ -171,7 +211,42 @@
                                          style="background-image: url({{ i.images.url }})"></div>
                                 </a>
                                 <div class="icons">
-                                    <div class="btn btn-outline-secondary encode43243d"></div>
+
+                                    <div style="padding: 7px;"
+                                         onclick="likes_in_other_sections(event,'{{ i.slug }}',{{ i.id }}, this)"
+                                         class="btn btn-outline-secondary">
+
+                                        <div style="width: 24px;
+                                            height: 24px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;">
+
+                                            {% if i.id in liked_products %}
+
+                                                <img id="like-{{ i.id }}"
+                                                     style="margin-top: -5px;"
+                                                     class="like-icon liked"
+                                                     src="{% static 'images/icons/heart.svg' %}"
+                                                     width="24"
+                                                     height="24"
+                                                     alt="like">
+
+                                            {% else %}
+
+                                                <img id="like-{{ i.id }}"
+                                                     style="margin-top: 1px;"
+                                                     class="like-icon"
+                                                     src="{% static 'images/icons/heart-outline.svg' %}"
+                                                     width="24"
+                                                     height="24"
+                                                     alt="like">
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
                                     <div class="btn btn-outline-secondary encode43bf243d"></div>
                                 </div>
                                 <div class="details p-3">
@@ -180,11 +255,12 @@
                                         &nbsp;/&nbsp;
                                         <a href="products.html">{{ i.brand }}</a>
                                     </div>
-                                    <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                    <a href="{% url 'products:product_detail' i.slug %}">
+                                        <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                     <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                     <div class="rate">
                                         {{ i.score|stars }}
-                                        <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                        <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                     </div>
                                 </div>
                             </div>
@@ -229,8 +305,9 @@
                                         <span class="pre">4.800.000 تومان</span>
                                     </div>
                                     <div class="cta pt-2">
-                                        <a href="{% url 'products:product_detail' i.slug %}" class="hvr-icon-back">همین حالا بخرید <i
-                                                class="fa fa-arrow-left hvr-icon"></i></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}" class="hvr-icon-back">همین
+                                            حالا بخرید <i
+                                                    class="fa fa-arrow-left hvr-icon"></i></a>
                                     </div>
                                     <div class="counter mt-3">
                                         <div class="time-counter">
@@ -271,7 +348,8 @@
                                     &nbsp;/&nbsp;
                                     <a href="products.html">سامسونگ</a>
                                 </div>
-                                <a href="{% url 'products:product_detail' i.slug %}"><h2>مودم روتر ADSL2 Plus بی‌ سیم N300 دی-لینک مدل DSL-2740U</h2>
+                                <a href="{% url 'products:product_detail' i.slug %}"><h2>مودم روتر ADSL2 Plus بی‌ سیم
+                                    N300 دی-لینک مدل DSL-2740U</h2>
                                 </a>
                                 <div>
                                     <span class="discounted">4.500.000 تومان</span>
@@ -284,7 +362,7 @@
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
-                                    <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                    <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                 </div>
                             </div>
                         </div>
@@ -305,7 +383,8 @@
                                     &nbsp;/&nbsp;
                                     <a href="products.html">سامسونگ</a>
                                 </div>
-                                <a href="{% url 'products:product_detail' i.slug %}"><h2>دوربین دیجیتال مدل AX6065</h2></a>
+                                <a href="{% url 'products:product_detail' i.slug %}"><h2>دوربین دیجیتال مدل AX6065</h2>
+                                </a>
                                 <div>
                                     <span class="discounted">4.500.000 تومان</span>
                                     <br class="d-sm-none">
@@ -317,7 +396,7 @@
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
-                                    <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                    <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                 </div>
                             </div>
                         </div>
@@ -384,9 +463,9 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-md-4 most-sales-product mobile" data-aos="fade-up"
                  data-aos-duration="1000">
 
-                    {% for i in product %}
-                        {% if i.Category.title == 'گوشی موبایل' %}
-                            <div class="col">
+                {% for i in product %}
+                    {% if i.Category.title == 'گوشی موبایل' %}
+                        <div class="col">
                             <!-- Product Box -->
                             <div class="col">
                                 <!-- Product Box -->
@@ -396,7 +475,42 @@
                                              style="background-image: url({{ i.images.url }})"></div>
                                     </a>
                                     <div class="icons">
-                                        <div class="btn btn-outline-secondary encode43243d"></div>
+
+                                        <div style="padding: 7px;"
+                                             onclick="likes_in_other_sections(event,'{{ i.slug }}',{{ i.id }}, this)"
+                                             class="btn btn-outline-secondary">
+
+                                            <div style="width: 24px;
+                                                height: 24px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;">
+
+                                                {% if i.id in liked_products %}
+
+                                                    <img id="like-{{ i.id }}"
+                                                         style="margin-top: -5px;"
+                                                         class="like-icon liked"
+                                                         src="{% static 'images/icons/heart.svg' %}"
+                                                         width="24"
+                                                         height="24"
+                                                         alt="like">
+
+                                                {% else %}
+
+                                                    <img id="like-{{ i.id }}"
+                                                         style="margin-top: 1px;"
+                                                         class="like-icon"
+                                                         src="{% static 'images/icons/heart-outline.svg' %}"
+                                                         width="24"
+                                                         height="24"
+                                                         alt="like">
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        </div>
                                         <div class="btn btn-outline-secondary encode43bf243d"></div>
                                     </div>
                                     <div class="details p-3">
@@ -405,11 +519,12 @@
                                             &nbsp;/&nbsp;
                                             <a href="products.html">{{ i.brand }}</a>
                                         </div>
-                                        <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}">
+                                            <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                         <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                         <div class="rate">
                                             {{ i.score|stars }}
-                                            <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                            <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -417,16 +532,16 @@
                             </div>
                             <!-- /Product Box -->
                         </div>
-                        {% endif %}
-                    {% endfor %}
+                    {% endif %}
+                {% endfor %}
 
             </div>
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-md-4 most-sales-product laptop" data-aos="fade-up"
                  data-aos-duration="1000">
-                    {% for i in product %}
-                        {% if i.Category.title == 'لپ تاپ و الترابوک' %}
-                            <div class="col">
+                {% for i in product %}
+                    {% if i.Category.title == 'لپ تاپ و الترابوک' %}
+                        <div class="col">
                             <!-- Product Box -->
                             <div class="col">
                                 <!-- Product Box -->
@@ -436,7 +551,42 @@
                                              style="background-image: url({{ i.images.url }})"></div>
                                     </a>
                                     <div class="icons">
-                                        <div class="btn btn-outline-secondary encode43243d"></div>
+
+                                        <div style="padding: 7px;"
+                                             onclick="likes_in_other_sections(event,'{{ i.slug }}',{{ i.id }}, this)"
+                                             class="btn btn-outline-secondary">
+
+                                            <div style="width: 24px;
+                                                height: 24px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;">
+
+                                                {% if i.id in liked_products %}
+
+                                                    <img id="like-{{ i.id }}"
+                                                         style="margin-top: -5px;"
+                                                         class="like-icon liked"
+                                                         src="{% static 'images/icons/heart.svg' %}"
+                                                         width="24"
+                                                         height="24"
+                                                         alt="like">
+
+                                                {% else %}
+
+                                                    <img id="like-{{ i.id }}"
+                                                         style="margin-top: 1px;"
+                                                         class="like-icon"
+                                                         src="{% static 'images/icons/heart-outline.svg' %}"
+                                                         width="24"
+                                                         height="24"
+                                                         alt="like">
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        </div>
                                         <div class="btn btn-outline-secondary encode43bf243d"></div>
                                     </div>
                                     <div class="details p-3">
@@ -445,11 +595,12 @@
                                             &nbsp;/&nbsp;
                                             <a href="products.html">{{ i.brand }}</a>
                                         </div>
-                                        <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}">
+                                            <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                         <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                         <div class="rate">
                                             {{ i.score|stars }}
-                                            <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                            <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -457,16 +608,16 @@
                             </div>
                             <!-- /Product Box -->
                         </div>
-                        {% endif %}
-                    {% endfor %}
+                    {% endif %}
+                {% endfor %}
 
             </div>
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-md-4 most-sales-product computer"
                  data-aos="fade-up" data-aos-duration="1000">
-                        {% for i in product %}
-                        {% if i.Category.title == 'تجهیزات کامپیوتر' %}
-                            <div class="col">
+                {% for i in product %}
+                    {% if i.Category.title == 'تجهیزات کامپیوتر' %}
+                        <div class="col">
                             <!-- Product Box -->
                             <div class="col">
                                 <!-- Product Box -->
@@ -476,7 +627,42 @@
                                              style="background-image: url({{ i.images.url }})"></div>
                                     </a>
                                     <div class="icons">
-                                        <div class="btn btn-outline-secondary encode43243d"></div>
+
+                                        <div style="padding: 7px;"
+                                             onclick="likes_in_other_sections(event,'{{ i.slug }}',{{ i.id }}, this)"
+                                             class="btn btn-outline-secondary">
+
+                                            <div style="width: 24px;
+                                                height: 24px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;">
+
+                                                {% if i.id in liked_products %}
+
+                                                    <img id="like-{{ i.id }}"
+                                                         style="margin-top: -5px;"
+                                                         class="like-icon liked"
+                                                         src="{% static 'images/icons/heart.svg' %}"
+                                                         width="24"
+                                                         height="24"
+                                                         alt="like">
+
+                                                {% else %}
+
+                                                    <img id="like-{{ i.id }}"
+                                                         style="margin-top: 1px;"
+                                                         class="like-icon"
+                                                         src="{% static 'images/icons/heart-outline.svg' %}"
+                                                         width="24"
+                                                         height="24"
+                                                         alt="like">
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        </div>
                                         <div class="btn btn-outline-secondary encode43bf243d"></div>
                                     </div>
                                     <div class="details p-3">
@@ -485,11 +671,12 @@
                                             &nbsp;/&nbsp;
                                             <a href="products.html">{{ i.brand }}</a>
                                         </div>
-                                        <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}">
+                                            <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                         <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                         <div class="rate">
                                             {{ i.score|stars }}
-                                            <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                            <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -497,15 +684,15 @@
                             </div>
                             <!-- /Product Box -->
                         </div>
-                        {% endif %}
-                    {% endfor %}
+                    {% endif %}
+                {% endfor %}
             </div>
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-md-4 most-sales-product camera" data-aos="fade-up"
                  data-aos-duration="1000">
-                    {% for i in product %}
-                        {% if i.Category.title == 'دوربین' %}
-                            <div class="col">
+                {% for i in product %}
+                    {% if i.Category.title == 'دوربین' %}
+                        <div class="col">
                             <!-- Product Box -->
                             <div class="col">
                                 <!-- Product Box -->
@@ -515,7 +702,42 @@
                                              style="background-image: url({{ i.images.url }})"></div>
                                     </a>
                                     <div class="icons">
-                                        <div class="btn btn-outline-secondary encode43243d"></div>
+
+                                        <div style="padding: 7px;"
+                                             onclick="likes_in_other_sections(event,'{{ i.slug }}',{{ i.id }}, this)"
+                                             class="btn btn-outline-secondary">
+
+                                            <div style="width: 24px;
+                                                height: 24px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;">
+
+                                                {% if i.id in liked_products %}
+
+                                                    <img id="like-{{ i.id }}"
+                                                         style="margin-top: -5px;"
+                                                         class="like-icon liked"
+                                                         src="{% static 'images/icons/heart.svg' %}"
+                                                         width="24"
+                                                         height="24"
+                                                         alt="like">
+
+                                                {% else %}
+
+                                                    <img id="like-{{ i.id }}"
+                                                         style="margin-top: 1px;"
+                                                         class="like-icon"
+                                                         src="{% static 'images/icons/heart-outline.svg' %}"
+                                                         width="24"
+                                                         height="24"
+                                                         alt="like">
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        </div>
                                         <div class="btn btn-outline-secondary encode43bf243d"></div>
                                     </div>
                                     <div class="details p-3">
@@ -524,11 +746,12 @@
                                             &nbsp;/&nbsp;
                                             <a href="products.html">{{ i.brand }}</a>
                                         </div>
-                                        <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                        <a href="{% url 'products:product_detail' i.slug %}">
+                                            <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
                                         <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
                                         <div class="rate">
                                             {{ i.score|stars }}
-                                            <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                            <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -536,8 +759,8 @@
                             </div>
                             <!-- /Product Box -->
                         </div>
-                        {% endif %}
-                    {% endfor %}
+                    {% endif %}
+                {% endfor %}
             </div>
             <!-- /Products -->
         </div>

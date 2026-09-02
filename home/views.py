@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView
 from .models import Team, About_the_store
 from .forms import Contact_Form
-from products.models import Product,Category
+from products.models import Product, Category, Like
 
 
 class Home(TemplateView):
@@ -11,8 +11,18 @@ class Home(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['product'] = Product.objects.all()
+
+        products = Product.objects.all()
+        context['product'] = products
         context['category'] = Category.objects.all()
+        context['most_viewed_view'] = products.order_by('-view')
+
+        if self.request.user.is_authenticated:
+            context['liked_products'] = Like.objects.filter(user=self.request.user, product__in=products).values_list(
+                'product_id', flat=True)
+        else:
+            context['liked_products'] = []
+
         return context
 
 

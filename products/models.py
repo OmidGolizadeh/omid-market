@@ -131,3 +131,21 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.user} - {self.product} - {self.parent}'
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes', verbose_name='کاربر')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='likes', verbose_name='محصول')
+    created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
+
+    class Meta:
+        verbose_name = 'لایک'
+        verbose_name_plural = 'لایک ها'
+
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'product'],
+                                    name='unique_user_product_like')
+        ]
+
+    def __str__(self):
+        return f'{self.user} - {self.product}'
