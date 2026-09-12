@@ -45,9 +45,9 @@
                             {% endif %}
                         </div>
                         <div class="col-12 col-md-5 col-lg-6">
-                            <a href="cart.html">
+                            <a href="{% url 'cart:cart_detail' %}">
                                 <div class="btn btn-warning w-100"><i class="fa fa-shopping-cart"></i>&nbsp;<span
-                                        class="d-md-none d-lg-inline-block">سبد خرید</span> (2)
+                                        class="d-md-none d-lg-inline-block">سبد خرید</span>
                                 </div>
                             </a>
                         </div>
@@ -56,21 +56,21 @@
             </div>
         </div>
     </div>
-{% if messages %}
-    {% for message in messages %}
-        {% if message.tags == 'success' %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% elif message.tags == 'error' %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endif %}
-    {% endfor %}
-{% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% elif message.tags == 'error' %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
     <!-- /Search NavBar -->
     <!-- Main NavBar -->
     <div id="main-nav">
@@ -340,13 +340,16 @@
                                             <li><a href="{% url 'home:about' %}">درباره ما<em
                                                     class="droopmenu-topanim"></em></a></li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href="{% url 'products:product' %}" aria-expanded="false">صفحات فروشگاه<em
-                                                        class="droopmenu-topanim"></em></a>
+                                                <a href="{% url 'products:product' %}" aria-expanded="false">صفحات
+                                                    فروشگاه<em
+                                                            class="droopmenu-topanim"></em></a>
                                                 <div class="dm-arrow"></div>
                                                 <ul style="">
-                                                    <li><a href="{% url 'products:product' %}">محصولات <sup>(کاشی کاری)</sup></a></li>
-                                                    <li><a href="{% url 'products:product_list' %}">محصولات <sup>(لیست)</sup></a></li>
-{#                                                    <li><a href="products.html">جزئیات محصول</a></li>#}
+                                                    <li><a href="{% url 'products:product' %}">محصولات <sup>(کاشی
+                                                        کاری)</sup></a></li>
+                                                    <li><a href="{% url 'products:product_list' %}">محصولات
+                                                        <sup>(لیست)</sup></a></li>
+                                                    {#                                                    <li><a href="products.html">جزئیات محصول</a></li>#}
                                                 </ul>
                                             </li>
                                             <li class="droopmenu-parent" aria-haspopup="true">

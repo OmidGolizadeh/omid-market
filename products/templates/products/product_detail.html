@@ -2,7 +2,48 @@
 {% load static %}
 {% load custom_filters %}
 
-{% block title %}{% endblock %}
+{% block title %}{{ product.title }}{% endblock %}
+{% block style_css %}
+    <style>
+        .color-options {
+            display: flex;
+            flex-direction: row; /* افقی / سطری */
+            flex-wrap: wrap; /* اگر جا کم بود به خط بعد بروند */
+            gap: 8px;
+            align-items: center;
+        }
+
+        .color-option {
+            position: relative;
+            flex-shrink: 0; /* اندازه کوچک نشود */
+        }
+
+        .color-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            margin: 0;
+        }
+
+        .color-swatch {
+            display: block;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .color-option input[type="radio"]:checked + .color-swatch {
+            border-color: #28a745;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #28a745;
+            transform: scale(1.1);
+        }
+    </style>
+{% endblock %}
 {% block extar_head %}
     {% include 'includes/product_css.html' %}
 {% endblock %}
@@ -113,100 +154,116 @@
                                 </div>
                             </div>
                             <div class="col-12 col-lg-7 mt-5 mt-lg-0 pl-lg-0" id="product-intro">
-                                <a href="product.html">
-                                    <h1>{{ product.title }}</h1>
-                                </a>
-                                <div class="stars-container">
-                                    {{ product.score|stars }}
-                                    <a href="#tabs-panel"><span>(نقد و بررسی)</span></a>
-                                </div>
-                                <div class="encode4365gbf265g43d-container py-2">
-                                    {% if product.discount %}
-                                        <span class="pre-encode4365gbf265g43d">{{ product.discount|toman }}</span>
-                                    {% endif %}
-                                    <span class="encode4365gbf265g43d">{{ product.price|toman }} <span>تومان</span></span>
+                                <form method="post" action="{% url 'cart:cart_add' product.id %}">
+                                    {% csrf_token %}
+                                    <a href="{% url 'products:product_detail' product.slug %}">
+                                        <h1>{{ product.title }}</h1>
+                                    </a>
+                                    <div class="stars-container">
+                                        {{ product.score|stars }}
+                                        <a href="#tabs-panel"><span>(نقد و بررسی)</span></a>
+                                    </div>
+                                    <div class="encode4365gbf265g43d-container py-2">
+                                        {% if product.discount %}
+                                            <span class="pre-encode4365gbf265g43d">{{ product.discount|toman }}</span>
+                                        {% endif %}
+                                        <span class="encode4365gbf265g43d">{{ product.price|toman }} <span>تومان</span></span>
 
-                                    {#                                <div class="badge badge-danger font-weight-light m-1 py-1 px-2">10%</div>#}
-                                </div>
-                                <p>{{ product.short_description }}</p>
-                                <hr>
-                                <div class="variables">
-                                    <div class="title">گزینه های موجود:</div>
-                                    <div class="row">
-                                        <div class="col-12 col-sm-4 col-lg-3">
-                                            <div class="variable">
-                                                <div class="sub-title pt-2 pb-3">رنگ</div>
-                                                {% for color in product.color.all %}
-                                                    <span class="color-variable"><a href="#" class=""
-                                                                                    style="background-color: #{{ color.color_code }}"></a></span>
-                                                {% endfor %}
+                                        {#                                <div class="badge badge-danger font-weight-light m-1 py-1 px-2">10%</div>#}
+                                    </div>
+                                    <p>{{ product.short_description }}</p>
+                                    <hr>
+                                    <div class="variables">
+                                        <div class="title">گزینه های موجود:</div>
+                                        <div class="row">
+                                            <div class="col-12 col-sm-4 col-lg-3">
+                                                <div class="variable">
+                                                    <div class="sub-title pt-2 pb-3">رنگ</div>
+                                                    <div class="color-options">
+                                                        {% for color in product.color.all %}
+                                                            <div class="color-option">
+                                                                <input type="radio"
+                                                                       name="color"
+                                                                       id="color-{{ color.id }}"
+                                                                       value="{{ color.name_color }}"
+                                                                       {% if forloop.first %}checked{% endif %}>
+                                                                <label for="color-{{ color.id }}"
+                                                                       class="color-swatch"
+                                                                       style="background-color: #{{ color.color_code }};"
+                                                                       title="{{ color.title|default:color.color_code }}">
+                                                                </label>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-12 col-sm-4 col-lg-3">
-                                            <div class="variable">
-                                                <div class="sub-title pt-2 pb-2">گارانتی</div>
-                                                <select name="" class="form-select">
-                                                    {% for warranty in product.warranty.all %}
-                                                        <option value="">{{ warranty.title }}</option>
-                                                    {% endfor %}
-                                                </select>
+                                            <div class="col-12 col-sm-4 col-lg-3">
+                                                <div class="variable">
+                                                    <div class="sub-title pt-2 pb-2">گارانتی</div>
+                                                    <select name="warranty" class="form-select">
+                                                        {% for warranty in product.warranty.all %}
+                                                            <option value="{{ warranty.title }}">{{ warranty.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-12 col-sm-4 col-lg-3">
-                                            <div class="variable">
-                                                <div class="sub-title pt-2 pb-2">تعداد</div>
-                                                <input type="number" min="1" max="{{ product.total_stock }}"
-                                                       class="form-control" value="1">
+                                            <div class="col-12 col-sm-4 col-lg-3">
+                                                <div class="variable">
+                                                    <div class="sub-title pt-2 pb-2">تعداد</div>
+                                                    <input type="number" min="1" max="{{ product.total_stock }}"
+                                                           class="form-control" name="number" value="1">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="cta-container pt-3 pt-md-5">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <a href="cart.html">
-                                                <div class="btn btn-success px-4 px-lg-2 px-xl-4 btn-add-to-basket"><i
-                                                        class="fa fa-shopping-cart"></i> افزودن به سبد خرید
+                                    <div class="cta-container pt-3 pt-md-5">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <button type="submit"
+                                                        class="btn btn-success px-4 px-lg-2 px-xl-4 btn-add-to-basket">
+                                                    <i class="fa fa-shopping-cart"></i> افزودن به سبد خرید
+                                                </button>
+                                                <br class="d-sm-none">
+                                                <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+                                                <div style="padding: 7px;"
+                                                     onclick="like(event,'{{ product.slug }}',{{ product.id }})"
+                                                     class="btn btn-outline-secondary mt-1 mt-sm-0"
+                                                     data-toggle="tooltip"
+                                                     data-placement="top"
+                                                     title="افزودن به علاقه‌مندی">
+
+                                                    <div style="width: 24px;height: 24px;display: flex;align-items: center;justify-content: center;">
+
+                                                        {% if like %}
+                                                            <img id="like"
+                                                                 style="margin-top: -5px;"
+                                                                 class="like-icon liked"
+                                                                 src="{% static 'images/icons/heart.svg' %}"
+                                                                 width="24"
+                                                                 height="24"
+                                                                 alt="like">
+                                                        {% else %}
+                                                            <img id="like"
+                                                                 style="margin-top: 1px;"
+                                                                 class="like-icon"
+                                                                 src="{% static 'images/icons/heart-outline.svg' %}"
+                                                                 width="24"
+                                                                 height="24"
+                                                                 alt="like">
+                                                        {% endif %}
+
+                                                    </div>
                                                 </div>
-                                            </a>
-                                            <br class="d-sm-none">
-                                            <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
-                                            <div style="padding: 7px;"
-                                                 onclick="like(event,'{{ product.slug }}',{{ product.id }})"
-                                                 class="btn btn-outline-secondary mt-1 mt-sm-0"
-                                                 data-toggle="tooltip"
-                                                 data-placement="top"
-                                                 title="افزودن به علاقه‌مندی">
-
-                                                <div style="width: 24px;height: 24px;display: flex;align-items: center;justify-content: center;">
-
-                                                    {% if like %}
-                                                        <img id="like"
-                                                             style="margin-top: -5px;"
-                                                             class="like-icon liked"
-                                                             src="{% static 'images/icons/heart.svg' %}"
-                                                             width="24"
-                                                             height="24"
-                                                             alt="like">
-                                                    {% else %}
-                                                        <img id="like"
-                                                             style="margin-top: 1px;"
-                                                             class="like-icon"
-                                                             src="{% static 'images/icons/heart-outline.svg' %}"
-                                                             width="24"
-                                                             height="24"
-                                                             alt="like">
-                                                    {% endif %}
-
-                                                </div>
+                                                <a href="#">
+                                                    <div class="btn btn-outline-secondary encode43bf243d mt-1 mt-sm-0"
+                                                         data-toggle="tooltip" data-placement="top"
+                                                         title="مقایسه"></div>
+                                                </a>
                                             </div>
-                                            <a href="#">
-                                                <div class="btn btn-outline-secondary encode43bf243d mt-1 mt-sm-0"
-                                                     data-toggle="tooltip" data-placement="top" title="مقایسه"></div>
-                                            </a>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
+
                                 <!-- Share Links -->
                                 <div class="pt-5" id="share-links">
                                     <span>اشتراک گذاری: </span>

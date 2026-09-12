@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en" dir="rtl">
 <head>
@@ -5,12 +6,14 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <title>{% block title %}my site{% endblock %}</title>
+    {% block style_css %}{% endblock %}
     {#  css  #}
-    {% if request.resolver_match.url_name != 'product_detail' %}
+    {% if request.resolver_match.url_name != 'product_detail' and request.resolver_match.url_name != 'cart_detail' %}
         {% include 'includes/css_link.html' %}
     {% endif %}
-    {#    {% include 'includes/product_css.html' %}#}
+
     {% block extar_head %}{% endblock %}
 </head>
 <body>
@@ -25,10 +28,11 @@
 {% include 'includes/footer.html' %}
 
 {# js #}
-{% if request.resolver_match.url_name != 'product_detail' %}
+
+{% if request.resolver_match.url_name != 'product_detail' and request.resolver_match.url_name != 'cart_detail' %}
     {% include 'includes/js_link.html' %}
 {% endif %}
-{#{% include 'includes/product_js.html' %}#}
+
 {% block extar_body %}{% endblock %}
 
 
