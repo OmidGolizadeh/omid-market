@@ -55,7 +55,7 @@ class Product(models.Model):
     discount = models.DecimalField(max_digits=11, blank=True, null=True, decimal_places=0, verbose_name='تخفیف')
     brand = models.ForeignKey(Category_brand, on_delete=models.CASCADE, null=True, verbose_name='برند ')
     Category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, verbose_name='توع محصول')
-    warranty = models.ManyToManyField(Warranty, null=True, blank=True, verbose_name='گارانتی')
+    warranty = models.ManyToManyField(Warranty, blank=True, verbose_name='گارانتی')
     slug = models.SlugField(unique=True, blank=True, verbose_name='اسلاگ')
     images = models.ImageField(upload_to='products/%Y/%m/%d/', null=True, blank=True, verbose_name='تصویر')
     score = models.FloatField(default=0.0, null=True, blank=True, verbose_name='امتیاز')
@@ -130,7 +130,7 @@ class Comment(models.Model):
         verbose_name_plural = 'کامنت ها'
 
     def __str__(self):
-        return f'{self.user} - {self.product} - {self.parent}'
+        return f'{self.user} - {self.product}'
 
 
 class Like(models.Model):

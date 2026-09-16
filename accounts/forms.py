@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField, AuthenticationForm
 from django.core.exceptions import ValidationError
-from accounts.models import User
+from accounts.models import User, Address, Province, City
 from django.core import validators
 
 
@@ -95,3 +95,76 @@ class CheckOtpForm(forms.Form):
     code = forms.CharField(max_length=255, widget=forms.TextInput(attrs={
         'class': 'form-control', 'name': 'code', 'id': 'code', 'placeholder': 'کد'
     }), validators=[validators.MaxLengthValidator(4)])
+
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ['province', 'city', 'full_address', 'postal_code', 'receiver_delivery', 'mobile_phone_number']
+        widgets = {
+            'province': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'id_province',
+
+            }),
+            'city': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'id_city',
+
+            }),
+            'full_address': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'address',
+                'placeholder': 'آدرس کامل را وارد کنید'
+
+            }),
+            'postal_code': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'postal_code',
+                'placeholder': 'کد پستی ۱۰ رقمی',
+
+            }),
+            'receiver_delivery': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'receiver',
+                'placeholder': 'نام تحویل‌گیرنده'
+
+            }),
+            'mobile_phone_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'tel',
+                'placeholder': '۰۹XXxxxxxxx'
+
+            })
+        }
+        labels = {
+            'province': 'استان',
+            'city': 'شهر',
+            'full_address': 'آدرس کامل',
+            'postal_code': 'کد پستی',
+            'receiver_delivery': 'تحویل‌گیرنده',
+            'mobile_phone_number': 'شماره موبایل',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['province'].queryset = Province.objects.all().order_by('name')
+        self.fields['province'].empty_label = 'استان را انتخاب کنید'
+
+        self.fields['city'].queryset = City.objects.none()
+        self.fields['city'].empty_label = 'ابتدا استان را انتخاب کنید'
+
+        if 'province' in self.data:
+            try:
+                province_id = int(self.data.get('province'))
+                self.fields['city'].queryset = City.objects.filter(
+                    province_id=province_id
+                ).order_by('name')
+            except (ValueError,TypeError):
+                pass
+        elif self.instance.pk and self.instance.province_id:
+            self.fields['city'].queryset = City.objects.filter(
+                province=self.instance.province
+            ).order_by('name')
+

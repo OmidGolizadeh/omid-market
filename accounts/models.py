@@ -74,3 +74,45 @@ class Otp(models.Model):
 
     def __str__(self):
         return self.username
+
+
+class Province(models.Model):
+    name = models.CharField(max_length=60, verbose_name='استان')
+
+    class Meta:
+        verbose_name = 'استان'
+        verbose_name_plural = 'استان ها'
+
+    def __str__(self):
+        return self.name
+
+
+class City(models.Model):
+    province = models.ForeignKey(Province, on_delete=models.CASCADE, related_name='cities', verbose_name='استان')
+    name = models.CharField(max_length=60, verbose_name='شهر')
+
+    class Meta:
+        verbose_name = 'شهر'
+        verbose_name_plural = 'شهر ها'
+        unique_together = ('name', 'province')
+
+    def __str__(self):
+        return f'{self.province}-{self.name}'
+
+
+class Address(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address', verbose_name='کاربر')
+    province = models.ForeignKey(Province, on_delete=models.CASCADE, related_name='address', verbose_name='استان')
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='address', verbose_name='شهر')
+    full_address = models.CharField(max_length=255, verbose_name='آدرس')
+    postal_code = models.CharField(max_length=10, verbose_name='کد پستی')
+    receiver_delivery = models.CharField(max_length=255, verbose_name='تحویل گیرنده')
+    mobile_phone_number = models.CharField(max_length=11, verbose_name='شماره تلفن همراه')
+    created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
+
+    def __str__(self):
+        return f'{self.user}-{self.province}-{self.city}-{self.postal_code}'
+
+    class Meta:
+        verbose_name = 'آدرس'
+        verbose_name_plural = 'آدرس ها'

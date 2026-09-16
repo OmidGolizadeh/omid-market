@@ -3,13 +3,14 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import FormView
+from django.views.generic import FormView, View, TemplateView
 from jdatetime import timedelta
-from .forms import LoginForm, RegisterForm, CheckOtpForm
+from .forms import LoginForm, RegisterForm, CheckOtpForm, AddressForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, login
-from accounts.models import User, Otp
+from accounts.models import User, Otp, Address, City
 from django.core.mail import send_mail
+from django.http import JsonResponse
 from omid_market import settings
 from random import randint
 import uuid
@@ -32,10 +33,11 @@ class UserLoginView(LoginView):
         return super().form_invalid(form)
 
 
-def UserLogout(request):
-    logout(request)
-    messages.error(request, 'کاربر خارج شد.')
-    return redirect('home:home')
+class UserLogout(View):
+    def get(self, request):
+        logout(request)
+        messages.error(request, 'کاربر خارج شد.')
+        return redirect('home:home')
 
 
 class Register(FormView):
@@ -92,3 +94,46 @@ class Check_Otp(FormView):
 
         return super().form_valid(form)
 
+
+class AddressView(FormView):
+    template_name = 'accounts/address.html'
+    form_class = AddressForm
+    success_url = reverse_lazy('accounts:profile_address')
+
+    def form_valid(self, form):
+        address_count = Address.objects.filter(user=self.request.user).count()
+        if address_count >= 5:
+            messages.error(self.request, 'شما نمی‌توانید بیش از ۵ آدرس ذخیره کنید.')
+            return super().form_valid(form)
+        address = form.save(commit=False)
+        address.user = self.request.user
+        address.save()
+        messages.success(self.request, 'آدرس با موفقیت ثبت شد.')
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['addresses'] = Address.objects.filter(user=self.request.user).select_related('province',
+                                                                                             'city').order_by(
+            '-created_at')
+        return context
+
+
+class LoadCityView(View):
+    def get(self, request, *args, **kwargs):
+        province_id = request.GET.get('province')
+        if not province_id:
+            return JsonResponse([], safe=False)
+
+        cities = City.objects.filter(province_id=province_id).order_by('name')
+        data = [{'id': city.id, 'name': city.name} for city in cities]
+        return JsonResponse(data, safe=False)
+
+
+class AddressDelete(View):
+    def get(self, request, id):
+        address = Address.objects.get(id=id)
+        if address:
+            address.delete()
+        return redirect('accounts:profile_address')
