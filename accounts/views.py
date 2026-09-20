@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
@@ -95,7 +96,7 @@ class Check_Otp(FormView):
         return super().form_valid(form)
 
 
-class AddressView(FormView):
+class AddressView(LoginRequiredMixin,FormView):
     template_name = 'accounts/address.html'
     form_class = AddressForm
     success_url = reverse_lazy('accounts:profile_address')

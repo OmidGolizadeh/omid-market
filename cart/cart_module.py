@@ -31,13 +31,13 @@ class Cart:
         resuit = f'{id}-{color}-{warranty}'
         return resuit
 
-    def add(self, product, number, color, warranty):
+    def add(self, product, number, color, warranty, size):
         unique = self.unique_id_generator(product.id, color, warranty)
 
         if unique not in self.cart:
             self.cart[unique] = {'number': 0, 'price': str(product.price),
                                  'discount': str(product.discount) if product.discount else '0',
-                                 'color': color, 'warranty': warranty,
+                                 'color': color, 'warranty': warranty, 'size': size,
                                  'id': product.id}
         if not self.cart[unique].get('discount'):
             self.cart[unique]['discount'] = 0

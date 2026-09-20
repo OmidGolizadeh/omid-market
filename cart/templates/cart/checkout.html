@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}پیش فاکتور{% endblock %}
+{% block style_css %}
+    <style>
+        .select_address {
+            position: relative;
+
+        }
+
+        .select_address_item {
+            position: absolute;
+            right: -700px;
+            left: 200px;
+            top: -65px;
+            width: 700px;
+            height: 180px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border: 1px black solid;
+            border-radius: 20px;
+
+        }
+
+        .show {
+            display: flex;
+        }
+
+        .address_select {
+            margin-bottom: 10px;
+
+        }
+
+        .address_btn {
+            width: 550px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <section class="inner-page" id="checkout-page">
+        <div class="container-fluid" id="page-hero">
+            <div class="row">
+                <div class="col-12">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 px-0">
+                                <h1>پیش فاکتور</h1>
+                                <p>با تکیمل پرداخت فاکتور، خرید خود را تکمیل کنید.</p>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="{% url 'home:home' %}">صفحه نخست</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">پیش فاکتور</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-12 col-lg-9">
+                                <!-- Choose Address -->
+                                <section id="choose-address">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-12 py-3">
+                                                <div class="pb-1 title">آدرس تحویل سفارش</div>
+                                                <div class="row">
+                                                    {% if request.user.address %}
+                                                        {% for i in address_user %}
+                                                            <div class="col-12 col-md-9 pl-0" id="address-detail">
+                                                                <div class="p-3 ml-3 mb-2 mb-md-0 ml-md-0 address-to-send">
+                                                                    <div class="address-title">
+                                                                        <span id="province-title">{{ i.province }}</span>،
+                                                                        <span id="city-title">{{ i.city }}</span>،
+                                                                        <span id="address">{{ i.full_address }}</span>،
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-md-4">کدپستی: {{ i.postal_code }}
+                                                                        </div>
+                                                                        <div class="col-12 col-md-8">تحویل گیرنده:
+                                                                            {{ i.receiver_delivery }}
+                                                                            |
+                                                                            {{ i.mobile_phone_number }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <div class="alert"
+                                                             style="background-color: rgba(252,185,65,0.5);text-align: center;">
+                                                            <span>لطفا آدرس را انتخاب کنید یا اگر آدرسی ندارد با استفاده از افزودن آدرس جدید یک آدرس برای خودتا بسازید .</span>
+                                                        </div>
+
+                                                    {% endif %}
+                                                    <div class="col-12 col-md-3">
+                                                        <div class="row">
+                                                            <div class="col-6 col-md-12 pl-2 px-md-3">
+                                                                <button class="btn btn-light w-100"
+                                                                        id="btn-change-address">
+                                                                    تغییر آدرس
+                                                                </button>
+                                                            </div>
+                                                            <div class="select_address">
+                                                                <div class="select_address_item "
+                                                                     id="select_address_panel">
+                                                                    <form method="post"
+                                                                          action="{% url 'cart:select_address' order.id %}">
+                                                                        {% csrf_token %}
+                                                                        <select class="address_select form-select "
+                                                                                id="select_address_item" size="3"
+                                                                                name='select_address'
+                                                                                aria-label="size 3 select example">
+                                                                            <option selected>آدرس منو در نطرتون را
+                                                                                انتخاب
+                                                                                کنید
+                                                                            </option>
+                                                                            {% for address in request.user.address.all %}
+                                                                                <option name='select_address'
+                                                                                        value="{{ address.id }}">{{ address.province }}-{{ address.city.name }}-{{ address.full_address }}-{{ address.receiver_delivery }}
+                                                                                </option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                        <button type="submit"
+                                                                                class="address_btn btn btn-primary "
+                                                                                id="btn_select_address">انتخاب
+                                                                        </button>
+                                                                    </form>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-6 col-md-12 pr-2 px-md-3">
+                                                                <a href="{% url 'accounts:profile_address' %}">
+                                                                    <div class="btn btn-outline-dark mt-0 mt-md-1 w-100">
+                                                                        افزودن آدرس جدید
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                                <!-- /Choose Address -->
+
+                                <!-- Orders List -->
+                                <section class="mt-3" id="orders">
+                                    <div class="container mt-2">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="pb-1 title">سفارشات شما</div>
+                                                <div class="row">
+                                                    {% for item in order.order_items.all %}
+                                                        <!-- Order Product Record -->
+                                                        <span class="col-6 col-sm-4 col-lg-3 px-0">
+                                                    <a href="{% url 'products:product_detail' item.product.slug %}"
+                                                       target="_blank">
+                                                        <div class="encode4326654321vfb">
+                                                            <div class="image"
+                                                                 style="background-image: url({{ item.product.images.url }})"></div>
+                                                            <div class="text-center px-1 px-sm-3">
+                                                                <a href="{% url 'products:product_detail' item.product.slug %}"
+                                                                   target="_blank"><h2>{{ item.product.short_description|truncatewords:10 }}</h2></a>
+                                                                <div class="number">تعداد: {{ item.number }} عدد</div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </span>
+                                                        <!-- /Order Product Record -->
+                                                    {% endfor %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                                <!-- /Orders List -->
+
+                                <!-- Choose Date To Send -->
+                                <section class="mt-3" id="select-receive-date">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="container px-0">
+                                                    <div class="row">
+                                                        <div class="col-12 px-0">
+                                                            <div class="row py-2 px-3">
+                                                                <div class="col-12">
+                                                                    <div class="pb-1 title">انتخاب تاریخ تحویل</div>
+                                                                    <div class="row">
+                                                                        <!-- Date -->
+                                                                        <div class="col-6 col-sm-4 col-lg-2 pt-3 pt-md-0 pl-2">
+                                                                            <div class="form-check">
+                                                                                <input type="radio"
+                                                                                       class="form-check-input valid-order-date"
+                                                                                       id="date1">
+                                                                                <label class="receive-date" for="date1">دوشنبه<br><span
+                                                                                        class="date">20 تیر 1400</span></label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Date -->
+                                                                        <!-- Date -->
+                                                                        <div class="col-6 col-sm-4 col-lg-2 pt-3 pt-md-0 pl-2">
+                                                                            <div class="form-check">
+                                                                                <input type="radio"
+                                                                                       class="form-check-input valid-order-date"
+                                                                                       id="date2">
+                                                                                <label class="receive-date" for="date2">سه
+                                                                                    شنبه<br><span class="date">21 تیر 1400</span></label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Date -->
+                                                                        <!-- Date -->
+                                                                        <div class="col-6 col-sm-4 col-lg-2 pt-3 pt-md-0 pl-2">
+                                                                            <div class="form-check">
+                                                                                <input type="radio"
+                                                                                       class="form-check-input valid-order-date"
+                                                                                       id="date3">
+                                                                                <label class="receive-date" for="date3">چهارشنبه<br><span
+                                                                                        class="date">22 تیر 1400</span></label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Date -->
+                                                                        <!-- Date -->
+                                                                        <div class="col-6 col-sm-4 col-lg-2 pt-3 pt-md-0 pl-2">
+                                                                            <div class="form-check">
+                                                                                <input type="radio"
+                                                                                       class="form-check-input valid-order-date"
+                                                                                       id="date4">
+                                                                                <label class="receive-date" for="date4">پنج
+                                                                                    شنبه<br><span class="date">23 تیر 1400</span></label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Date -->
+                                                                        <!-- Date -->
+                                                                        <div class="col-6 col-sm-4 col-lg-2 pt-3 pt-md-0 pl-2">
+                                                                            <div class="form-check">
+                                                                                <input type="radio"
+                                                                                       class="form-check-input valid-order-date"
+                                                                                       id="date5">
+                                                                                <label class="receive-date" for="date5">پنج
+                                                                                    شنبه<br><span class="date">24 تیر 1400</span></label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Date -->
+                                                                        <!-- Date -->
+                                                                        <div class="col-6 col-sm-4 col-lg-2 pt-3 pt-md-0 pl-2">
+                                                                            <div class="form-check">
+                                                                                <input type="radio"
+                                                                                       class="form-check-input valid-order-date"
+                                                                                       id="date6">
+                                                                                <label class="receive-date" for="date6">جمعه<br><span
+                                                                                        class="date">25 تیر 1400</span></label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Date -->
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                                <!-- /Choose Date To Send -->
+                            </div>
+                            <div class="col-12 col-lg-3 mt-2 mt-lg-0 pr-3 pr-lg-0">
+                                <div id="factor">
+                                    <div class="container">
+                                        <div class="row py-2">
+                                            <div class="col-6">
+                                                <div>جمع کل فاکتور:</div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div>3.200.000 تومان</div>
+                                            </div>
+                                        </div>
+                                        <div class="row py-2 bg-light">
+                                            <div class="col-6">
+                                                <div>جمع تخفیف:</div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div>200.000 تومان</div>
+                                            </div>
+                                        </div>
+                                        <div class="row py-2">
+                                            <div class="col-6">
+                                                <div>هزینه ارسال:</div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="small">درب منزل با مشتری</div>
+                                            </div>
+                                        </div>
+                                        <div class="row py-2" id="total">
+                                            <div class="col-6">
+                                                <div>مبلغ قابل پرداخت:</div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div>3.000.000 تومان</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="container">
+                                        <div class="row py-2">
+                                            <div class="col-12">
+                                                <div>انتخاب نحوه پرداخت</div>
+                                            </div>
+                                        </div>
+                                        <div class="row pb-2">
+                                            <div class="col-12 pb-2">
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input type="radio" class="form-check-input" name="payment_type"
+                                                               checked>پرداخت آنلاین
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input type="radio" class="form-check-input"
+                                                               name="payment_type">ثبت فیش پرداخت/کارت به کارت
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 pb-2" id="rules">
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input"
+                                                               name="accept_rules" value="1"><a href="#"
+                                                                                                target="_blank">قوانین و
+                                                        مقررات</a> را خواندم و قبول دارم.
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <input type="submit" value="پرداخت و تکمیل خرید"
+                                                       class="btn btn-success w-100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block extar_body %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnChange = document.getElementById('btn-change-address');
+            const panel = document.getElementById('select_address_panel');
+
+            // باز و بسته کردن پنل با کلیک روی «تغییر آدرس»
+            btnChange.addEventListener('click', function (e) {
+                e.stopPropagation();
+                panel.classList.toggle('show');
+            });
+
+            // کلیک بیرون از پنل → بستن
+            document.addEventListener('click', function (e) {
+                if (!panel.contains(e.target) && e.target !== btnChange) {
+                    panel.classList.remove('show');
+                }
+            });
+
+            // جلوگیری از بسته شدن وقتی داخل پنل کلیک می‌شه
+            panel.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+{% endblock %}

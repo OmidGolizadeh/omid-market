@@ -6,9 +6,7 @@ from django_jalali.db import models as jmodels
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name='کاربر')
-    address = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='orders', verbose_name='آدرس')
-    email = models.CharField(max_length=255, blank=True, null=True, verbose_name='ایمیل')
-    phone = models.CharField(max_length=11, blank=True, null=True, verbose_name='تلفن')
+    total_price = models.PositiveIntegerField(default=0, verbose_name='جمع قیمت')
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
     is_paid = models.BooleanField(default=False, verbose_name='پرداخت شده')
 
@@ -21,7 +19,7 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items', verbose_name='سفارش')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items', verbose_name='سفارش')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items', verbose_name='محصول')
     size = models.CharField(max_length=10, blank=True, null=True, verbose_name='اندازه')
     color = models.CharField(max_length=255, verbose_name='رنگ')
