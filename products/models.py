@@ -3,6 +3,7 @@ from django.utils.text import slugify
 from django_jalali.db import models as jmodels
 from django.db.models import Sum
 from accounts.models import User
+from django.utils import timezone
 
 
 class Category_brand(models.Model):
@@ -52,7 +53,11 @@ class Product(models.Model):
     description = models.TextField(blank=True, null=True, verbose_name='توضیح')
     short_description = models.TextField(blank=True, null=True, verbose_name='نوضیح کوتاه')
     price = models.DecimalField(max_digits=11, blank=True, null=True, decimal_places=0, verbose_name='قیمت')
-    discount = models.DecimalField(max_digits=11, blank=True, null=True, decimal_places=0, verbose_name='تخفیف')
+    discount_percent = models.PositiveSmallIntegerField(default=0, blank=True, null=True, verbose_name='درصد تخفیف',
+                                                        help_text='مثلاً ۱۵ یعنی ۱۵ درصد تخفیف')
+    discount_expire = jmodels.jDateTimeField(null=True, blank=True, verbose_name='تاریخ پایان تخفیف',
+                                             help_text='بعد از این تاریخ تخفیف اعمال نمی‌شود'
+                                             )
     brand = models.ForeignKey(Category_brand, on_delete=models.CASCADE, null=True, verbose_name='برند ')
     Category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, verbose_name='توع محصول')
     warranty = models.ManyToManyField(Warranty, blank=True, verbose_name='گارانتی')
@@ -78,12 +83,39 @@ class Product(models.Model):
         super(Product, self).save(*args)
 
     @property
+    def is_discount_active(self):
+        if not self.discount_percent or self.discount_percent <= 0:
+            return False
+        if self.discount_expire:
+            now = timezone.now()
+            expire = self.discount_expire
+            if hasattr(expire, 'togregorian'):
+                expire = expire.togregorian()
+            if now > expire:
+                return False
+        return True
+
+    @property
     def total_stock(self):
         try:
             result = self.color.aggregate(total=Sum('number'))['total']
             return result or 0
         except Exception:
             return 0
+
+    @property
+    def final_price(self):
+        """قیمت بعد از اعمال تخفیف"""
+        if self.is_discount_active and self.price:
+            return int(self.price * (100 - self.discount_percent) / 100)
+        return int(self.price) if self.price else 0
+
+    @property
+    def discount_amount(self):
+        """مبلغ تخفیف به تومان"""
+        if self.is_discount_active and self.price:
+            return int(self.price) - self.final_price
+        return 0
 
     def __str__(self):
         return self.title

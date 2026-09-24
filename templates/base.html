@@ -34,7 +34,29 @@
 {% endif %}
 
 {% block extar_body %}{% endblock %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const messages = document.querySelectorAll('#django-messages .message-item');
 
+        messages.forEach(function (msg) {
+            // بعد از ۴ ثانیه محو شود
+            setTimeout(function () {
+                msg.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                msg.style.opacity = '0';
+                msg.style.transform = 'translateY(-20px)';
+
+                setTimeout(function () {
+                    msg.remove();
+                    // اگر همه پیام‌ها پاک شدند، ظرف را هم حذف کن
+                    const container = document.getElementById('django-messages');
+                    if (container && container.children.length === 0) {
+                        container.remove();
+                    }
+                }, 500);
+            }, 4000); // زمان نمایش: ۴ ثانیه
+        });
+    });
+</script>
 
 </body>
 </html>

@@ -11,4 +11,5 @@ urlpatterns = [
     path('checkout/<int:pk>', views.OrderDetail.as_view(), name='order_detail'),
     path('checkout/add', views.OrderCreate.as_view(), name='order_add'),
     path('select_address/<int:pk>', views.SelectAddress.as_view(), name='select_address'),
+    path('discount_code/<int:pk>', views.DiscountCodeView.as_view(), name='discount_code'),
 ]

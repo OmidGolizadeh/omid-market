@@ -164,12 +164,17 @@
                                         <a href="#tabs-panel"><span>(نقد و بررسی)</span></a>
                                     </div>
                                     <div class="encode4365gbf265g43d-container py-2">
-                                        {% if product.discount %}
-                                            <span class="pre-encode4365gbf265g43d">{{ product.discount|toman }}</span>
+                                        {% if product.is_discount_active %}
+                                            <span class="pre-encode4365gbf265g43d">{{ product.price|toman }}</span>
+                                            <span class="encode4365gbf265g43d">
+                                                    {{ product.final_price|toman }} <span>تومان</span>
+                                                </span>
+                                            <div class="badge badge-danger font-weight-light m-1 py-1 px-2">
+                                                {{ product.discount_percent }}٪ تخفیف
+                                            </div>
+                                        {% else %}
+                                            <span class="encode4365gbf265g43d">{{ product.price|toman }} <span>تومان</span></span>
                                         {% endif %}
-                                        <span class="encode4365gbf265g43d">{{ product.price|toman }} <span>تومان</span></span>
-
-                                        {#                                <div class="badge badge-danger font-weight-light m-1 py-1 px-2">10%</div>#}
                                     </div>
                                     <p>{{ product.short_description }}</p>
                                     <hr>

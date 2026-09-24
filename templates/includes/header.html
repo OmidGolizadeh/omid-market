@@ -57,19 +57,21 @@
         </div>
     </div>
     {% if messages %}
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div id="django-messages"
+             style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 480px;">
+            {% for message in messages %}
+                <div class="alert alert-dismissible fade show message-item
+                {% if message.tags == 'success' %}alert-success
+                {% elif message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'warning' %}alert-warning
+                {% elif message.tags == 'info' %}alert-info
+                {% else %}alert-secondary{% endif %}"
+                     role="alert">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            {% elif message.tags == 'error' %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endif %}
-        {% endfor %}
+            {% endfor %}
+        </div>
     {% endif %}
     <!-- /Search NavBar -->
     <!-- Main NavBar -->

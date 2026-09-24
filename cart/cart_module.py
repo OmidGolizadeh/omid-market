@@ -18,14 +18,20 @@ class Cart:
             product_id = item.get('id')
             if not product_id:
                 continue
-            product = Product.objects.get(id=int(item['id']))
-            item['product'] = product
-            item['total'] = int(item['number']) * int(item['price'])
-            item['total_discount'] = int(item['number']) * int(item.get('discount', 0))
-            item['final_total'] = item['total'] - item['total_discount']
-            item['unique_id'] = self.unique_id_generator(product.id, item['color'], item['warranty'])
 
-            yield item
+            product = Product.objects.get(id=int(product_id))
+
+            # یک کپی جدید بساز تا session دست نخورد
+            item_copy = item.copy()
+            item_copy['product'] = product
+            item_copy['total'] = int(item['number']) * int(item['price'])
+            item_copy['total_discount'] = int(item['number']) * int(item.get('discount', 0))
+            item_copy['final_total'] = item_copy['total'] - item_copy['total_discount']
+            item_copy['unique_id'] = self.unique_id_generator(
+                product.id, item['color'], item['warranty']
+            )
+
+            yield item_copy
 
     def unique_id_generator(self, id, color, warranty):
         resuit = f'{id}-{color}-{warranty}'
@@ -36,11 +42,12 @@ class Cart:
 
         if unique not in self.cart:
             self.cart[unique] = {'number': 0, 'price': str(product.price),
-                                 'discount': str(product.discount) if product.discount else '0',
+                                 'discount': str(product.discount_amount),
+                                 'final_price': str(product.final_price),
                                  'color': color, 'warranty': warranty, 'size': size,
                                  'id': product.id}
-        if not self.cart[unique].get('discount'):
-            self.cart[unique]['discount'] = 0
+        # if not self.cart[unique].get('discount'):
+        #     self.cart[unique]['discount'] = 0
         self.cart[unique]['number'] += int(number)
         self.save()
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order, OrderItem
+from .models import Order, OrderItem, DiscountCode
 
 
 # Register your models here.
@@ -14,3 +14,11 @@ class Order_show(admin.ModelAdmin):
     ordering = ['created_at']
     list_filter = ['is_paid', 'created_at']
     inlines = (OrderItem_show,)
+
+
+@admin.register(DiscountCode)
+class DiscountCode_show(admin.ModelAdmin):
+    list_display = ['name', 'discount', 'number', 'created_at']
+    ordering = ['created_at']
+    readonly_fields = ('created_at',)
+    list_filter = ['created_at']
