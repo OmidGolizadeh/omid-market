@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,13 +40,9 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'django.contrib.humanize',
     'django_jalali',
-    # filter
-    'core.apps.CoreConfig',
     # my app
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
-    'products.apps.ProductsConfig',
-    'cart.apps.CartConfig',
 
 ]
 
@@ -141,3 +138,4 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
