@@ -41,21 +41,35 @@ class DiscountCode(models.Model):
 
 
 class Order(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'در انتظار پرداخت'),
+        ('processing', 'در حال آماده‌سازی'),
+        ('shipped', 'ارسال شده'),
+        ('delivered', 'تحویل داده شده'),
+        ('canceled', 'لغو شده'),
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name='کاربر')
     total_price = models.PositiveIntegerField(default=0, verbose_name='جمع قیمت')
     total_discount = models.PositiveIntegerField(default=0, verbose_name='جمع تخفیف')
     code_discount = models.PositiveIntegerField(default=0, verbose_name='تخفیف کد تخفیف')
     discount_code = models.ForeignKey('DiscountCode', null=True, blank=True, on_delete=models.SET_NULL,
                                       verbose_name='کد تخفیف')
+    authority = models.CharField(max_length=255, null=True, blank=True, unique=True,
+                                 verbose_name='شناسه پرداخت')
+    ref_id = models.CharField(max_length=255, null=True, blank=True, unique=True, verbose_name='کد پیگیری')
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders',
+                                verbose_name='آدرس')
+    status = models.CharField(choices=STATUS_CHOICES,default='pending', null=True, blank=True, verbose_name='وضعیت سفارش')
+    paid_at = jmodels.jDateTimeField(blank=True, null=True, verbose_name='تاریخ پرداخت')
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
-    is_paid = models.BooleanField(default=False, verbose_name='پرداخت شده')
+    is_paid = models.BooleanField(default=False, verbose_name='وضعیت پرداخت')
 
     class Meta:
         verbose_name = 'سفارش'
         verbose_name_plural = 'سفارش‌ها'
 
     def __str__(self):
-        return f'{self.user} - {self.created_at} - {"پرداخت شده" if self.is_paid else "پرداخت نشده"}'
+        return f'{self.user} - {self.created_at} - {"پرداخت شده" if self.is_paid else "در انتظار پرداخت"}'
 
 
 class OrderItem(models.Model):

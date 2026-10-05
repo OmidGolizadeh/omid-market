@@ -1,11 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views.generic import View, TemplateView, DetailView, CreateView
 from products.models import Product
 from accounts.models import Address
 from .models import Order, OrderItem, DiscountCode
 from .cart_module import Cart
 from django.contrib import messages
+from .zarinpal import ZarinPal
+from django.utils import timezone
 
 
 # Create your views here.
@@ -124,7 +126,7 @@ class OrderCreate(LoginRequiredMixin, View):
         return redirect('cart:order_detail', order.id)
 
 
-class DiscountCodeView(View):
+class DiscountCodeView(LoginRequiredMixin, View):
     def post(self, request, pk):
         code = request.POST.get('discount_code')
         order = get_object_or_404(Order, id=pk)
@@ -148,3 +150,73 @@ class DiscountCodeView(View):
         discount_code.save()
         messages.success(request, f'کد تخفیف {discount_code.discount}٪ اعمال شد')
         return redirect('cart:order_detail', order.id)
+
+
+pay = ZarinPal(merchant='00000000-0000-0000-0000-000000000000', call_back_url='http://127.0.0.1:8000/cart/verify')
+
+
+class SendRequestView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        order = get_object_or_404(Order, id=pk, user=request.user)
+        address_id = request.session.get('select_address_user')
+        if address_id:
+            order.address = Address.objects.get(id=address_id)
+            order.save()
+        response = pay.send_request(amount=order.total_price,
+                                    description=f'سفارش #{order.id} - {order.user.full_name or order.user.phone_number}',
+                                    email=request.user.email, mobile=request.user.phone_number)
+        if isinstance(response, str):
+            order.authority = response
+            order.save()
+            return redirect(pay.ZP_API_STARTPAY.format(authority=response))
+        else:
+            return render(request, 'cart/payment_result.html', {
+                'message': f'Error code: {response.get("error_code")}, Error Message: {response.get("message")}',
+                'success': False
+            })
+
+
+class VerifyView(View):
+    def get(self, request):
+        authority = request.GET.get('Authority')
+        status = request.GET.get('Status')
+        if status != 'OK':
+            return render(request, 'cart/payment_result.html', {
+                'message': f'تراکنش ناموفق بوده است یا توسط کاربر لغو شده است',
+                'success': False
+            })
+        try:
+            order = Order.objects.get(authority=authority)
+        except:
+            return render(request, 'cart/payment_result.html', {
+                'message': 'سفارش پیدا نشد.',
+                'success': False
+            })
+        response = pay.verify(request=request, amount=order.total_price)
+
+        if response.get('transaction'):
+            if response.get('pay'):
+                order.is_paid = True
+                order.status = 'processing'
+                order.paid_at = timezone.now()
+                order.ref_id = response.get('RefID')
+                order.save()
+                return render(request, 'cart/payment_result.html',
+                              {'success': True, 'order': order, 'message': 'پرداخت با موفقیت انجام شد',
+                               'ref_id': order.ref_id})
+            else:
+                return render(request, 'cart/payment_result.html',
+                              {'success': True, 'order': order, 'message': 'پرداخت با موفقیت انجام شد',
+                               'ref_id': order.ref_id})
+        else:
+            if response.get("status") == "ok":
+                return render(request, 'cart/payment_result.html', {
+                    'message': f'Error code: {response.get("error_code")}, Error Message: {response.get("message")}',
+                    'success': False, })
+            elif response.get("status") == "cancel":
+                return render(request, 'cart/payment_result.html', {
+                    'message': f'تراکنش ناموفق بوده است یا توسط کاربر لغو شده است'
+                               f'Error Message: {response.get("message")}',
+                    'success': False
+                })
+

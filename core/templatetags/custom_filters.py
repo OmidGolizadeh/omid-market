@@ -1,5 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
+import jdatetime
 
 register = template.Library()
 
@@ -30,3 +31,45 @@ def stars(score):
         html += '<i class="fa fa-star-half-alt"></i>'
     html += '<i class="far fa-star"></i>' * empty
     return mark_safe(html)
+
+
+@register.filter()
+def jalali_date(value):
+    if not value:
+        return ''
+
+    # اگر مقدار از قبل جلالی است
+    if isinstance(value, jdatetime.datetime):
+        date = value
+    else:
+        # اگر میلادی بود، آن را به جلالی تبدیل کن
+        date = jdatetime.datetime.fromgregorian(datetime=value)
+
+    months = [
+        'فروردین',
+        'اردیبهشت',
+        'خرداد',
+        'تیر',
+        'مرداد',
+        'شهریور',
+        'مهر',
+        'آبان',
+        'آذر',
+        'دی',
+        'بهمن',
+        'اسفند',
+    ]
+
+    result = (
+        f'{date.day} '
+        f'{months[date.month - 1]} '
+        f'{date.year}، ساعت '
+        f'{date.hour:02d}:{date.minute:02d}'
+    )
+
+    persian_numbers = '۰۱۲۳۴۵۶۷۸۹'
+    english_numbers = '0123456789'
+
+    return result.translate(
+        str.maketrans(english_numbers, persian_numbers)
+    )

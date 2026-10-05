@@ -318,13 +318,7 @@
                                                                 پرداخت آنلاین
                                                             </label>
                                                         </div>
-                                                        <div class="form-check">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input"
-                                                                       name="payment_type">
-                                                                ثبت فیش پرداخت/کارت به کارت
-                                                            </label>
-                                                        </div>
+
                                                     </div>
                                                     <div class="col-12 pb-2" id="rules">
                                                         <div class="form-check">
@@ -337,8 +331,14 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-12">
-                                                        <input type="submit" value="پرداخت و تکمیل خرید"
-                                                               class="btn btn-success w-100">
+                                                        <form method="post"
+                                                              action="{% url 'cart:send_request' order.id %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-success w-100">پرداخت و
+                                                                تکمیل خرید
+                                                            </button>
+                                                        </form>
+
                                                     </div>
                                                 </div>
                                             </div>
