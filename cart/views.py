@@ -176,7 +176,7 @@ class SendRequestView(LoginRequiredMixin, View):
             })
 
 
-class VerifyView(View):
+class VerifyView(LoginRequiredMixin, View):
     def get(self, request):
         authority = request.GET.get('Authority')
         status = request.GET.get('Status')
@@ -220,3 +220,28 @@ class VerifyView(View):
                     'success': False
                 })
 
+
+class DeleteItemOrderView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        order_item = get_object_or_404(OrderItem, id=pk, order__user=request.user)
+        order = order_item.order
+        if order.code_discount > 0:
+            order.total_price += order.code_discount
+            order.code_discount = 0
+        order.total_price -= order_item.price * order_item.number
+        order.total_discount -= order_item.discount * order_item.number
+        if order.discount_code:
+            if order.discount_code.is_valid():
+                discount_amount = int(order.total_price * order.discount_code.discount / 100)
+                order.code_discount = discount_amount
+                order.total_price -= order.code_discount
+            else:
+                order.discount_code = None
+
+        order_item.delete()
+        order.save()
+        if order.order_items.count() == 0:
+            messages.warning(request, 'سفارش شما خالی شده پس به سبدخرید انتقال مییابد')
+            return redirect('cart:cart_detail')
+        messages.success(request, 'محصول با موفقیت حذف شد ')
+        return redirect('cart:order_detail', order.id)

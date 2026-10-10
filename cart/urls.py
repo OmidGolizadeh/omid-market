@@ -7,6 +7,7 @@ urlpatterns = [
     path('cart_detail', views.CartView.as_view(), name='cart_detail'),
     path('cart_add/<int:pk>', views.CartAddView.as_view(), name='cart_add'),
     path('cart_delete/<str:id>', views.CartDelete.as_view(), name='cart_delete'),
+    path('delete_order_item/<int:pk>', views.DeleteItemOrderView.as_view(), name='delete_order_item'),
     path('cart_delete_all', views.CartDeleteAll.as_view(), name='cart_delete_all'),
     path('checkout/<int:pk>', views.OrderDetail.as_view(), name='order_detail'),
     path('checkout/add', views.OrderCreate.as_view(), name='order_add'),
