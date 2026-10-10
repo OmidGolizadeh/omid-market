@@ -1,5 +1,13 @@
 from django.urls import path
 from . import views
+from django.views.decorators.cache import cache_page
+
+"""
+path('profile/address',cache_page(60 * 1)(views.LoadCityView.as_view()) , name='profile_address'),
+این نوع cache کردن است 
+cache_page(60 * 1) = 1 دقیقه cache رو انجام میده 
+"""
+
 
 app_name = 'accounts'
 
