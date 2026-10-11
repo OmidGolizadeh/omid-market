@@ -32,9 +32,11 @@ class Product_show(admin.ModelAdmin):
 
 @admin.register(Category)
 class Category_show(admin.ModelAdmin):
-    list_display = ['title']
+    list_display = ['title', 'slug', 'created_at']
     readonly_fields = ('created_at',)
+    search_fields = ('title', 'slug')
     ordering = ['title', 'created_at']
+    filter_horizontal = ('categories',)
 
 
 @admin.register(Category_brand)

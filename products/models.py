@@ -19,7 +19,15 @@ class Category_brand(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=255, verbose_name='نوع محصول')
+    categories = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='related_categories',
+                                        verbose_name='دسته‌بندی')
+    slug = models.SlugField(unique=True, allow_unicode=True, null=True, blank=True, verbose_name='اسلاگ')
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'نوع محصول'
@@ -55,7 +63,7 @@ class Product(models.Model):
     discount = models.DecimalField(max_digits=11, blank=True, null=True, decimal_places=0, verbose_name='تخفیف')
     brand = models.ForeignKey(Category_brand, on_delete=models.CASCADE, null=True, verbose_name='برند ')
     Category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, verbose_name='توع محصول')
-    warranty = models.ManyToManyField(Warranty, null=True, blank=True, verbose_name='گارانتی')
+    warranty = models.ManyToManyField(Warranty, blank=True, verbose_name='گارانتی')
     slug = models.SlugField(unique=True, blank=True, verbose_name='اسلاگ')
     images = models.ImageField(upload_to='products/%Y/%m/%d/', null=True, blank=True, verbose_name='تصویر')
     score = models.FloatField(default=0.0, null=True, blank=True, verbose_name='امتیاز')
