@@ -20,7 +20,15 @@ class Category_brand(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=255, verbose_name='نوع محصول')
+    categories = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='related_categories',
+                                        verbose_name='دسته‌بندی')
+    slug = models.SlugField(unique=True, allow_unicode=True, null=True, blank=True, verbose_name='اسلاگ')
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'نوع محصول'
