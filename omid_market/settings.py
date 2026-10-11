@@ -41,10 +41,13 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'django.contrib.humanize',
     'django_jalali',
+    # filter
+    'core.apps.CoreConfig',
     # my app
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
-
+    'products.apps.ProductsConfig',
+    'cart.apps.CartConfig',
 
 ]
 
