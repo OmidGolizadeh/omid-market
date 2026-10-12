@@ -1,44 +1,33 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView, DetailView
-from .models import Product, Category, Category_brand, Comment, Like
-from django.db.models import F
+from .models import Product, Category, Category_brand, Comment, Like, ProductColor
+from django.db.models import F, Exists, OuterRef
 from .forms import CommentForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from .mixins import ProductFilterMixin
 
 
-class ProductView(TemplateView):
+class ProductView(ProductFilterMixin, TemplateView):
     template_name = 'products/product.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        products = Product.objects.all()
-
-        context['object_list'] = products
-        context['category'] = Category.objects.all()
+        products = self.get_filtered_products()
+        context.update(self.get_filter_context(products))
         context['brand'] = Category_brand.objects.all()
-        context['latest_products'] = Product.objects.order_by('-created_at')[:3]
-
-        if self.request.user.is_authenticated:
-            context['liked_products'] = Like.objects.filter(user=self.request.user, product__in=products).values_list(
-                'product_id', flat=True)
-        else:
-            context['liked_products'] = []
-
         return context
 
 
-class ProductList(TemplateView):
+class ProductList(ProductFilterMixin, TemplateView):
     template_name = 'products/product_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object_list'] = Product.objects.all()
-        context['category'] = Category.objects.all()
+        products = self.get_filtered_products()
+        context.update(self.get_filter_context(products))
         context['brand'] = Category_brand.objects.all()
-        context['latest_products'] = Product.objects.order_by('-created_at')[:3]
         return context
 
 

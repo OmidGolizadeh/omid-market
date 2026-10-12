@@ -555,9 +555,13 @@
                                     </a>
                                     <div class="details p-3">
                                         <div class="category">
-                                            <a href="products.html">{{ i.Category }}</a>
-                                            &nbsp;/&nbsp;
-                                            <a href="products.html">{{ i.brand }}</a>
+                                            {% if i.Category %}
+                                                <a href="{% url 'products:product' %}?category={{ i.Category.slug }}">{{ i.Category }}</a>
+                                            {% endif %}
+                                            {% if i.Category and i.brand %}/{% endif %}
+                                            {% if i.brand %}
+                                                <a href="{% url 'products:product' %}?brand={{ i.brand.id }}">{{ i.brand }}</a>
+                                            {% endif %}
                                         </div>
                                         <a href="{% url 'products:product_detail' i.slug %}">
                                             <h2>{{ i.short_description|truncatewords:15 }}</h2></a>

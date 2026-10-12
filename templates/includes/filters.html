@@ -1,0 +1,139 @@
+{% load static %}
+{% load custom_filters %}
+<div class="col-12 col-lg-3 px-3 px-lg-0">
+    <!-- Side Panel -->
+    <form method="get" action="">
+        <input type="hidden" name="sort" value="{{ current_sort }}">
+        <div class="accordion filters-container">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button py-2 px-3" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                            aria-expanded="true" aria-controls="collapseOne">
+                        گروه های محصولات
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        {% for c1 in menu_categories %}
+                            <div class="form-group">
+                                <input type="checkbox" name="category" value="{{ c1.slug }}"
+                                       id="cat-{{ c1.id }}"
+                                       {% if c1.slug in selected_slugs %}checked{% endif %}>
+                                <label for="cat-{{ c1.id }}">{{ c1.title }}</label>
+                            </div>
+                            {% for c2 in c1.categories.all %}
+                                <div class="form-group" style="padding-right: 1rem;">
+                                    <input type="checkbox" name="category" value="{{ c2.slug }}"
+                                           id="cat-{{ c2.id }}"
+                                           {% if c2.slug in selected_slugs %}checked{% endif %}>
+                                    <label for="cat-{{ c2.id }}">{{ c2.title }}</label>
+                                </div>
+                                {% for c3 in c2.categories.all %}
+                                    <div class="form-group" style="padding-right: 2rem;">
+                                        <input type="checkbox" name="category" value="{{ c3.slug }}"
+                                               id="cat-{{ c3.id }}"
+                                               {% if c3.slug in selected_slugs %}checked{% endif %}>
+                                        <label for="cat-{{ c3.id }}">{{ c3.title }}</label>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion filters-container mt-3">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button py-2 px-3" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                            aria-expanded="true" aria-controls="collapseTwo">
+                        محدوده قیمت
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <label class="small mb-1" for="min_price">از (تومان)</label>
+                        <input type="number" min="0" class="form-control mb-2" name="min_price"
+                               id="min_price" value="{{ min_price|default_if_none:'' }}">
+                        <label class="small mb-1" for="max_price">تا (تومان)</label>
+                        <input type="number" min="0" class="form-control" name="max_price"
+                               id="max_price" value="{{ max_price|default_if_none:'' }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="accordion filters-container mt-3">
+            <div class="accordion-item">
+                <div class="accordion-body pb-2">
+                    <div class="form-group">
+                        <input type="checkbox" name="only_available" value="1" id="only-available"
+                               {% if only_available %}checked{% endif %}>
+                        <label for="only-available">فقط کالاهای موجود</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" name="only_warranty" value="1" id="only-warranty"
+                               {% if only_warranty %}checked{% endif %}>
+                        <label for="only-warranty">فقط کالاهای دارای گارانتی</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+            <button type="submit" class="btn btn-warning flex-fill">اعمال فیلتر</button>
+            <a href="{{ request.path }}" class="btn btn-outline-secondary">حذف فیلترها</a>
+        </div>
+    </form>
+
+
+    <div class="accordion filters-container mt-3">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFive">
+                <button class="accordion-button py-2 px-3" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseFive"
+                        aria-expanded="true" aria-controls="collapseFive">
+                    جدیدترین محصولات
+                </button>
+            </h2>
+            <div id="collapseFive" class="accordion-collapse collapse show"
+                 aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <div class="row">
+                        {% for i in latest_products %}
+                            <!-- Side Product -->
+                            <div class="col-12 col-md-4 col-lg-12 px-0 mt-2">
+                                <a href="{% url 'products:product_detail' i.slug %}">
+                                    <div class="side-product">
+                                        <div class="row pl-3">
+                                            <div class="col-3 pl-2">
+                                                <div class="image"
+                                                     style="background-image: url({{ i.images.url }})"></div>
+                                            </div>
+                                            <div class="col-9 pr-0">
+                                                <h2>{{ i.title }}</h2>
+                                                <div class="row">
+                                                    <div class="col-7 pl-0">
+                                                        <span class="encode4365gbf265g43d">{{ i.price|toman }} تومان</span>
+                                                    </div>
+                                                    <div class="col-5 pr-0 text-end">
+                                                        <span class="views">{{ i.view }} بازدید</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <!-- Side Product -->
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Side Panel -->
+</div>

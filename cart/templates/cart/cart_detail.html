@@ -117,7 +117,8 @@
                                                     </div>
                                                     <hr>
                                                 {% empty %}
-                                                    <div class="alert" style="background-color: rgba(252,185,65,0.5);text-align: center;">
+                                                    <div class="alert"
+                                                         style="background-color: rgba(252,185,65,0.5);text-align: center;">
                                                         <span>سبد خرید شما خالی است.</span></div>
                                                 {% endfor %}
                                                 <!-- Order Product Record -->
@@ -174,8 +175,9 @@
                                         </div>
                                         <div class="row py-2">
                                             <div class="col-12">
-                                                <a href="{% url 'cart:order_add' %}"><input type="submit" value="ادامه ثبت سفارش"
-                                                                               class="btn btn-success w-100"></a>
+                                                <a href="{% url 'cart:order_add' %}"><input type="submit"
+                                                                                            value="ادامه ثبت سفارش"
+                                                                                            class="btn btn-success w-100"></a>
                                             </div>
                                         </div>
                                     </div>
@@ -195,9 +197,13 @@
                                             </a>
                                             <div class="details p-3">
                                                 <div class="category">
-                                                    <a href="products.html">{{ offer.Category }}</a>
-                                                    &nbsp;/&nbsp;
-                                                    <a href="products.html">{{ offer.brand }}</a>
+                                                    {% if offer.Category %}
+                                                        <a href="{% url 'products:product' %}?category={{ offer.Category.slug }}">{{ offer.Category }}</a>
+                                                    {% endif %}
+                                                    {% if offer.Category and offer.brand %}/{% endif %}
+                                                    {% if offer.brand %}
+                                                        <a href="{% url 'products:product' %}?brand={{ offer.brand.id }}">{{ offer.brand }}</a>
+                                                    {% endif %}
                                                 </div>
                                                 <a href="{% url 'products:product_detail' offer.slug %}">
                                                     <h2>{{ offer.short_description|truncatewords:15 }}</h2></a>

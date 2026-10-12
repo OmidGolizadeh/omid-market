@@ -57,7 +57,7 @@
         </div>
     </div>
     {% if messages %}
-<<<<<<< HEAD
+        <<<<<<< HEAD
         <div id="django-messages"
              style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 480px;">
             {% for message in messages %}
@@ -73,7 +73,7 @@
                 </div>
             {% endfor %}
         </div>
-=======
+        =======
         {% for message in messages %}
             {% if message.tags == 'success' %}
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -87,7 +87,7 @@
                 </div>
             {% endif %}
         {% endfor %}
->>>>>>> product
+        >>>>>>> product
     {% endif %}
     <!-- /Search NavBar -->
     <!-- Main NavBar -->
@@ -112,38 +112,30 @@
                                                 <div class="dm-arrow"></div>
                                                 <ul class="droopmenu-grid droopmenu-grid-9">
                                                     <li class="droopmenu-tabs droopmenu-tabs-vertical">
-                                                        {% for top in menu_categories %}
+                                                        {% for cat1 in menu_categories %}
                                                             <div class="droopmenu-tabsection {% if forloop.first %}droopmenu-tab-active{% endif %}"
-                                                                 id="droopmenutab{{ top.id }}">
+                                                                 id="droopmenutab{{ cat1.id }}">
                                                                 <a class="droopmenu-tabheader"
-                                                                   href="{% url 'products:product' %}?category={{ top.slug }}">{{ top.title }}</a>
+                                                                   href="{% url 'products:product' %}?category={{ cat1.slug }}">{{ cat1.title }}</a>
                                                                 <div class="droopmenu-tabcontent">
                                                                     <div class="droopmenu-row">
-                                                                        <ul class="droopmenu-col droopmenu-col4">
-                                                                            {% for sub in top.categories.all %}
-                                                                                <li>
-                                                                                    <h4>
-                                                                                        <a href="{% url 'products:product' %}?category={{ sub.slug }}">{{ sub.title }}</a>
-                                                                                    </h4>
-                                                                                </li>
-                                                                                {% for item in sub.categories.all %}
-                                                                                    <li>
-                                                                                        <a href="{% url 'products:product' %}?category={{ item.slug }}">{{ item.title }}</a>
-                                                                                    </li>
-                                                                                {% endfor %}
-                                                                            {% endfor %}
-                                                                        </ul>
+                                                                        {% for cat2 in cat1.categories.all %}
+                                                                            {% if cat2.categories.all %}
+                                                                                <ul class="droopmenu-col droopmenu-col4">
+                                                                                    <li><h4>{{ cat2.title }}</h4></li>
+                                                                                    {% for cat3 in cat2.categories.all %}
+                                                                                        <li>
+                                                                                            <a href="{% url 'products:product' %}?category={{ cat3.slug }}">{{ cat3.title }}</a>
+                                                                                        </li>
+                                                                                    {% endfor %}
+                                                                                </ul>
+                                                                            {% endif %}
+                                                                        {% endfor %}
 
-                                                                        <ul class="droopmenu-col droopmenu-col4 d-none d-lg-inline-block">
-                                                                            <li><img
-                                                                                    src="{% static 'images/megamenu/megamenu-image1.png' %}"
-                                                                                    alt="megamenu-image1.png"></li>
-                                                                        </ul>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         {% endfor %}
-
                                                     </li>
                                                 </ul>
                                             </li>
