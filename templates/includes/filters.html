@@ -1,48 +1,106 @@
 {% load static %}
 {% load custom_filters %}
+<style>
+    .cat-tree {
+        max-height: 320px;
+        overflow-y: auto;
+        padding-inline-end: .25rem;
+    }
+
+    .cat-row {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .35rem .25rem;
+        border-radius: 6px;
+    }
+
+    .cat-row:hover {
+        background: rgba(0, 0, 0, .04);
+    }
+
+    .cat-row label {
+        flex: 1;
+        margin: 0;
+        cursor: pointer;
+        font-size: .9rem;
+    }
+
+    .cat-row .cat-check:checked + label {
+        font-weight: 700;
+        color: #f0a500;
+    }
+
+    .cat-toggle {
+        border: 0;
+        background: none;
+        padding: .15rem .4rem;
+        color: #888;
+        line-height: 1;
+    }
+
+    .cat-toggle i {
+        font-size: .7rem;
+        transition: transform .2s;
+    }
+
+    .cat-toggle[aria-expanded="true"] i {
+        transform: rotate(180deg);
+    }
+
+    .cat-children {
+        margin-inline-start: .9rem;
+        padding-inline-start: .6rem;
+        border-inline-start: 1px dashed #d5d5d5;
+    }
+</style>
 <div class="col-12 col-lg-3 px-3 px-lg-0">
     <!-- Side Panel -->
     <form method="get" action="">
-        <input type="hidden" name="sort" value="{{ current_sort }}">
-        <div class="accordion filters-container">
+        {% if selected_brand %}<input type="hidden" name="brand" value="{{ selected_brand }}">{% endif %}
+        <div class="accordion filters-container mt-3">
             <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
+                <h2 class="accordion-header" id="headingTwo">
                     <button class="accordion-button py-2 px-3" type="button"
-                            data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                            aria-expanded="true" aria-controls="collapseOne">
+                            data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                            aria-expanded="true" aria-controls="collapseTwo">
                         گروه های محصولات
                     </button>
                 </h2>
-                <div id="collapseOne" class="accordion-collapse collapse show">
-                    <div class="accordion-body">
+                <div class="accordion-body p-2">
+                    <div class="cat-tree">
                         {% for c1 in menu_categories %}
-                            <div class="form-group">
-                                <input type="checkbox" name="category" value="{{ c1.slug }}"
-                                       id="cat-{{ c1.id }}"
-                                       {% if c1.slug in selected_slugs %}checked{% endif %}>
-                                <label for="cat-{{ c1.id }}">{{ c1.title }}</label>
-                            </div>
-                            {% for c2 in c1.categories.all %}
-                                <div class="form-group" style="padding-right: 1rem;">
-                                    <input type="checkbox" name="category" value="{{ c2.slug }}"
-                                           id="cat-{{ c2.id }}"
-                                           {% if c2.slug in selected_slugs %}checked{% endif %}>
-                                    <label for="cat-{{ c2.id }}">{{ c2.title }}</label>
-                                </div>
-                                {% for c3 in c2.categories.all %}
-                                    <div class="form-group" style="padding-right: 2rem;">
-                                        <input type="checkbox" name="category" value="{{ c3.slug }}"
-                                               id="cat-{{ c3.id }}"
-                                               {% if c3.slug in selected_slugs %}checked{% endif %}>
-                                        <label for="cat-{{ c3.id }}">{{ c3.title }}</label>
+                            <div class="cat-node">
+                                {% include 'includes/cat_row.html' with cat=c1 children=c1.categories.all %}
+
+                                {% if c1.categories.all %}
+                                    <div class="collapse cat-children" id="sub-{{ c1.id }}">
+                                        {% for c2 in c1.categories.all %}
+                                            <div class="cat-node">
+                                                {% include 'includes/cat_row.html' with cat=c2 children=c2.categories.all %}
+
+                                                {% if c2.categories.all %}
+                                                    <div class="collapse cat-children" id="sub-{{ c2.id }}">
+                                                        {% for c3 in c2.categories.all %}
+                                                            <div class="cat-node">
+                                                                {% include 'includes/cat_row.html' with cat=c3 %}
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
                                     </div>
-                                {% endfor %}
-                            {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <p class="text-muted small mb-0">دسته‌بندی‌ای ثبت نشده است.</p>
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="accordion filters-container mt-3">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingTwo">

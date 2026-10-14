@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, View
 from .models import Product, Category, Category_brand, Comment, Like, ProductColor
-from django.db.models import F, Exists, OuterRef
+from django.db.models import F, Exists, OuterRef, Q
 from .forms import CommentForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -78,3 +78,24 @@ def like_view(request, slug, pk):
     else:
         Like.objects.create(user=request.user, product=product)
         return JsonResponse({'response': 'liked'})
+
+
+class Search_view(View):
+    def get(self, request):
+        q = request.GET.get('q')
+
+        if q:
+            products = Product.objects.filter(
+                Q(title__icontains=q) |
+                Q(short_description__icontains=q) |
+                Q(description__icontains=q) |
+                Q(brand__title__icontains=q) |
+                Q(Category__title__icontains=q)
+            ).distinct()
+        else:
+            products = Product.objects.none()
+
+        return render(request, 'products/product.html', {
+            'object_list': products,
+            'q': q,
+        })
