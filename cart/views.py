@@ -8,6 +8,7 @@ from .cart_module import Cart
 from django.contrib import messages
 from .zarinpal import ZarinPal
 from django.utils import timezone
+from django.db.models import F
 
 
 # Create your views here.
@@ -201,6 +202,10 @@ class VerifyView(LoginRequiredMixin, View):
                 order.paid_at = timezone.now()
                 order.ref_id = response.get('RefID')
                 order.save()
+                for i in order.order_items.all():
+                    Product.objects.filter(id=i.product.id).update(
+                        sales_count=F('sales_count') + i.number
+                    )
                 return render(request, 'cart/payment_result.html',
                               {'success': True, 'order': order, 'message': 'پرداخت با موفقیت انجام شد',
                                'ref_id': order.ref_id})

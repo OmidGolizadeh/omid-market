@@ -43,13 +43,11 @@
                                                 <span class="d-block d-sm-inline-block">مرتب سازی بر اساس:</span>
                                                 {% for key, label in sort_options %}
                                                     <span class="order-filter d-block d-sm-inline-block {% if current_sort == key %}active{% endif %}">
-                                                             <a class="text-reset text-decoration-none"
-                                                                href="?
-                                                                        {% if base_query %}{{ base_query }}&{% endif %}sort={{ key }}">{{ label }}</a>
-                                                            </span>
+                                                        <a class="text-reset text-decoration-none"
+                                                        href="?{% if base_query %}{{ base_query }}&{% endif %}sort={{ key }}">{{ label }}</a>
+                                                    </span>
                                                 {% endfor %}
-                                                <span class="order-filter d-block d-sm-inline-block text-muted"
-                                                      title="به‌زودی">پرفروش‌ترین</span>
+
                                             </div>
                                             <div class="col-12 col-sm-2 pt-1 text-end">
                                         <span>

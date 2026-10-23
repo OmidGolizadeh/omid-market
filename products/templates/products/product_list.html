@@ -44,14 +44,11 @@
                                                 {% for key, label in sort_options %}
                                                     <span class="order-filter d-block d-sm-inline-block {% if current_sort == key %}active{% endif %}">
                                                         <a class="text-reset text-decoration-none"
-                                                           href="?
-                                                                   {% if base_query %}{{ base_query }}&{% endif %}sort={{ key }}">{{ label }}</a>
+                                                        href="?{% if base_query %}{{ base_query }}&{% endif %}sort={{ key }}">
+                                                            {{ label }}</a>
                                                     </span>
                                                 {% endfor %}
-                                                <span class="order-filter d-block d-sm-inline-block text-muted"
-                                                      title="به‌زودی">پرفروش‌ترین</span>
-                                            </div>
-                                            <div class="col-12 col-sm-2 pt-1 text-end">
+                                                <div class="col-12 col-sm-2 pt-1 text-end">
                                             <span>
                                                 <a href="{% url 'products:product_list' %}"
                                                    class="products-view-type active"><i
@@ -59,73 +56,75 @@
                                                 <a href="{% url 'products:product' %}" class="products-view-type"><i
                                                         class="fa fa-th"></i></a>
                                             </span>
-                                                &nbsp;|&nbsp;
-                                                <span>{{ object_list.count }} کالا</span>
+                                                    &nbsp;|&nbsp;
+                                                    <span>{{ object_list.count }} کالا</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- /Filters -->
-                                <div class="mt-2" id="pager">
-                                    <div class="container">
-                                        <div class="row row-cols-1 gx-md-4">
-                                            <!-- Products -->
-                                            {% for i in object_list %}
-                                                <div class="col">
-                                                    <!-- Product Box -->
-                                                    <div class="encode4326654321vfb-row">
-                                                        <div class="row">
-                                                            <div class="col-12 col-md-4">
-                                                                <a href="{% url 'products:product_detail' i.slug %}">
-                                                                    <div class="image"
-                                                                         style="background-image: url({{ i.images.url }})"></div>
-                                                                </a>
-                                                            </div>
-                                                            <div class="col-12 col-md-8">
-                                                                <div class="details py-3 px-3">
-                                                                    <div class="category">
-                                                                        <div class="category">
-                                                                            {% if i.Category %}
-                                                                                <a href="{% url 'products:product' %}?category={{ i.Category.slug }}">{{ i.Category }}</a>
-                                                                            {% endif %}
-                                                                            {% if i.Category and i.brand %}/{% endif %}
-                                                                            {% if i.brand %}
-                                                                                <a href="{% url 'products:product' %}?brand={{ i.brand.id }}">{{ i.brand }}</a>
-                                                                            {% endif %}
-                                                                        </div>
-                                                                    </div>
+                                    <!-- /Filters -->
+                                    <div class="mt-2" id="pager">
+                                        <div class="container">
+                                            <div class="row row-cols-1 gx-md-4">
+                                                <!-- Products -->
+                                                {% for i in object_list %}
+                                                    <div class="col">
+                                                        <!-- Product Box -->
+                                                        <div class="encode4326654321vfb-row">
+                                                            <div class="row">
+                                                                <div class="col-12 col-md-4">
                                                                     <a href="{% url 'products:product_detail' i.slug %}">
-                                                                        <h2>{{ i.short_description|truncatewords:15 }}</h2>
+                                                                        <div class="image"
+                                                                             style="background-image: url({{ i.images.url }})"></div>
                                                                     </a>
-                                                                    <div class="rate">
-                                                                        {{ i.score|stars }}
-                                                                        <span class="encode43bf265g43d">(14 رای دهنده)</span>
-                                                                    </div>
-                                                                    <p>{{ i.description|truncatewords:15 }}</p>
-                                                                    <div class="encode4365gbf265g43d mb-2">{{ i.price|toman }}
-                                                                        تومان
-                                                                    </div>
-                                                                    <a href="#">
-                                                                        <div class="btn btn-sm btn-success">مشاهده و
-                                                                            خرید
+                                                                </div>
+                                                                <div class="col-12 col-md-8">
+                                                                    <div class="details py-3 px-3">
+                                                                        <div class="category">
+                                                                            <div class="category">
+                                                                                {% if i.Category %}
+                                                                                    <a href="{% url 'products:product' %}?category={{ i.Category.slug }}">{{ i.Category }}</a>
+                                                                                {% endif %}
+                                                                                {% if i.Category and i.brand %}
+                                                                                    /{% endif %}
+                                                                                {% if i.brand %}
+                                                                                    <a href="{% url 'products:product' %}?brand={{ i.brand.id }}">{{ i.brand }}</a>
+                                                                                {% endif %}
+                                                                            </div>
                                                                         </div>
-                                                                    </a>
+                                                                        <a href="{% url 'products:product_detail' i.slug %}">
+                                                                            <h2>{{ i.short_description|truncatewords:15 }}</h2>
+                                                                        </a>
+                                                                        <div class="rate">
+                                                                            {{ i.score|stars }}
+                                                                            <span class="encode43bf265g43d">(14 رای دهنده)</span>
+                                                                        </div>
+                                                                        <p>{{ i.description|truncatewords:15 }}</p>
+                                                                        <div class="encode4365gbf265g43d mb-2">{{ i.price|toman }}
+                                                                            تومان
+                                                                        </div>
+                                                                        <a href="#">
+                                                                            <div class="btn btn-sm btn-success">مشاهده و
+                                                                                خرید
+                                                                            </div>
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <!-- /Product Box -->
                                                     </div>
-                                                    <!-- /Product Box -->
-                                                </div>
-                                            {% endfor %}
-                                            <!-- /Products -->
+                                                {% endfor %}
+                                                <!-- /Products -->
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div id="pagination-bg">
-                                                <ul class="pagination justify-content-center pagination-sm"></ul>
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div id="pagination-bg">
+                                                    <ul class="pagination justify-content-center pagination-sm"></ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -135,6 +134,5 @@
                     </div>
                 </div>
             </div>
-        </div>
     </section>
 {% endblock %}

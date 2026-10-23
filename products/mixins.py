@@ -3,6 +3,7 @@ from .models import Product, Category, Like, ProductColor
 
 SORT_OPTIONS = {
     'newest': ('جدیدترین', ['-created_at', '-id']),
+    'bestselling': ('پرفروش‌ترین', ['-sales_count', '-id']),
     'views': ('پربازدیدترین', ['-view', '-id']),
     'cheapest': ('ارزان‌ترین', [F('price').asc(nulls_last=True), 'id']),
 }
