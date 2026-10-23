@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views.generic import View, TemplateView, DetailView, CreateView
-from products.models import Product
+from products.models import Product, Warranty
 from accounts.models import Address
 from .models import Order, OrderItem, DiscountCode
 from .cart_module import Cart
@@ -35,8 +35,13 @@ class CartAddView(View):
         product = get_object_or_404(Product, id=pk)
         color, warranty, number, size = request.POST.get('color'), request.POST.get('warranty'), request.POST.get(
             'number'), request.POST.get('size')
+        warranty_price = 0
+        if warranty:
+            warranty_obj = Warranty.objects.filter(title=warranty).first()
+            if warranty_obj and hasattr(warranty_obj, 'price') and warranty_obj.price:
+                warranty_price = warranty_obj.price
         cart = Cart(request)
-        cart.add(product, number, color, warranty, size)
+        cart.add(product, number, color, warranty, size, warranty_price)
         return redirect('cart:cart_detail')
 
 

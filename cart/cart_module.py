@@ -21,10 +21,10 @@ class Cart:
 
             product = Product.objects.get(id=int(product_id))
 
-            # یک کپی جدید بساز تا session دست نخورد
             item_copy = item.copy()
             item_copy['product'] = product
-            item_copy['total'] = int(item['number']) * int(item['price'])
+            warranty_price = int(item_copy.get('warranty_price') or 0)
+            item_copy['total'] = (warranty_price + int(item['price'])) * int(item['number'])
             item_copy['total_discount'] = int(item['number']) * int(item.get('discount', 0))
             item_copy['final_total'] = item_copy['total'] - item_copy['total_discount']
             item_copy['unique_id'] = self.unique_id_generator(
@@ -37,17 +37,17 @@ class Cart:
         resuit = f'{id}-{color}-{warranty}'
         return resuit
 
-    def add(self, product, number, color, warranty, size):
+    def add(self, product, number, color, warranty, size, warranty_price):
         unique = self.unique_id_generator(product.id, color, warranty)
 
         if unique not in self.cart:
             self.cart[unique] = {'number': 0, 'price': str(product.price),
                                  'discount': str(product.discount_amount),
                                  'final_price': str(product.final_price),
-                                 'color': color, 'warranty': warranty, 'size': size,
+                                 'color': color, 'warranty': warranty, 'warranty_price': str(warranty_price),
+                                 'size': size,
                                  'id': product.id}
-        # if not self.cart[unique].get('discount'):
-        #     self.cart[unique]['discount'] = 0
+
         self.cart[unique]['number'] += int(number)
         self.save()
 
@@ -65,24 +65,18 @@ class Cart:
 
     def get_total_price_all(self):
         total = 0
-
         for item in self:
             total += item['final_total']
-
         return total
 
     def get_total_discount(self):
         total = 0
-
         for item in self:
             total += item['total_discount']
-
         return total
 
     def get_total_price(self):
         total = 0
-
         for item in self:
             total += item['final_total']
-
         return total

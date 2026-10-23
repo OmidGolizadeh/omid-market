@@ -40,6 +40,7 @@ class Category(models.Model):
 
 class Warranty(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True, verbose_name='نام کارانتی')
+    price = models.DecimalField(max_digits=11, blank=True, null=True, decimal_places=0, verbose_name='قیمت کارانتی')
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
 
     class Meta:
@@ -47,7 +48,7 @@ class Warranty(models.Model):
         verbose_name_plural = 'کارانتی ها'
 
     def __str__(self):
-        return self.title
+        return f'{self.title}-{self.price}'
 
 
 class Product(models.Model):
@@ -74,16 +75,16 @@ class Product(models.Model):
         verbose_name = 'محصول'
         verbose_name_plural = 'محصول ها'
 
-    def save(
-            self,
-            *args,
-            force_insert=False,
-            force_update=False,
-            using=None,
-            update_fields=None,
-    ):
+    def save(self, *args, force_insert=False, force_update=False, using=None, update_fields=None,
+             ):
         self.slug = slugify(self.title)
         super(Product, self).save(*args)
+
+    def warranty_price(self):
+        total = self.warranty.get('price')
+        if total:
+            self.price = self.price + total
+            return self.price
 
     @property
     def is_discount_active(self):
