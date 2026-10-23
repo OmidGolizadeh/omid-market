@@ -128,8 +128,8 @@ class Like_show(admin.TabularInline):
 @admin.register(Product)
 class Product_show(admin.ModelAdmin):
     list_display = (
-        'title', 'short_description_truncated', 'price', 'show_image_product', 'get_total_stock', 'view', 'likes_count',
-        'comments_count')
+        'title', 'short_description_truncated', 'price', 'show_image_product', 'get_total_stock', 'view', 'sales_count',
+        'likes_count', 'comments_count')
     readonly_fields = ('created_at',)
     search_fields = ['title', 'short_description_truncated', ]
     ordering = ['title', '-created_at']
