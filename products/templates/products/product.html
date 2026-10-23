@@ -129,7 +129,7 @@
                                                                         <a href="{% url 'products:product' %}?brand={{ i.brand.id }}">{{ i.brand }}</a>
                                                                     {% endif %}
                                                                 </div>
-                                                                <a href="product.html">
+                                                                <a href="{% url 'products:product_detail' i.slug %}">
                                                                     <h2>{{ i.short_description|truncatewords:15 }}</h2>
                                                                 </a>
                                                                 <div class="encode4365gbf265g43d">{{ i.price|toman }}

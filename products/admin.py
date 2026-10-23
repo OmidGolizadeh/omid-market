@@ -1,8 +1,25 @@
 from django.contrib import admin
-from .models import Product, Category, Category_brand, ProductColor, Product_Image, Warranty, Comment, Like
+from .models import Product, Category, Category_brand, ProductColor, Product_Image, Warranty, Comment, Like, Rating
 from django.utils.html import format_html
 from django.db import models
 from django.forms import Textarea, TextInput
+
+
+class Rating_show(admin.TabularInline):
+    model = Rating
+    extra = 1
+    fields = ['user', 'product', 'comment', 'score', 'created_at']
+    readonly_fields = ('user', 'product', 'comment', 'score', 'created_at',)
+    ordering = ('created_at',)
+
+
+@admin.register(Rating)
+class Rating_show_score(admin.ModelAdmin):
+    list_display = ['user', 'product', 'comment', 'score', 'created_at']
+    list_filter = ['product', 'score']
+    search_fields = ['user', 'product', 'score']
+    readonly_fields = ('user', 'product', 'comment', 'score', 'created_at',)
+    ordering = ('created_at',)
 
 
 class Product_Image_show(admin.TabularInline):
@@ -114,9 +131,10 @@ class Product_show(admin.ModelAdmin):
         'title', 'short_description_truncated', 'price', 'show_image_product', 'get_total_stock', 'view', 'likes_count',
         'comments_count')
     readonly_fields = ('created_at',)
+    search_fields = ['title', 'short_description_truncated', ]
     ordering = ['title', '-created_at']
     list_filter = ['created_at']
-    inlines = (Product_Image_show, Like_show, Comment_show)
+    inlines = (Product_Image_show, Like_show, Rating_show, Comment_show)
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)

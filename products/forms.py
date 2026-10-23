@@ -13,6 +13,8 @@ class CommentForm(forms.ModelForm):
                 'id': 'body',
                 'rows': '4',
                 'required': True,
+                'oninvalid': "this.setCustomValidity('لطفاً متن دیدگاه خود را وارد کنید.')",
+                'oninput': "this.setCustomValidity('')"
             }),
             'parent': forms.HiddenInput(attrs={
                 'class': 'form-control',

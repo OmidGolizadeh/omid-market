@@ -5,6 +5,7 @@
 {% block title %}{{ product.title }}{% endblock %}
 {% block style_css %}
     <style>
+
         .color-options {
             display: flex;
             flex-direction: row; /* افقی / سطری */
@@ -41,6 +42,38 @@
             border-color: #28a745;
             box-shadow: 0 0 0 2px #fff, 0 0 0 4px #28a745;
             transform: scale(1.1);
+        }
+
+        .rating-pagination {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .rating-item {
+            width: 48px;
+            height: 48px;
+            border: none;
+            border-radius: 12px;
+            background-color: rgba(255, 193, 7, 0.30);
+            color: #FFC107;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .rating-item:hover:not(.active) {
+            background-color: rgba(255, 193, 7, 0.30);
+        }
+
+        .rating-item.active {
+            background-color: #FFC107;
+            color: #ffffff;
         }
     </style>
 {% endblock %}
@@ -495,14 +528,52 @@
 
                                                             <!-- Send Comment Form -->
                                                             <div class="comments-container">
-                                                                <div class="row pt-4">
-                                                                    <div class="col-12"><h2>دیدگاه خود را ارسال
-                                                                        کنید</h2></div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col-12 py-3">
-                                                                        <form method="post"
-                                                                              action="#" name="comment">
+                                                                <form method="post"
+                                                                      action="{% url 'products:product_detail' product.slug %}"
+                                                                      name="comment">
+                                                                    <div class="row pt-4">
+                                                                        <div class="col-12">
+                                                                            <h2>امتیاز خود را وارد کنید</h2>
+                                                                        </div>
+                                                                        <div class="col-12">
+
+                                                                            <div class="rating-pagination"
+                                                                                 id="rating-container"
+                                                                                 data-initial-score="{{ user_rating.score|default:4 }}">
+                                                                                <button type="button"
+                                                                                        class="rating-item"
+                                                                                        data-value="1">۱
+                                                                                </button>
+                                                                                <button type="button"
+                                                                                        class="rating-item"
+                                                                                        data-value="2">۲
+                                                                                </button>
+                                                                                <button type="button"
+                                                                                        class="rating-item"
+                                                                                        data-value="3">۳
+                                                                                </button>
+                                                                                <button type="button"
+                                                                                        class="rating-item"
+                                                                                        data-value="4">۴
+                                                                                </button>
+                                                                                <button type="button"
+                                                                                        class="rating-item"
+                                                                                        data-value="5">۵
+                                                                                </button>
+                                                                            </div>
+
+
+                                                                            <input type="hidden" name="score"
+                                                                                   id="id_score"
+                                                                                   value="{{ user_rating.score|default:4 }}">
+                                                                        </div>
+                                                                        <div class="col-12">
+                                                                            <h2>دیدگاه خود را ارسال کنید</h2>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-12 py-3">
+
                                                                             {% csrf_token %}
                                                                             <div id="send-comment-form">
                                                                                 <p>نظر خود را برای این مطلب ارسال کنید.
@@ -524,62 +595,62 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                    </div>
-                                                                    </form>
-                                                                </div>
+                                                                        </div>
+                                                                </form>
                                                             </div>
                                                         </div>
-                                                        <!-- /Send Comment Form -->
                                                     </div>
+                                                    <!-- /Send Comment Form -->
                                                 </div>
                                             </div>
-                                            <!-- /Comments Tab -->
                                         </div>
+                                        <!-- /Comments Tab -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- /Nav Tabs -->
+                </div>
+                <!-- /Nav Tabs -->
 
-                    <!-- Suggested Products -->
-                    <div class="col-12 pt-5" id="suggested-products">
-                        <div class="title py-3 text-center">محصولات مرتبط</div>
-                        <div class="owl-carousel products-carousel">
-                            {% for i in product_offer %}
-                                <!-- Product Item -->
-                                <div class="encode4326654321vfb item">
+                <!-- Suggested Products -->
+                <div class="col-12 pt-5" id="suggested-products">
+                    <div class="title py-3 text-center">محصولات مرتبط</div>
+                    <div class="owl-carousel products-carousel">
+                        {% for i in product_offer %}
+                            <!-- Product Item -->
+                            <div class="encode4326654321vfb item">
+                                <a href="{% url 'products:product_detail' i.slug %}">
+                                    <div class="image"
+                                         style="background-image: url({{ i.images.url }})"></div>
+                                </a>
+                                <div class="details p-3">
+                                    <div class="category">
+                                        {% if i.Category %}
+                                            <a href="{% url 'products:product' %}?category={{ i.Category.slug }}">{{ i.Category }}</a>
+                                        {% endif %}
+                                        {% if i.Category and i.brand %}/{% endif %}
+                                        {% if i.brand %}
+                                            <a href="{% url 'products:product' %}?brand={{ i.brand.id }}">{{ i.brand }}</a>
+                                        {% endif %}
+                                    </div>
                                     <a href="{% url 'products:product_detail' i.slug %}">
-                                        <div class="image"
-                                             style="background-image: url({{ i.images.url }})"></div>
-                                    </a>
-                                    <div class="details p-3">
-                                        <div class="category">
-                                            {% if i.Category %}
-                                                <a href="{% url 'products:product' %}?category={{ i.Category.slug }}">{{ i.Category }}</a>
-                                            {% endif %}
-                                            {% if i.Category and i.brand %}/{% endif %}
-                                            {% if i.brand %}
-                                                <a href="{% url 'products:product' %}?brand={{ i.brand.id }}">{{ i.brand }}</a>
-                                            {% endif %}
-                                        </div>
-                                        <a href="{% url 'products:product_detail' i.slug %}">
-                                            <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
-                                        <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
-                                        <div class="rate">
-                                            {{ i.score|stars }}
-                                            <span class="encode43bf265g43d">(14 رای دهنده)</span>
-                                        </div>
+                                        <h2>{{ i.short_description|truncatewords:15 }}</h2></a>
+                                    <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
+                                    <div class="rate">
+                                        {{ i.score|stars }}
+                                        <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
                                     </div>
                                 </div>
-                                <!-- /Product Item -->
-                            {% endfor %}
+                            </div>
+                            <!-- /Product Item -->
+                        {% endfor %}
 
-                        </div>
                     </div>
-                    <!-- /Suggested Products -->
                 </div>
+                <!-- /Suggested Products -->
             </div>
+        </div>
         </div>
         </div>
         </div>
@@ -597,5 +668,28 @@
             window.location.href = '#body'
 
         }
+
+        const ratingItems = document.querySelectorAll('.rating-item');
+        const scoreInput = document.getElementById('id_score');
+        const ratingContainer = document.getElementById('rating-container');
+
+
+        const initialScore = ratingContainer.dataset.initialScore;
+
+
+        ratingItems.forEach(item => {
+            if (item.getAttribute('data-value') === initialScore) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+
+
+            item.addEventListener('click', function () {
+                ratingItems.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                scoreInput.value = this.getAttribute('data-value');
+            });
+        });
     </script>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView, DetailView, View
-from .models import Product, Category, Category_brand, Comment, Like, ProductColor
+from .models import Product, Category, Category_brand, Comment, Like, ProductColor, Rating
 from django.db.models import F, Exists, OuterRef, Q
 from .forms import CommentForm
 from django.http import JsonResponse
@@ -48,20 +48,38 @@ class ProductDetail(DetailView):
         context['product_offer'] = Product.objects.exclude(pk=self.object.pk)[:5]
         context['commentForm'] = CommentForm
         if self.request.user.is_authenticated:
+            context['user_rating'] = Rating.objects.filter(
+                product=self.object, user=self.request.user
+            ).first()
             context['like'] = Like.objects.filter(user=self.request.user, product=self.object).exists()
         else:
+            context['user_rating'] = None
             context['like'] = False
         return context
 
     def post(self, request, *args, **kwargs):
-        product = self.get_object()
+        if not request.user.is_authenticated:
+            return redirect('accounts:login')
+        self.object = self.get_object()
+        product = self.object
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.user = request.user
             comment.product = product
             comment.save()
+            score = request.POST.get('score')
+            if score is not None:
+                try:
+                    score_int = int(score)
+                    if 1 <= score_int <= 5:
+                        Rating.objects.create(user=request.user, product=product,
+                                              defaults={'score': score_int, 'comment': comment})
+                        product.update_score()
+                except ValueError:
+                    pass
             return redirect('products:product_detail', slug=product.slug)
+
         context = self.get_context_data()
         context['commentForm'] = form
         return self.render_to_response(context)

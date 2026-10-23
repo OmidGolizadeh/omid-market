@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django_jalali.db import models as jmodels
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from accounts.models import User
 from django.utils import timezone
 
@@ -51,12 +51,6 @@ class Warranty(models.Model):
 
 
 class Product(models.Model):
-    Product_Warranty = [
-        ('not_warranty', 'بدون گارانتی'),
-        ('1_month_old', '1 ماهه'),
-        ('6_month_old', '6 ماهه'),
-        ('12_month_old', '12 ماهه'),
-    ]
     title = models.CharField(max_length=255, verbose_name='نام محصول')
     description = models.TextField(blank=True, null=True, verbose_name='توضیح')
     short_description = models.TextField(blank=True, null=True, verbose_name='نوضیح کوتاه')
@@ -73,6 +67,7 @@ class Product(models.Model):
     images = models.ImageField(upload_to='products/%Y/%m/%d/', null=True, blank=True, verbose_name='تصویر')
     score = models.FloatField(default=0.0, null=True, blank=True, verbose_name='امتیاز')
     view = models.PositiveIntegerField(default=0, verbose_name='تعداد بازدید')
+    sales_count = models.PositiveIntegerField(default=0, verbose_name='تعداد فروش')
     created_at = jmodels.jDateTimeField(auto_now_add=True, null=True, blank=True, verbose_name='تاریخ ایجاد محصول')
 
     class Meta:
@@ -124,6 +119,15 @@ class Product(models.Model):
         if self.is_discount_active and self.price:
             return int(self.price) - self.final_price
         return 0
+
+    def update_score(self):
+        score_data = self.ratings.aggregate(Avg('score'))
+        avg_score = score_data['score__avg']
+        if avg_score is not None:
+            self.score = round(avg_score, 1)
+        else:
+            self.score = 0.0
+        self.save()
 
     def __str__(self):
         return self.title
@@ -189,3 +193,31 @@ class Like(models.Model):
 
     def __str__(self):
         return f'{self.user} - {self.product}'
+
+
+class Rating(models.Model):
+    Rating_Number = {
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+    }
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings', verbose_name='کاربر')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings', verbose_name='محصول')
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True, related_name='ratings',
+                                verbose_name='کامنت')
+    score = models.IntegerField(choices=Rating_Number, verbose_name='امتیاز')
+    created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ ثبت')
+
+    class Meta:
+        verbose_name = 'امتیاز'
+        verbose_name_plural = 'امتیازها'
+
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'product'],
+                                    name='unique_user_product_rating')
+        ]
+
+    def __str__(self):
+        return f'{self.user}-{self.product}-{self.comment}-{self.score}'
