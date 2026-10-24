@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views.generic import View, TemplateView, DetailView, CreateView
-from products.models import Product, Warranty
+from products.models import Product, Warranty, ProductColor
 from accounts.models import Address
 from .models import Order, OrderItem, DiscountCode
 from .cart_module import Cart
@@ -33,8 +33,22 @@ class CartView(TemplateView):
 class CartAddView(View):
     def post(self, request, pk):
         product = get_object_or_404(Product, id=pk)
-        color, warranty, number, size = request.POST.get('color'), request.POST.get('warranty'), request.POST.get(
-            'number'), request.POST.get('size')
+        color, warranty, size = request.POST.get('color'), request.POST.get('warranty'), request.POST.get('size')
+        try:
+            number = int(request.POST.get('number', 1))
+        except (TypeError, ValueError):
+            number = 1
+        if number < 1:
+            number = 1
+        if color:
+            product_color = ProductColor.objects.filter(product=product, color__name=color).first()
+            stock = (product_color.number or 0) if product_color else 0
+            if stock <= 0:
+                messages.error(request, 'موجودی محصول با این رنگ انتخابی موجود نیست')
+                return redirect('products:product_detail', slug=product.slug)
+            if number > stock:
+                messages.error(request, f'فقط {stock} عدد از این رنگ موجود است')
+                return redirect('products:product_detail', slug=product.slug)
         warranty_price = 0
         if warranty:
             warranty_obj = Warranty.objects.filter(title=warranty).first()

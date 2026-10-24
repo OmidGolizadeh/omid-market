@@ -223,12 +223,14 @@
                                                                 <input type="radio"
                                                                        name="color"
                                                                        id="color-{{ color.id }}"
-                                                                       value="{{ color.name_color }}"
-                                                                       {% if forloop.first %}checked{% endif %}>
+                                                                       value="{{ color.color.name }}"
+                                                                       {% if forloop.first %}checked{% endif %}
+                                                                       title="">
+
                                                                 <label for="color-{{ color.id }}"
                                                                        class="color-swatch"
-                                                                       style="background-color: #{{ color.color_code }};"
-                                                                       title="{{ color.title|default:color.color_code }}">
+                                                                       style="background-color: #{{ color.color.color_code }};"
+                                                                       title="{{ color.title|default:color.color.name }}">
                                                                 </label>
                                                             </div>
                                                         {% endfor %}
@@ -241,7 +243,8 @@
                                                     <select name="warranty" class="form-select">
                                                         {% for warranty in product.warranty.all %}
                                                             <option value="{{ warranty.title }}">{{ warranty.title }} -
-                                                                 قیمت:{{ warranty.price|toman }} تومان</option>
+                                                                قیمت:{{ warranty.price|toman }} تومان
+                                                            </option>
 
                                                         {% endfor %}
                                                     </select>
@@ -255,6 +258,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
                                     <div class="cta-container pt-3 pt-md-5">
                                         <div class="row">

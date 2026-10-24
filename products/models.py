@@ -6,6 +6,19 @@ from accounts.models import User
 from django.utils import timezone
 
 
+class Overall_Color(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True, verbose_name='نام رنگ')
+    color_code = models.CharField(max_length=7, help_text="مثال: #FF5733", verbose_name='کد رنگ')
+    created_at = jmodels.jDateTimeField(auto_now_add=True, blank=True, null=True, verbose_name='تاریخ')
+
+    class Meta:
+        verbose_name = 'رنگ کلی'
+        verbose_name_plural = 'رنگ های کلی'
+
+    def __str__(self):
+        return f'{self.name}-{self.color_code}'
+
+
 class Category_brand(models.Model):
     title = models.CharField(max_length=255, verbose_name='نام برند')
     created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
@@ -136,8 +149,8 @@ class Product(models.Model):
 
 class ProductColor(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='color', verbose_name='محصول')
-    name_color = models.CharField(max_length=255, blank=True, null=True, verbose_name='رنگ')
-    color_code = models.CharField(max_length=7, help_text="مثال: #FF5733", verbose_name='کد رنگ')
+    color = models.ForeignKey(Overall_Color, on_delete=models.CASCADE, null=True, blank=True, related_name='color',
+                              verbose_name='رنگ')
     number = models.IntegerField(blank=True, null=True, verbose_name='تعداد')
     created_at = jmodels.jDateTimeField(auto_now_add=True, blank=True, null=True, verbose_name='تاریخ')
 
@@ -146,7 +159,7 @@ class ProductColor(models.Model):
         verbose_name_plural = 'رنگ محصول ها'
 
     def __str__(self):
-        return f'{self.product} - {self.name_color}'
+        return f'{self.product} - {self.color.name}'
 
 
 class Product_Image(models.Model):

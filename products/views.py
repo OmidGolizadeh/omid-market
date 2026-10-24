@@ -6,7 +6,8 @@ from .forms import CommentForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from .mixins import ProductFilterMixin
+from .mixins import ProductFilterMixin, to_int
+from django.contrib import messages
 
 
 class ProductView(ProductFilterMixin, TemplateView):
@@ -62,27 +63,35 @@ class ProductDetail(DetailView):
             return redirect('accounts:login')
         self.object = self.get_object()
         product = self.object
-        form = CommentForm(request.POST)
-        if form.is_valid():
+        body = (request.POST.get('body') or '').strip()
+        score = to_int(request.POST.get('score'))
+        if not body and score is None:
+            messages.error(request, 'لطفاً امتیاز یا دیدگاه خود را وارد کنید.')
+            return redirect('products:product_detail', slug=product.slug)
+
+        comment = None
+        if body:
+            form = CommentForm(request.POST)
+            if not form.is_valid():
+                context = self.get_context_data()
+                context['commentForm'] = form
+                return self.render_to_response(context)
             comment = form.save(commit=False)
             comment.user = request.user
             comment.product = product
             comment.save()
-            score = request.POST.get('score')
-            if score is not None:
-                try:
-                    score_int = int(score)
-                    if 1 <= score_int <= 5:
-                        Rating.objects.create(user=request.user, product=product,
-                                              defaults={'score': score_int, 'comment': comment})
-                        product.update_score()
-                except ValueError:
-                    pass
-            return redirect('products:product_detail', slug=product.slug)
 
-        context = self.get_context_data()
-        context['commentForm'] = form
-        return self.render_to_response(context)
+        if score is not None and 1 <= score <= 5:
+            rating, created = Rating.objects.get_or_create(user=request.user, product=product,
+                                                           defaults={'score': score, 'comment': comment})
+            if not created:
+                rating.score = score
+                if comment:
+                    rating.comment = comment
+                rating.save()
+            product.update_score()
+
+        return redirect('products:product_detail', slug=product.slug)
 
 
 @require_POST

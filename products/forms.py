@@ -9,17 +9,16 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'body': forms.Textarea(attrs={
                 'class': 'form-control',
-                'name': 'body',
-                'id': 'body',
                 'rows': '4',
-                'required': True,
-                'oninvalid': "this.setCustomValidity('لطفاً متن دیدگاه خود را وارد کنید.')",
-                'oninput': "this.setCustomValidity('')"
+                'placeholder': 'متن کامنت',
             }),
             'parent': forms.HiddenInput(attrs={
                 'class': 'form-control',
-                'name': 'parent_id',
-                'id': 'parent_id',
-                'value': ''
             })
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['body'].required = False
+        self.fields['parent'].required = False
+        self.fields['body'].widget.attrs['id'] = 'body'

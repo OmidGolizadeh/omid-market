@@ -1,19 +1,36 @@
 from django.contrib import admin
-from .models import Product, Category, Category_brand, ProductColor, Product_Image, Warranty, Comment, Like, Rating
+from . import models as product_model
 from django.utils.html import format_html
 from django.db import models
 from django.forms import Textarea, TextInput
 
 
+@admin.register(product_model.Overall_Color)
+class ProductColor_show(admin.ModelAdmin):
+    list_display = ['name', 'show_color', ]
+    readonly_fields = ('created_at',)
+    ordering = ['created_at']
+
+    def show_color(self, obj):
+        if obj.color_code:
+            return format_html(
+                '<div style="width: 30px; height: 30px; background-color: #{}; border-radius: 50%; border: 1px solid #ccc;"></div>',
+                obj.color_code
+            )
+        return "بدون رنگ"
+
+    show_color.short_description = 'نمایش رنگ'
+
+
 class Rating_show(admin.TabularInline):
-    model = Rating
+    model = product_model.Rating
     extra = 1
     fields = ['user', 'product', 'comment', 'score', 'created_at']
     readonly_fields = ('user', 'product', 'comment', 'score', 'created_at',)
     ordering = ('created_at',)
 
 
-@admin.register(Rating)
+@admin.register(product_model.Rating)
 class Rating_show_score(admin.ModelAdmin):
     list_display = ['user', 'product', 'comment', 'score', 'created_at']
     list_filter = ['product', 'score']
@@ -23,7 +40,7 @@ class Rating_show_score(admin.ModelAdmin):
 
 
 class Product_Image_show(admin.TabularInline):
-    model = Product_Image
+    model = product_model.Product_Image
     extra = 1
     fields = ('images', 'show_image_product', 'created_at')
     readonly_fields = ('show_image_product', 'created_at')
@@ -40,7 +57,7 @@ class Product_Image_show(admin.TabularInline):
     show_image_product.short_description = "پیش‌نمایش"
 
 
-@admin.register(Comment)
+@admin.register(product_model.Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'product', 'body_short', 'created_at']
     list_filter = ['created_at', 'product']  # فیلتر تاریخ و محصول
@@ -56,7 +73,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class Comment_show(admin.TabularInline):
-    model = Comment
+    model = product_model.Comment
     extra = 1
     fields = ('user', 'body', 'parent', 'parent_display', 'created_at')
     readonly_fields = ('user', 'parent_display', 'created_at')
@@ -89,7 +106,7 @@ class Comment_show(admin.TabularInline):
         if db_field.name == "parent":
             if request.resolver_match.kwargs.get('object_id'):
                 product_id = request.resolver_match.kwargs.get('object_id')
-                kwargs["queryset"] = Comment.objects.filter(product_id=product_id)
+                kwargs["queryset"] = product_model.Comment.objects.filter(product_id=product_id)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_formset(self, request, obj=None, **kwargs):
@@ -117,7 +134,7 @@ class Comment_show(admin.TabularInline):
 
 
 class Like_show(admin.TabularInline):
-    model = Like
+    model = product_model.Like
     extra = 0
     fields = ('user', 'created_at')
     readonly_fields = ('user', 'created_at')
@@ -125,7 +142,7 @@ class Like_show(admin.TabularInline):
     can_delete = False
 
 
-@admin.register(Product)
+@admin.register(product_model.Product)
 class Product_show(admin.ModelAdmin):
     list_display = (
         'title', 'short_description_truncated', 'price', 'show_image_product', 'get_total_stock', 'view', 'sales_count',
@@ -139,7 +156,7 @@ class Product_show(admin.ModelAdmin):
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
-            if isinstance(instance, Comment) and not instance.user_id:
+            if isinstance(instance, product_model.Comment) and not instance.user_id:
                 instance.user = request.user
             instance.save()
         formset.save_m2m()
@@ -184,7 +201,7 @@ class Product_show(admin.ModelAdmin):
     comments_count.short_description = 'کامت ها'
 
 
-@admin.register(Category)
+@admin.register(product_model.Category)
 class Category_show(admin.ModelAdmin):
     list_display = ['title', 'slug', 'created_at']
     readonly_fields = ('created_at',)
@@ -193,30 +210,30 @@ class Category_show(admin.ModelAdmin):
     filter_horizontal = ('categories',)
 
 
-@admin.register(Category_brand)
+@admin.register(product_model.Category_brand)
 class Category_brand_show(admin.ModelAdmin):
     list_display = ['title']
     readonly_fields = ('created_at',)
     ordering = ['title', 'created_at']
 
 
-@admin.register(ProductColor)
+@admin.register(product_model.ProductColor)
 class ProductColor_show(admin.ModelAdmin):
-    list_display = ['product', 'name_color', 'show_color', 'number']
+    list_display = ['product',  'show_color', 'number']
     readonly_fields = ('created_at',)
     ordering = ['product', 'created_at']
 
     def show_color(self, obj):
-        if obj.color_code:
+        if obj.color.color_code:
             return format_html(
                 '<div style="width: 30px; height: 30px; background-color: #{}; border-radius: 50%; border: 1px solid #ccc;"></div>',
-                obj.color_code
+                obj.color.color_code
             )
         return "بدون رنگ"
 
     show_color.short_description = 'نمایش رنگ'
 
 
-@admin.register(Warranty)
+@admin.register(product_model.Warranty)
 class Warranty_show(admin.ModelAdmin):
     list_display = ['title']
