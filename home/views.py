@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView
-from .models import Team, About_the_store
+from .models import Team, About_the_store, BannerLink
 from .forms import Contact_Form
 from products.models import Product, Category, Like
 from django.db.models import Count
@@ -15,6 +15,7 @@ class Home(TemplateView):
         base_products = Product.objects.select_related('Category', 'brand').annotate(
             comment_count=Count('comment')
         )
+
         products = Product.objects.all()
         context['product'] = base_products.order_by('-created_at')[:8]
         context['category'] = Category.objects.all()
@@ -24,7 +25,10 @@ class Home(TemplateView):
         context['laptop_products'] = base_products.filter(Category__title='لپ تاپ و الترابوک')[:8]
         context['computer_products'] = base_products.filter(Category__title='تجهیزات کامپیوتر')[:8]
         context['camera_products'] = base_products.filter(Category__title='دوربین')[:8]
-
+        context['banner_main'] = BannerLink.objects.filter(main_banner=True).exclude(image='').order_by('order','id')[:4]
+        context['banner_second'] = BannerLink.objects.filter(second_banner=True, order=1).order_by('order', 'id')[:3]
+        context['banner_second_md8'] =BannerLink.objects.filter(second_banner=True, order=2).order_by('order', 'id')[:1]
+        context['banner_second_md4'] =BannerLink.objects.filter(second_banner=True, order=3).order_by('order', 'id')[:1]
         if self.request.user.is_authenticated:
             context['liked_products'] = set(
                 Like.objects.filter(user=self.request.user, product__in=products).values_list(

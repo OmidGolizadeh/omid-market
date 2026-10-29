@@ -40,6 +40,14 @@ class ProductFilterMixin:
             ids = Category.objects.filter(slug__in=self.selected_slugs).values_list('id', flat=True)
             products = products.filter(Category_id__in=get_category_tree_ids(ids))
 
+        raw_brands = GET.getlist('brand')
+        self.selected_brands = [i for i in map(to_int, raw_brands) if i is not None]
+        if raw_brands:
+            if self.selected_brands:
+                products = products.filter(brand_id__in=self.selected_brands)
+            else:
+                products = products.none()
+
         self.min_price = to_int(GET.get('min_price'))
         self.max_price = to_int(GET.get('max_price'))
         if self.min_price is not None:
@@ -71,6 +79,7 @@ class ProductFilterMixin:
             'object_list': products,
             'latest_products': Product.objects.order_by('-created_at')[:3],
             'selected_slugs': self.selected_slugs,
+            'selected_brands': self.selected_brands,
             'min_price': self.min_price,
             'max_price': self.max_price,
             'only_available': self.only_available,

@@ -60,3 +60,22 @@ class Link(models.Model):
     class Meta:
         verbose_name = 'لینک شبکه اجتمایی'
         verbose_name_plural = 'لینک شبکه های اجتمایی'
+
+
+class BannerLink(models.Model):
+    title = models.CharField(max_length=255, blank=True, null=True, verbose_name='موضوغ')
+    image = models.ImageField(upload_to='images/banners', null=True, blank=True, verbose_name='بنر')
+    url = models.CharField(max_length=500, blank=True, null=True, verbose_name='آدرس')
+    main_banner = models.BooleanField(default=False, blank=True, null=True, verbose_name='بتر اصلی')
+    second_banner = models.BooleanField(default=False, blank=True, null=True, verbose_name='بنر فرعی')
+    second_url = models.BooleanField(default=False, blank=True, null=True, verbose_name='آدرس فرعی')
+    order = models.PositiveSmallIntegerField(default=0, blank=True, null=True, verbose_name='ترتیب')
+    created_at = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریج ایجاد')
+
+    class Meta:
+        ordering = ('created_at',)
+        verbose_name = 'بنر و آدرس صفحه اصلی'
+        verbose_name_plural = 'بنر ها  و آدرس ها صفحه اصلی'
+
+    def __str__(self):
+        return f'{self.title}-{self.url}-{self.order}'

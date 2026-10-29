@@ -1,7 +1,40 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import About_the_store, Contact_us, Team, Link
+from .models import About_the_store, Contact_us, Team, Link, BannerLink
+from .forms import BannerLinkForm
 import jdatetime
+
+
+@admin.register(BannerLink)
+class BannerLinkAdmin(admin.ModelAdmin):
+    form = BannerLinkForm
+    list_display = ('image_thumb', 'title', 'url', 'main_banner', 'second_banner', 'second_url', 'order')
+    list_display_links = ('image_thumb', 'title')
+    list_editable = ('order',)
+    readonly_fields = ('image_preview',)
+    list_filter = ('order', 'main_banner', 'second_banner', 'second_url','created_at')
+    fields = (
+        'title', 'image', 'image_preview', 'url',
+        'main_banner', 'second_banner', 'second_url', 'order',
+    )
+
+    @admin.display(description='تصویر')
+    def image_thumb(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="height:50px; width:auto; border-radius:4px;">',
+                obj.image.url,
+            )
+        return '—'
+
+    @admin.display(description='پیش‌نمایش بنر')
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="max-width:500px; max-height:300px; border-radius:6px;">',
+                obj.image.url,
+            )
+        return 'هنوز تصویری آپلود نشده است'
 
 
 @admin.register(Team)

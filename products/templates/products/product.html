@@ -44,7 +44,8 @@
                                                 {% for key, label in sort_options %}
                                                     <span class="order-filter d-block d-sm-inline-block {% if current_sort == key %}active{% endif %}">
                                                         <a class="text-reset text-decoration-none"
-                                                        href="?{% if base_query %}{{ base_query }}&{% endif %}sort={{ key }}">{{ label }}</a>
+                                                           href="?
+                                                                   {% if base_query %}{{ base_query }}&{% endif %}sort={{ key }}">{{ label }}</a>
                                                     </span>
                                                 {% endfor %}
 
@@ -142,6 +143,14 @@
                                                         <!-- /Product Box -->
                                                     </div>
                                                     <!-- /Product Box -->
+                                                </div>
+                                            {% empty %}
+                                                <div class="col-12 w-100">
+                                                    <div class="alert alert-warning text-center my-4">
+                                                        <p class="mb-2">محصولی با این فیلترها پیدا نشد.</p>
+                                                        <a href="{{ request.path }}"
+                                                           class="btn btn-sm btn-outline-secondary">حذف فیلترها</a>
+                                                    </div>
                                                 </div>
                                             {% endfor %}
                                             <!-- /Products -->
