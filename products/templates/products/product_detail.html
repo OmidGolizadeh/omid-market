@@ -298,11 +298,10 @@
 
                                                     </div>
                                                 </div>
-                                                <a href="#">
-                                                    <div class="btn btn-outline-secondary encode43bf243d mt-1 mt-sm-0"
-                                                         data-toggle="tooltip" data-placement="top"
-                                                         title="مقایسه"></div>
-                                                </a>
+                                                <button type="submit"
+                                                        formaction="{% url 'products:compare_add' product.id %}"
+                                                        class="btn btn-outline-secondary encode43bf243d mt-1 mt-sm-0"
+                                                        title="مقایسه"></button>
                                             </div>
                                         </div>
                                     </div>
@@ -360,77 +359,31 @@
                                                 <div id="details-tab" class="tabs-container px-0 px-md-3 pb-0 pb-md-3"
                                                      style="display:none">
                                                     <!-- Detail Section -->
-                                                    <div class="row">
-                                                        <div class="col-12 my-2">
-                                            <span class="detail-title"><i
-                                                    class="fa fa-chevron-left small"></i> مشخصات کلی</span>
+                                                    {% regroup product.specifications.all by group as spec_groups %}
+                                                    {% for g in spec_groups %}
+                                                        <div class="row">
+                                                            <div class="col-12 my-2">
+                                                        <span class="detail-title">
+                                                            <i class="fa fa-chevron-left small"></i>{{ g.grouper }}</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="row mb-2">
-                                                        <div class="col-12 col-md-3 font-weight-bold">
-                                                            <div class="bg-light p-2">طول</div>
-                                                        </div>
-                                                        <div class="col-12 col-md-9 pr-md-0">
-                                                            <div class="bg-light p-2">32 سانتی متر</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-2">
-                                                        <div class="col-12 col-md-3 font-weight-bold">
-                                                            <div class="bg-light p-2">عرض</div>
-                                                        </div>
-                                                        <div class="col-12 col-md-9 pr-md-0">
-                                                            <div class="bg-light p-2">15 سانتی متر</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-2">
-                                                        <div class="col-12 col-md-3 font-weight-bold">
-                                                            <div class="bg-light p-2">ارتفاع</div>
-                                                        </div>
-                                                        <div class="col-12 col-md-9 pr-md-0">
-                                                            <div class="bg-light p-2">25 سانتی متر</div>
-                                                        </div>
-                                                    </div>
+                                                        {% for spec in g.list %}
+                                                            <div class="row mb-2">
+                                                                <div class="col-12 col-md-3 font-weight-bold">
+                                                                    <div class="bg-light p-2">{{ spec.title }}</div>
+                                                                </div>
+                                                                <div class="col-12 col-md-9 pr-md-0">
+                                                                    <div class="bg-light p-2">{{ spec.value }}</div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    {% empty %}
+                                                        <p class="text-muted p-3">مشخصاتی برای این محصول ثبت نشده
+                                                            است.</p>
+                                                    {% endfor %}
                                                     <!-- /Detail Section -->
                                                     <!-- Detail Section -->
-                                                    <div class="row">
-                                                        <div class="col-12 my-2">
-                                            <span class="detail-title"><i
-                                                    class="fa fa-chevron-left small"></i> صفحه نمایش</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-2">
-                                                        <div class="col-12 col-md-3 font-weight-bold">
-                                                            <div class="bg-light p-2">صفحه نمایش رنگی</div>
-                                                        </div>
-                                                        <div class="col-12 col-md-9 pr-md-0">
-                                                            <div class="bg-light p-2">بله</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-2">
-                                                        <div class="col-12 col-md-3 font-weight-bold">
-                                                            <div class="bg-light p-2">صفحه نمایش لمسی</div>
-                                                        </div>
-                                                        <div class="col-12 col-md-9 pr-md-0">
-                                                            <div class="bg-light p-2">بله</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-2">
-                                                        <div class="col-12 col-md-3 font-weight-bold">
-                                                            <div class="bg-light p-2">بازه‌ی اندازه صفحه نمایش</div>
-                                                        </div>
-                                                        <div class="col-12 col-md-9 pr-md-0">
-                                                            <div class="bg-light p-2">6.0 اینچ و بزرگتر</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mb-2">
-                                                        <div class="col-12 col-md-3 font-weight-bold">
-                                                            <div class="bg-light p-2">نسبت صفحه‌نمایش به بدنه</div>
-                                                        </div>
-                                                        <div class="col-12 col-md-9 pr-md-0">
-                                                            <div class="bg-light p-2">87.4 درصد</div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- /Detail Section -->
+
                                                 </div>
                                                 <!-- /Details Tab -->
 

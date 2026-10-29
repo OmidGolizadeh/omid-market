@@ -1,4 +1,7 @@
+from lib2to3.fixes.fix_input import context
+
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.defaultfilters import title
 from django.views.generic import TemplateView, DetailView, View
 from .models import Product, Category, Category_brand, Comment, Like, ProductColor, Rating
 from django.db.models import F, Exists, OuterRef, Q
@@ -8,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from .mixins import ProductFilterMixin, to_int
 from django.contrib import messages
+from collections import OrderedDict
 
 
 class ProductView(ProductFilterMixin, TemplateView):
@@ -43,6 +47,9 @@ class ProductDetail(DetailView):
         Product.objects.filter(pk=obj.pk).update(view=F('view') + 1)
         obj.refresh_from_db()
         return obj
+
+    def get_queryset(self):
+        return Product.objects.prefetch_related('specifications__group')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -126,3 +133,58 @@ class Search_view(View):
             'object_list': products,
             'q': q,
         })
+
+
+COMPARE_MAX = 4
+
+
+class CompareView(TemplateView):
+    template_name = 'products/compare.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ids = self.request.session.get('compare', [])
+        products = list(Product.objects.filter(pk__in=ids).prefetch_related('specifications__group'))
+        products.sort(key=lambda p: ids.index(p.id))
+        group = OrderedDict()
+        for p in products:
+            for spec in p.specifications.all():
+                group_name = spec.group.title if spec.group else 'سایر'
+                group.setdefault(group_name, OrderedDict()) \
+                    .setdefault(spec.title, {})[p.id] = spec.value
+        table = []
+        for group_name, rows in group.items():
+            table.append({
+                'title': group_name,
+                'rows': [
+                    {'title': title, 'values': [vals.get(p.id, '—') for p in products]}
+                    for title, vals in rows.items()
+                ],
+            })
+
+        context['products'] = products
+        context['table'] = table
+        context['empty_slots'] = range(COMPARE_MAX - len(products))
+        return context
+
+class CompareAdd(View):
+    def post(self, request, pk):
+        product = get_object_or_404(Product, id=pk)
+        ids = request.session.get('compare', [])
+        if product.id in ids:
+            messages.error(request, 'این محصول قبلاً به لیست مقایسه اضافه شده است.')
+        elif len(ids) >= COMPARE_MAX:
+            messages.error(request, f'حداکثر {COMPARE_MAX} محصول را می‌توانید مقایسه کنید.')
+        else:
+            ids.append(product.id)
+            request.session['compare'] = ids
+            messages.success(request, 'محصول به لیست مقایسه اضافه شد.')
+        return redirect(request.META.get('HTTP_REFERER') or 'products:compare')
+
+class CompareDelete(View):
+    def post(self, request, pk):
+        ids = request.session.get('compare', [])
+        if pk in ids:
+            ids.remove(pk)
+            request.session['compare'] = ids
+        return redirect('products:compare')

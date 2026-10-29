@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}مقایسه محصول{% endblock %}
+{% block content %}
+    <section class="inner-page" id="contact-page">
+        <div class="container-fluid" id="page-hero">
+            <div class="row">
+                <div class="col-12">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 px-0">
+                                <h1>مقایسه محصول</h1>
+                                <p>محصولات را با هم مقایسه کنید.</p>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="{% url 'home:home' %}">صفحه نخست</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">مقایسه محصول</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container d-none d-lg-block" id="compare-table">
+            <div class="row">
+                <div class="col-12">
+                    <div class="content">
+
+                        <div id="products-compared">
+                            <div class="row mt-2 bg-white">
+                                {% for p in products %}
+                                    <div class="col-3 px-2 pb-2 products-compare-item">
+                                        <div class="bg-light p-2 text-center">
+                                            <form method="post" action="{% url 'products:compare_remove' p.id %}">
+                                                {% csrf_token %}
+                                                <button class="btn btn-sm btn-outline-secondary float-start rounded-circle">
+                                                    X
+                                                </button>
+                                            </form>
+                                            <div><img src="{{ p.images.url }}" alt="{{ p.title }}" class="img-fluid">
+                                            </div>
+                                            <div class="title">{{ p.title }}</div>
+                                            <div class="encode4365gbf265g43d-container">
+                                                <span class="encode4365gbf265g43d">{{ p.final_price|toman }} <span>تومان</span></span>
+                                            </div>
+                                            <a href="{% url 'products:product_detail' p.slug %}"
+                                               class="btn btn-sm btn-primary mt-2">مشاهده و خرید محصول</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                                {% for _ in empty_slots %}
+                                    <div class="col-3 px-2 pb-2">
+                                        <div class="bg-light p-5 text-center text-muted">
+                                            <a href="{% url 'products:product' %}">افزودن محصول</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row" id="compare-table-details">
+                            <div class="col-12 px-lg-0">
+                                {% for group in table %}
+                                    <div class="row">
+                                        <div class="col-12 my-2">
+                                            <div class="bg-light-yellow px-2 py-1 rounded">
+                                                <span class="detail-title"><i
+                                                        class="fa fa-chevron-left small"></i> {{ group.title }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% for row in group.rows %}
+                                        <div class="col-12 mb-1 px-2 font-weight-light">
+                                            <div class="sub-detail-title p-2">{{ row.title }}</div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            {% for value in row.values %}
+                                                <div class="col-3 px-2">
+                                                    <div class="bg-light p-2">{{ value }}</div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section id="mobile-forbidden" class="d-lg-none">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="container px-lg-0">
+                            <div class="row mb-0 mb-sm-5">
+                                <div class="col-12 px-0">
+                                    <div class="row">
+                                        <div class="col-12 p-5 text-center">
+                                            <span>این صفحه در موبایل قابل مشاهده نمی باشد.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+{% endblock %}

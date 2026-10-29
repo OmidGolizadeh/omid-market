@@ -6,6 +6,19 @@ from accounts.models import User
 from django.utils import timezone
 
 
+class SpecificationGroup(models.Model):
+    title = models.CharField(max_length=255, blank=True, null=True, verbose_name='عنوان گروه')
+    order = models.PositiveSmallIntegerField(default=0, blank=True, null=True, verbose_name='ترتیب')
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = 'گروه مشخصات'
+        verbose_name_plural = 'گروه های مشخصات'
+
+    def __str__(self):
+        return f'{self.title}'
+
+
 class Overall_Color(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True, verbose_name='نام رنگ')
     color_code = models.CharField(max_length=7, help_text="مثال: #FF5733", verbose_name='کد رنگ')
@@ -235,3 +248,20 @@ class Rating(models.Model):
 
     def __str__(self):
         return f'{self.user}-{self.product}-{self.comment}-{self.score}'
+
+
+class ProductSpecification(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True, related_name='specifications',
+                                verbose_name='محصول')
+    group = models.ForeignKey(SpecificationGroup, on_delete=models.CASCADE, null=True, blank=True, verbose_name='گروه')
+    title = models.CharField(max_length=255, blank=True, null=True, verbose_name='عنوان (مثلاً طول)')
+    value = models.CharField(max_length=255, null=True, blank=True, verbose_name='مقدار (مثلاً ۳۲ سانتی‌متر)')
+    order = models.PositiveSmallIntegerField(default=0, null=True, blank=True, verbose_name='ترتیب')
+
+    class Meta:
+        ordering = ['group__order', 'group_id', 'order', 'id']
+        verbose_name = 'مشخصه محصول'
+        verbose_name_plural = 'مشخصات محصول'
+
+    def __str__(self):
+        return f'{self.product}-{self.title}'

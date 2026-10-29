@@ -5,6 +5,20 @@ from django.db import models
 from django.forms import Textarea, TextInput
 
 
+class ProductSpecificationInline(admin.TabularInline):
+    model = product_model.ProductSpecification
+    extra = 3
+
+
+
+@admin.register(product_model.SpecificationGroup)
+class SpecificationGroup_show(admin.ModelAdmin):
+    list_display = ['title', 'order']
+    list_filter = ['order']
+    search_fields = ['title']
+    ordering = ['order']
+
+
 @admin.register(product_model.Overall_Color)
 class ProductColor_show(admin.ModelAdmin):
     list_display = ['name', 'show_color', ]
@@ -59,78 +73,45 @@ class Product_Image_show(admin.TabularInline):
 
 @admin.register(product_model.Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'product', 'body_short', 'created_at']
-    list_filter = ['created_at', 'product']  # فیلتر تاریخ و محصول
+    list_display = ['product', 'id', 'user', 'body_short', 'parent', 'created_at']
+    list_filter = ['created_at', 'product']
     search_fields = ['body', 'user__username', 'user__full_name', 'product__title']
     ordering = ['-created_at']
     readonly_fields = ['created_at']
+    list_select_related = ['product', 'user', 'parent']
+    autocomplete_fields = ['product']  # نیاز به search_fields در ProductAdmin دارد
     list_per_page = 20
 
+    @admin.display(description='متن کامنت')
     def body_short(self, obj):
-        return obj.body[:50] + '...' if len(obj.body) > 50 else obj.body
+        body = obj.body or ''
+        return body[:50] + '...' if len(body) > 50 else body
 
-    body_short.short_description = 'متن کامنت'
+    def get_readonly_fields(self, request, obj=None):
+        # user فقط روی کامنت‌های موجود readonly باشد
+        if obj:
+            return ['user', 'created_at']
+        return ['created_at']
 
+    def get_exclude(self, request, obj=None):
+        # هنگام افزودن، user خودکار پر می‌شود و در فرم نمایش داده نمی‌شود
+        return None if obj else ['user']
 
-class Comment_show(admin.TabularInline):
-    model = product_model.Comment
-    extra = 1
-    fields = ('user', 'body', 'parent', 'parent_display', 'created_at')
-    readonly_fields = ('user', 'parent_display', 'created_at')
-    ordering = ['-created_at']
-
-    def parent_display(self, obj):
-        if not obj.parent:
-            return format_html('<span style="color:#999;">بدون منبع</span>')
-
-        parent = obj.parent
-        text = parent.body[:70] + '...' if len(parent.body) > 70 else parent.body
-
-        return format_html(
-            '''
-            <div style="background:#f1f5f9; padding:7px 11px; border-radius:6px; border-right:3px solid #3b82f6; max-width:340px;">
-                <div style="font-size:12px; color:#64748b; margin-bottom:4px;">
-                    <strong>{}</strong> • {}
-                </div>
-                <div style="font-size:13px; color:#1e293b; line-height:1.4;">{}</div>
-            </div>
-            ''',
-            parent.user,
-            parent.created_at.strftime('%Y/%m/%d %H:%M') if parent.created_at else '',
-            text
-        )
-
-    parent_display.short_description = 'پیش‌نمایش منبع'
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.user = request.user
+        super().save_model(request, obj, form, change)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "parent":
-            if request.resolver_match.kwargs.get('object_id'):
-                product_id = request.resolver_match.kwargs.get('object_id')
-                kwargs["queryset"] = product_model.Comment.objects.filter(product_id=product_id)
+        if db_field.name == 'parent':
+            object_id = request.resolver_match.kwargs.get('object_id')
+            if object_id:
+                comment = product_model.Comment.objects.filter(pk=object_id).first()
+                if comment:
+                    kwargs['queryset'] = product_model.Comment.objects.filter(
+                        product_id=comment.product_id
+                    ).exclude(pk=comment.pk)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    def get_formset(self, request, obj=None, **kwargs):
-        formset = super().get_formset(request, obj, **kwargs)
-
-        class CommentFormSet(formset):
-            def save_new(self, form, commit=True):
-                # کاربر رو به صورت خودکار روی ادمین فعلی تنظیم می‌کنه
-                instance = form.save(commit=False)
-                instance.user = request.user
-                if commit:
-                    instance.save()
-                return instance
-
-        return CommentFormSet
-
-    formfield_overrides = {
-        models.TextField: {
-            'widget': Textarea(attrs={
-                'rows': 3,
-                'style': 'width:100%; min-height:70px; resize:vertical;'
-            })
-        },
-    }
 
 
 class Like_show(admin.TabularInline):
@@ -151,7 +132,7 @@ class Product_show(admin.ModelAdmin):
     search_fields = ['title', 'short_description_truncated', ]
     ordering = ['title', '-created_at']
     list_filter = ['created_at']
-    inlines = (Product_Image_show, Like_show, Rating_show, Comment_show)
+    inlines = (Product_Image_show, Like_show, Rating_show, ProductSpecificationInline)
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
@@ -219,7 +200,7 @@ class Category_brand_show(admin.ModelAdmin):
 
 @admin.register(product_model.ProductColor)
 class ProductColor_show(admin.ModelAdmin):
-    list_display = ['product',  'show_color', 'number']
+    list_display = ['product', 'show_color', 'number']
     readonly_fields = ('created_at',)
     ordering = ['product', 'created_at']
 
