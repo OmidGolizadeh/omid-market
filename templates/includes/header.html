@@ -1,4 +1,96 @@
 {% load static %}
+<style>
+    .user-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .4rem .9rem;
+        background: #fff;
+        border: 1px solid #FFC107;
+        border-radius: 10px;
+        color: #000;
+        font-size: .9rem;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+    .user-menu-btn .menu-avatar {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .user-menu-btn:hover,
+    .user-menu-btn[aria-expanded="true"] {
+        background: #FFC107;
+        color: #000;
+    }
+
+    .user-menu-btn i {
+        color: #000;
+    }
+
+    .user-menu-list {
+        min-width: 230px;
+        padding: .5rem 0;
+        background: #fff;
+        border: 1px solid #FFC107;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+        text-align: right;
+    }
+
+    .user-menu-head {
+        display: flex;
+        flex-direction: column;
+        padding: .5rem 1rem;
+        font-weight: 700;
+        color: #000;
+    }
+
+    .user-menu-head small {
+        font-weight: 400;
+        color: #6c757d;
+    }
+
+    .user-menu-list .dropdown-divider {
+        border-top-color: rgba(255, 193, 7, .5);
+    }
+
+    .user-menu-list .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+        padding: .6rem 1rem;
+        font-size: .9rem;
+        color: #000;
+    }
+
+    .user-menu-list .dropdown-item i {
+        width: 20px;
+        text-align: center;
+        color: #000;
+    }
+
+    .user-menu-list .dropdown-item:hover,
+    .user-menu-list .dropdown-item:focus {
+        background: rgba(255, 193, 7, .25);
+        color: #000;
+    }
+
+    .user-menu-list .dropdown-item:active {
+        background: #FFC107;
+        color: #000;
+    }
+
+    /* خروج: قرمز بماند تا از بقیه جدا باشد */
+    .user-menu-list .dropdown-item.text-danger,
+    .user-menu-list .dropdown-item.text-danger i {
+        color: #dc3545;
+    }
+</style>
 <!-- Header -->
 <section id="header">
     <!-- Top NavBar -->
@@ -42,7 +134,52 @@
                     <div class="row">
                         <div class="col-12 col-md-7 col-lg-6 text-center" id="btn-login-register">
                             {% if request.user.is_authenticated %}
-                                <a class="text-danger" href="{% url 'accounts:logout' %}">خروج از احساب</a>
+                                <div class="dropdown user-menu">
+                                    <button class="user-menu-btn dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src="{% static 'images/icons/profile-menu/profile.webp' %}" alt="profile"
+                                             class="menu-avatar" width="20" height="20">
+                                        <span>{{ request.user.full_name|default:request.user.phone_number }}</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu user-menu-list">
+                                        <li class="user-menu-head">
+                                            <span>{{ request.user.full_name|default:request.user.phone_number }}</span>
+                                            <small>{{ request.user.phone_number }}</small>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="profile/personal-info.html">
+                                                <img src="{% static 'images/icons/profile-menu/profile.webp' %}"> مشخصات کاربری
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="profile/factors.html">
+                                                <img src="{% static 'images/icons/profile-menu/orders.webp' %}"> سفارش‌ها
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'accounts:profile_address' %}">
+                                                <img src="{% static 'images/icons/profile-menu/addresses.webp' %}"> آدرس‌ها
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="profile/favorites.html">
+                                                <img src="{% static 'images/icons/profile-menu/favorites.webp' %}"> علاقه‌مندی‌ها
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                                                <img  src="{% static 'images/icons/profile-menu/exit.webp' %}"> خروج از حساب کاربری
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             {% else %}
                                 <a href="{% url 'accounts:login' %}">ورود</a> /
                                 <a href="{% url 'accounts:register' %}">عضویت</a>
@@ -174,17 +311,7 @@
                                                     <li class="dm-bottom-separator"></li>
                                                 </ul>
                                             </li>
-                                            <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href="profile/personal-info.html" aria-expanded="false">پروفایل
-                                                    کاربری<em class="droopmenu-topanim"></em></a>
-                                                <div class="dm-arrow"></div>
-                                                <ul style="">
-                                                    <li><a href="profile/personal-info.html">مشخصات کاربری</a></li>
-                                                    <li><a href="profile/factors.html">سفارشات</a></li>
-                                                    <li><a href="{% url 'accounts:profile_address' %}">آدرس ها</a></li>
-                                                    <li><a href="profile/favorites.html">علاقه مندی ها</a></li>
-                                                </ul>
-                                            </li>
+                                            
                                         </ul>
                                     </div>
                                 </div>

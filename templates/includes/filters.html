@@ -60,14 +60,14 @@
         {% if selected_brand %}<input type="hidden" name="brand" value="{{ selected_brand }}">{% endif %}
         <div class="accordion filters-container mt-3">
             <div class="accordion-item">
-                <h2 class="accordion-header" id="headingTwo">
+                <h2 class="accordion-header" id="headingOne">
                     <button class="accordion-button py-2 px-3" type="button"
-                            data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-                            aria-expanded="true" aria-controls="collapseTwo">
+                            data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                            aria-expanded="true" aria-controls="collapseOne">
                         گروه های محصولات
                     </button>
                 </h2>
-                <div class="accordion-body p-2">
+                <div id="collapseOne" class="accordion-body p-2">
                     <div class="cat-tree">
                         {% for c1 in menu_categories %}
                             <div class="cat-node">

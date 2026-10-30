@@ -15,20 +15,25 @@
                 <div class="col-12 col-md-9" data-aos="fade-zoom-in" data-aos-duration="700">
                     <div id="carouselExampleCaptions" class="carousel slide carousel-fade" data-bs-ride="carousel">
                         <div class="carousel-indicators">
-                            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0"
-                                    class="active" aria-current="true" aria-label="Slide 1"></button>
-                            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
-                                    aria-label="Slide 2"></button>
+                            {% for main in banner_main %}
+                                <button type="button" data-bs-target="#carouselExampleCaptions"
+                                        data-bs-slide-to="{{ forloop.counter0 }}"
+                                        {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                                        aria-label="Slide {{ forloop.counter }}"></button>
+                            {% endfor %}
                         </div>
+
                         <div class="carousel-inner">
                             {% for main in banner_main %}
-                                <div class="carousel-item active">
-                                    <a href="{{ main.url }}">
-                                        <img src="{{ main.image.url }}" class="d-block" alt="{{ main.title }}">
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <a href="{{ main.url|default:'#' }}">
+                                        <img src="{{ main.image.url }}" class="d-block"
+                                             alt="{{ main.title|default:'' }}">
                                     </a>
                                 </div>
                             {% endfor %}
                         </div>
+
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
                                 data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -200,9 +205,9 @@
 
                     {% endfor %}
                 {% else %}
-                    <P class="alert"
-                       style="text-align: center;width: 1320px; color: #842029;background-color: #FFC107;">
-                        بزودی </P>
+                    <div class="alert alert-warning text-center col-12 my-4">
+                        <p class="mb-2 text-danger">بزودی</p>
+                    </div>
                 {% endif %}
             </div>
 
@@ -334,9 +339,9 @@
                         </div>
                     {% endwith %}
                 {% else %}
-                    <P class="alert"
-                       style="text-align: center;width: 1320px; color: #842029;background-color: #FFC107;">
-                        بزودی </P>
+                    <div class="alert alert-warning text-center col-12 my-4">
+                        <p class="mb-2 text-danger">بزودی</p>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -473,9 +478,9 @@
                         </div>
                     {% endfor %}
                 {% else %}
-                    <P class="alert"
-                       style="text-align: center;width: 1320px; color: #842029;background-color: #FFC107;">
-                        بزودی </P>
+                    <div class="alert alert-warning text-center col-12 my-4">
+                        <p class="mb-2 text-danger">بزودی</p>
+                    </div>
                 {% endif %}
             </div>
 
@@ -559,9 +564,9 @@
                         </div>
                     {% endfor %}
                 {% else %}
-                    <P class="alert"
-                       style="text-align: center;width: 1320px; color: #842029;background-color: #FFC107;">
-                        بزودی </P>
+                    <div class="alert alert-warning text-center col-12 my-4">
+                        <p class="mb-2 text-danger">بزودی</p>
+                    </div>
                 {% endif %}
             </div>
 
@@ -645,9 +650,9 @@
                         </div>
                     {% endfor %}
                 {% else %}
-                    <P class="alert"
-                       style="text-align: center;width: 1320px; color: #842029;background-color: #FFC107;">
-                        بزودی </P>
+                    <div class="alert alert-warning text-center col-12 my-4">
+                        <p class="mb-2 text-danger">بزودی</p>
+                    </div>
                 {% endif %}
             </div>
 
@@ -731,9 +736,9 @@
                         </div>
                     {% endfor %}
                 {% else %}
-                    <P class="alert"
-                       style="text-align: center;width: 1320px; color: #842029;background-color: #FFC107;">
-                        بزودی </P>
+                    <div class="alert alert-warning text-center col-12 my-4">
+                        <p class="mb-2 text-danger">بزودی</p>
+                    </div>
                 {% endif %}
             </div>
             <!-- /Products -->
