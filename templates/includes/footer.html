@@ -6,7 +6,7 @@
             <div class="col-6 col-sm-4 col-lg-2">
                 <div class="title">دسترسی سریع</div>
                 <ul>
-                    <li><a href="blog.html">بلاگ آموزشی</a></li>
+                    <li><a href="">بلاگ آموزشی</a></li>
                     <li><a href="{% url 'home:faq' %}">راهنمای خرید</a></li>
                     <li><a href="{% url 'home:faq' %}">شیوه های پرداخت</a></li>
                     <li><a href="{% url 'home:contact' %}">پیگیری سفارش</a></li>
@@ -18,23 +18,22 @@
             <div class="col-6 col-sm-4 col-lg-2">
                 <div class="title">گروه های محصولات</div>
                 <ul>
-                    <li><a href="products.html">تجهیزات کامپیوتر</a></li>
-                    <li><a href="products.html">گوشی موبایل</a></li>
-                    <li><a href="products.html">جانبی موبایل</a></li>
-                    <li><a href="products.html">ساعت هوشمند</a></li>
-                    <li><a href="products.html">جانبی کامپیوتر</a></li>
-                    <li><a href="products.html">دوربین</a></li>
-                    <li><a href="products.html">لپ تاپ</a></li>
+                    {% for u in footer_links %}
+                        <li><a href="{{ u.url }}">{{ u.title }}</a></li>
+                    {% endfor %}
                 </ul>
             </div>
             <div class="col-6 col-sm-4 col-lg-2 d-none d-sm-inline-block">
                 <div class="title">ناحیه کاربری</div>
                 <ul>
-                    <li><a href="login.html">ورود به سایت</a></li>
-                    <li><a href="register.html">عضویت در سایت</a></li>
-                    <li><a href="reset-password.html">بازیابی رمز عبور</a></li>
-                    <li><a href="cart.html">سبد خرید</a></li>
-                    <li><a href="checkout.html">پیش فاکتور</a></li>
+                    {% if not request.user.is_authenticated %}
+                        <li><a href="{% url 'accounts:login' %}">ورود به سایت</a></li>
+                        <li><a href="{% url 'accounts:register' %}">عضویت در سایت</a></li>
+                        <li><a href="{% url '' %}">بازیابی رمز عبور</a></li>
+                    {% else %}
+                        <li><a href="{% url 'cart:cart_detail' %}">سبد خرید</a></li>
+                        <li><a href="{% url 'products:compare' %}">مقایسه محصول</a></li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="col-12 col-md-12 col-lg-6">
@@ -47,19 +46,19 @@
                         <div>پاسخگوی شما هستیم</div>
                         <div>{{ about.phone }}</div>
                     </div>
-                    <div class="col-12 col-md-6 pt-2 pt-md-0" id="encode43vfbbbfb">
-                        <div class="row">
-                            <div class="col-4 text-center">
-                                <a href="#"><img src="" alt=""></a>
-                            </div>
-                            <div class="col-4 text-center">
-                                <a href="#"><img src="" alt=""></a>
-                            </div>
-                            <div class="col-4 text-center">
-                                <a href="#"><img src="" alt=""></a>
-                            </div>
-                        </div>
-                    </div>
+                    {#                    <div class="col-12 col-md-6 pt-2 pt-md-0" id="encode43vfbbbfb">#}
+                    {#                        <div class="row">#}
+                    {#                            <div class="col-4 text-center">#}
+                    {#                                <a href="#"><img src="" alt=""></a>#}
+                    {#                            </div>#}
+                    {#                            <div class="col-4 text-center">#}
+                    {#                                <a href="#"><img src="" alt=""></a>#}
+                    {#                            </div>#}
+                    {#                            <div class="col-4 text-center">#}
+                    {#                                <a href="#"><img src="" alt=""></a>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
                 </div>
             </div>
         </div>
@@ -72,15 +71,25 @@
     <div class="container">
         <div class="row">
             <div class="col-12 col-sm-6" id="social-links">
-                <span>ما را دنبال کنید</span>
-                <a href="#"><img src="{% static 'images/social/insta.png' %}" alt="insta.png"></a>
-                <a href="#"><img src="{% static 'images/social/facebook.png' %}" alt="facebook.png"></a>
-                <a href="#"><img src="{% static 'images/social/linkedin.png' %}" alt="linkedin.png"></a>
-                <a href="#"><img src="{% static 'images/social/twitter.png' %}" alt="twitter.png"></a>
-                <a href="#"><img src="{% static 'images/social/youtube.png' %}" alt="youtube.png"></a>
-            </div>
-            <div class="col-12 col-sm-6 text-sm-end pt-2 pt-sm-0">
-                <span>کلیه حقوق و مادی معنوی محفوط است.</span>
+                {% for l in footer_links_about %}
+                    <span>ما را دنبال کنید</span>
+                    {% if l.title == 'INSTA' %}
+                        <a href="{{ l.url }}"><img src="{% static 'images/social/insta.png' %}" alt="{{ l.title }}"></a>
+                    {% elif l.title == 'FACEBOOK' %}
+                        <a href="{{ l.url }}"><img src="{% static 'images/social/facebook.png' %}" alt="{{ l.title }}"></a>
+                    {% elif l.title == 'LINKEDIN' %}
+                        <a href="{{ l.url }}"><img src="{% static 'images/social/linkedin.png' %}" alt="{{ l.title }}"></a>
+                    {% elif l.title == 'X' %}
+                        <a href="{{ l.url }}"><img src="{% static 'images/social/twitter.png' %}"
+                                                   alt="{{ l.title }}"></a>
+                    {% elif l.title == 'YOUTUBE' %}
+                        <a href="{{ l.url }}"><img src="{% static 'images/social/youtube.png' %}"
+                                                   alt="{{ l.title }}"></a>
+                    {% elif l.title == 'TELEGRAM' %}
+                        <a  href="{{ l.url }}"><img style="width: 17px;height: 14px;" src="{% static 'images/social/telegram.jpg' %}"
+                                                   alt="{{ l.title }}"></a>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>

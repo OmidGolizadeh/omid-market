@@ -29,6 +29,7 @@ class Home(TemplateView):
         context['banner_second'] = BannerLink.objects.filter(second_banner=True, order=1).order_by('order', 'id')[:3]
         context['banner_second_md8'] =BannerLink.objects.filter(second_banner=True, order=2).order_by('order', 'id')[:1]
         context['banner_second_md4'] =BannerLink.objects.filter(second_banner=True, order=3).order_by('order', 'id')[:1]
+        context['home_links'] = BannerLink.objects.filter(second_url=True).order_by('order', 'id')
         if self.request.user.is_authenticated:
             context['liked_products'] = set(
                 Like.objects.filter(user=self.request.user, product__in=products).values_list(
@@ -68,3 +69,7 @@ class Contact(FormView):
 
 class Fag(TemplateView):
     template_name = 'home/faq.html'
+
+
+class RulesView(TemplateView):
+    template_name = 'home/rules.html'

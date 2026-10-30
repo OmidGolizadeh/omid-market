@@ -51,7 +51,15 @@ class Team(models.Model):
 
 
 class Link(models.Model):
-    title = models.CharField(max_length=25, verbose_name='عنوان')
+    Link_title = {
+        ('FACEBOOK', 'فیس‌بوک'),
+        ('LINKEDIN', 'لینکدین'),
+        ('X', 'ایکس'),
+        ('YOUTUBE', 'یوتیوب'),
+        ('INSTA', 'اینستا'),
+        ('TELEGRAM', 'تلگرام'),
+    }
+    title = models.CharField(max_length=25, choices=Link_title, verbose_name='عنوان')
     url = models.URLField(blank=True, null=True, verbose_name='لینک شبکه های اجتمایی')
 
     def __str__(self):
@@ -74,8 +82,8 @@ class BannerLink(models.Model):
 
     class Meta:
         ordering = ('created_at',)
-        verbose_name = 'بنر و آدرس صفحه اصلی'
-        verbose_name_plural = 'بنر ها  و آدرس ها صفحه اصلی'
+        verbose_name = 'بنر و لینک نخست'
+        verbose_name_plural = '	بنرها و لینک‌های نخست'
 
     def __str__(self):
         return f'{self.title}-{self.url}-{self.order}'

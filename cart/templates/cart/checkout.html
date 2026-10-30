@@ -194,7 +194,8 @@
                                                                     </div>
                                                                      <a href="{% url 'cart:delete_order_item' item.id %}"
                                                                         class="product-remove ">
-                                                            <div class="small pl-2" style="color: darkred;"><i class="fa fa-times"></i> حذف
+                                                            <div class="small pl-2" style="color: darkred;"><i
+                                                                    class="fa fa-times"></i> حذف
                                                             </div>
                                                         </a>
                                                                 </div>
@@ -327,20 +328,24 @@
                                                         </div>
 
                                                     </div>
-                                                    <div class="col-12 pb-2" id="rules">
-                                                        <div class="form-check">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                       name="accept_rules" value="1">
-                                                                <a href="#" target="_blank">قوانین و مقررات</a>
-                                                                را خواندم و قبول دارم.
-                                                            </label>
-                                                        </div>
-                                                    </div>
                                                     <div class="col-12">
                                                         <form method="post"
                                                               action="{% url 'cart:send_request' order.id %}">
                                                             {% csrf_token %}
+
+                                                            <div class="form-check pb-2" id="rules">
+                                                                <input type="checkbox" class="form-check-input"
+                                                                       id="accept_rules"
+                                                                       name="accept_rules" value="1" required
+                                                                       oninvalid="this.setCustomValidity('برای ادامه خرید باید قوانین و مقررات را بپذیرید')"
+                                                                       oninput="this.setCustomValidity('')">
+                                                                <label class="form-check-label" for="accept_rules">
+                                                                    <a href="{% url 'home:rules' %}" target="_blank">قوانین
+                                                                        و مقررات</a>
+                                                                    را خواندم و قبول دارم.
+                                                                </label>
+                                                            </div>
+
                                                             <button type="submit" class="btn btn-success w-100">پرداخت و
                                                                 تکمیل خرید
                                                             </button>

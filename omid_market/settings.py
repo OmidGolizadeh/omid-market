@@ -76,6 +76,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'context_processors.context_processors.show_about_site',
                 'context_processors.context_processors.menu_categories',
+                'context_processors.context_processors.footer_links',
             ],
         },
     },
