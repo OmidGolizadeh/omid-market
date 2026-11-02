@@ -4,16 +4,18 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import FormView, View, TemplateView
+from django.views.generic import FormView, View, TemplateView, DetailView, UpdateView
 from jdatetime import timedelta
-from .forms import LoginForm, RegisterForm, CheckOtpForm, AddressForm
-from django.contrib.auth.decorators import login_required
+from .forms import LoginForm, RegisterForm, CheckOtpForm, AddressForm, UpdatePersonalInfoForm
 from django.contrib.auth import logout, login
 from accounts.models import User, Otp, Address, City
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from omid_market import settings
 from random import randint
+from cart.models import Order
+from products.models import Product
+from django.db.models import Q
 import uuid
 
 
@@ -34,7 +36,7 @@ class UserLoginView(LoginView):
         return super().form_invalid(form)
 
 
-class UserLogout(View):
+class UserLogout(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         messages.error(request, 'کاربر خارج شد.')
@@ -96,7 +98,7 @@ class Check_Otp(FormView):
         return super().form_valid(form)
 
 
-class AddressView(LoginRequiredMixin,FormView):
+class AddressView(LoginRequiredMixin, FormView):
     template_name = 'accounts/address.html'
     form_class = AddressForm
     success_url = reverse_lazy('accounts:profile_address')
@@ -121,7 +123,7 @@ class AddressView(LoginRequiredMixin,FormView):
         return context
 
 
-class LoadCityView(View):
+class LoadCityView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         province_id = request.GET.get('province')
         if not province_id:
@@ -132,9 +134,81 @@ class LoadCityView(View):
         return JsonResponse(data, safe=False)
 
 
-class AddressDelete(View):
+class AddressDelete(LoginRequiredMixin, View):
     def get(self, request, id):
         address = Address.objects.get(id=id)
         if address:
             address.delete()
         return redirect('accounts:profile_address')
+
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/personal-info.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['order'] = (Order.objects.filter(user=self.request.user, is_paid=True).order_by('-created_at').first())
+        return context
+
+
+class FavoritesView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/favorites.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['favorites'] = Product.objects.filter(likes__user=self.request.user).order_by('-created_at')
+        return context
+
+
+STATUS_TABS = [
+    ('pending', 'در انتظار پرداخت', Q(is_paid=False)),
+    ('paid', 'پرداخت شده', Q(is_paid=True, status='processing')),
+    ('shipped', 'ارسال شده', Q(is_paid=True, status='shipped')),
+    ('completed', 'تکمیل شده', Q(is_paid=True, status='completed')),
+]
+
+
+class FactorsView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/factors.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_order = Order.objects.filter(user=self.request.user)
+        key = [t[0] for t in STATUS_TABS]
+        current = self.request.GET.get('status')
+        if current not in key:
+            current = 'pending'
+        tabs = []
+        selected_q = None
+        for key, title, cond in STATUS_TABS:
+            tabs.append({'key': key, 'title': title, 'cond': user_order.filter(cond).count(), 'active': key == current})
+            if key == current:
+                selected_q = cond
+        context['tabs'] = tabs
+        context['current'] = current
+        context['orders'] = Order.objects.filter(selected_q).prefetch_related(
+            'order_items__product').order_by('-created_at')
+        return context
+
+
+class InvoiceView(LoginRequiredMixin, DetailView):
+    template_name = 'accounts/invoice.html'
+    context_object_name = 'order'
+
+    def get_queryset(self):
+        return (Order.objects.filter(user=self.request.user, is_paid=True)
+        .select_related('user', 'address', 'address__province', 'address__city').prefetch_related(
+            'order_items__product'))
+
+
+class UpdatePersonalInfoView(LoginRequiredMixin, UpdateView):
+    form_class = UpdatePersonalInfoForm
+    template_name = 'accounts/personal-info-edit.html'
+    success_url = reverse_lazy('accounts:personal-info')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        messages.success(self.request, 'اطلاعات با موفقیت ذخیره شد.')
+        return super().form_valid(form)

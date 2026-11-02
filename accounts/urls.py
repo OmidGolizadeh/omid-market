@@ -8,7 +8,6 @@ path('profile/address',cache_page(60 * 1)(views.LoadCityView.as_view()) , name='
 cache_page(60 * 1) = 1 دقیقه cache رو انجام میده 
 """
 
-
 app_name = 'accounts'
 
 urlpatterns = [
@@ -19,4 +18,9 @@ urlpatterns = [
     path('profile/address', views.AddressView.as_view(), name='profile_address'),
     path('profile/address/load-cities', views.LoadCityView.as_view(), name='profile_address_city'),
     path('profile/address_delete/<int:id>', views.AddressDelete.as_view(), name='profile_address_delete'),
+    path('profile/personal-info', views.ProfileView.as_view(), name='personal-info'),
+    path('profile/favorites', views.FavoritesView.as_view(), name='favorites'),
+    path('profile/factors', views.FactorsView.as_view(), name='factors'),
+    path('invoice/<int:pk>/', views.InvoiceView.as_view(), name='invoice'),
+    path('profile/edit/', views.UpdatePersonalInfoView.as_view(), name='profile_edit'),
 ]

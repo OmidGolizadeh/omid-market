@@ -3,6 +3,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField, AuthenticationF
 from django.core.exceptions import ValidationError
 from accounts.models import User, Address, Province, City
 from django.core import validators
+import re
 
 
 class UserCreationForm(forms.ModelForm):
@@ -161,10 +162,57 @@ class AddressForm(forms.ModelForm):
                 self.fields['city'].queryset = City.objects.filter(
                     province_id=province_id
                 ).order_by('name')
-            except (ValueError,TypeError):
+            except (ValueError, TypeError):
                 pass
         elif self.instance.pk and self.instance.province_id:
             self.fields['city'].queryset = City.objects.filter(
                 province=self.instance.province
             ).order_by('name')
 
+
+class UpdatePersonalInfoForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['full_name', 'email', 'phone_number', 'landline',
+                  'national_code', 'date_of_birth', 'card_number', 'image']
+        widgets = {
+            'full_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '09xxxxxxxxx'}),
+            'landline': forms.TextInput(attrs={'class': 'form-control'}),
+            'national_code': forms.TextInput(attrs={'class': 'form-control'}),
+            'date_of_birth': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1380-05-12'}),
+            'card_number': forms.TextInput(attrs={'class': 'form-control', 'dir': 'ltr'}),
+            'image': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+    def _digits(self, field, length=None):
+        value = self.cleaned_data.get(field)
+        if not value:
+            raise value
+        value = value.translate(str.maketrans('۰۱۲۳۴۵۶۷۸۹', '0123456789'))
+        if not value.isdigit() or (length and len(value) != length):
+            raise forms.ValidationError('مقدار واردشده معتبر نیست.')
+        return value
+
+    def clean_phone_number(self):
+        v = self._digits('phone_number', 11)
+        if v and not v.startswith('09'):
+            raise forms.ValidationError('شماره موبایل باید با 09 شروع شود.')
+        return v or None
+
+    def clean_national_code(self):
+        v = self._digits('national_code', 10)
+
+        if v:
+            s = sum(int(v[i]) * (10 - i) for i in range(9)) % 11
+            ok = (s < 2 and int(v[9]) == s) or (s >= 2 and int(v[9]) == 11 - s)
+            if not ok or len(str(v)) == 1:
+                raise forms.ValidationError('کد ملی معتبر نیست.')
+        return v
+
+    def clean_card_number(self):
+        return self._digits('card_number', 16)
+
+    def clean_landline(self):
+        return self._digits('landline')

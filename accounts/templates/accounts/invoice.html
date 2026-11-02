@@ -1,0 +1,84 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>فاکتور شماره {{ order.id }}</title>
+    <style>
+        body { font-family: Tahoma, sans-serif; margin: 0; background: #f2f2f2; color: #222; }
+        .sheet { max-width: 800px; margin: 20px auto; background: #fff; padding: 30px; }
+        h1 { font-size: 22px; margin: 0 0 4px; }
+        .meta { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: right; }
+        th { background: #f7f7f7; }
+        .totals { margin-top: 15px; width: 320px; margin-right: auto; font-size: 14px; }
+        .totals div { display: flex; justify-content: space-between; padding: 4px 0; }
+        .totals .final { font-weight: bold; border-top: 2px solid #222; margin-top: 6px; padding-top: 8px; }
+        .actions { text-align: center; margin-bottom: 15px; }
+        @media print {
+            body { background: #fff; }
+            .sheet { margin: 0; padding: 0; max-width: none; }
+            .actions { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="actions">
+    <button onclick="window.print()">چاپ / ذخیره PDF</button>
+</div>
+
+<div class="sheet">
+    <h1>فاکتور فروش - امید مارکت</h1>
+    <div class="meta">
+        <div>
+            شماره فاکتور: {{ order.id }}<br>
+            تاریخ پرداخت: {{ order.paid_at|jalali_date:False }}<br>
+            {% if order.ref_id %}کد پیگیری: {{ order.ref_id }}{% endif %}
+        </div>
+        <div>
+            خریدار: {{ order.user.full_name|default:order.user.phone_number }}<br>
+            {% if order.address %}
+                {{ order.address.province }}، {{ order.address.city }}، {{ order.address.full_address }}<br>
+                کدپستی: {{ order.address.postal_code }}
+            {% endif %}
+        </div>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>محصول</th>
+            <th>رنگ / گارانتی</th>
+            <th>تعداد</th>
+            <th>قیمت واحد (تومان)</th>
+            <th>جمع (تومان)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in order.order_items.all %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.product.title }}</td>
+                <td>{{ item.color|default:'-' }} / {{ item.warranty|default:'-' }}</td>
+                <td>{{ item.number }}</td>
+                <td>{{ item.price|toman }}</td>
+                <td>{% widthratio item.price 1 item.number as line_total %}{{ line_total|toman }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        {% if order.total_discount %}
+            <div><span>تخفیف محصولات:</span><span>{{ order.total_discount|toman }} تومان</span></div>
+        {% endif %}
+        {% if order.code_discount %}
+            <div><span>تخفیف کد تخفیف:</span><span>{{ order.code_discount|toman }} تومان</span></div>
+        {% endif %}
+        <div class="final"><span>مبلغ پرداخت‌شده:</span><span>{{ order.total_price|toman }} تومان</span></div>
+    </div>
+</div>
+</body>
+</html>

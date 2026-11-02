@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}factors{% endblock %}
+{% block content %}
+    <section class="inner-page" id="profile-page">
+        <div class="container-fluid" id="page-hero">
+            <div class="row">
+                <div class="col-12">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 px-0">
+                                <h1>ناحیه کاربری</h1>
+                                <p>به ناحیه کاربری روبیک مارکت خوش آمدید.</p>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="{% url 'home:home' %}">صفحه نخست</a></li>
+                                        <li class="breadcrumb-item"><a href="#">ناحیه کاربری</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">سفارشات</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-12 col-lg-3">
+                                <!-- Side Panel -->
+                                {% include 'includes/side_profile.html' %}
+                                <!-- /Side Panel -->
+                            </div>
+                            <div class="col-12 col-lg-9 pl-lg-0 pr-lg-2 mt-2 mt-lg-0">
+                                <!-- Factors Count -->
+                                <div class="custom-container" id="orders-status">
+                                    <div class="container nowrap">
+                                        <div class="row py-2">
+                                            <div class="col-12 px-0">
+                                                <ul class="px-3">
+                                                    {% for t in tabs %}
+                                                        <li>
+                                                            <a href="?status={{ t.key }}"
+                                                               class="{% if t.active %}active{% endif %}">
+                                                                <span>{{ t.title }}</span>
+                                                                <div class="badge badge-secondary">{{ t.count }}</div>
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /Factors Count -->
+
+                                <!-- Factors List -->
+                                {% if orders %}
+                                    {% for i in orders %}
+                                        <div class="custom-container mt-2 order">
+                                            <div class="row pt-2 px-3">
+                                                <div class="col-12 col-sm-6"><h2>سفارش شماره #{{ i.id }}</h2></div>
+                                                <div class="col-12 col-sm-6 text-sm-end">
+                                                    <span>{{ i.paid_at|jalali_date:False }}</span> -
+                                                    <span>{{ i.get_status_display }}</span>
+                                                </div>
+                                                {% if i.is_paid %}
+                                                    <a href="{% url 'accounts:invoice' i.id %}" target="_blank"
+                                                       class="btn btn-sm btn-outline-dark mt-1">
+                                                        <i class="fas fa-file-invoice"></i> دریافت فاکتور
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                            <hr>
+                                            <div class="container">
+                                                <div class="row py-2">
+                                                    <div class="col-12">
+                                                        <div>
+                                                            <div class="header">
+                                                                <div class="total py-1">
+                                                                    {% if i.is_paid %}
+                                                                        <span>کد پیگیری:</span> {{ i.ref_id }}
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="total py-1">
+                                                                    <span>مبلغ کل:</span> {{ i.total_price }}
+                                                                    تومان
+                                                                </div>
+                                                            </div>
+                                                            <div class="container products px-0">
+                                                                <div class="row">
+                                                                    {% for o in i.order_items.all %}
+                                                                        <!-- Order Record -->
+                                                                        <span class="col-12 col-sm-6 col-lg-4 col-xl-3 px-1">
+                                                                                <a href="{% url 'products:product_detail' o.product.slug %}"
+                                                                                   target="_blank">
+                                                                                    <div class="encode4326654321vfb">
+                                                                                        <div class="image"
+                                                                                             style="background-image: url('{{ o.product.images.url }}')"></div>
+                                                                                        <div class="text-center px-1 px-sm-3">
+                                                                                            <h2>{{ o.product.Category }} {{ o.product.brand }} مدل {{ o.product.title }}</h2>
+                                                                                            <div class="number">تعداد: {{ o.number }} عدد</div>
+                                                                                            <div class="encode4365gbf265g43d">مبلغ: {{ o.product.price|toman }} عدد</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </span>
+                                                                        <!-- /Order Record -->
+                                                                    {% empty %}
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="custom-container mt-2 p-4 text-center text-muted">سفارشی در این بخش وجود
+                                        ندارد.
+                                    </div>
+
+                                {% endif %}
+                                <!-- /Factors List -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
