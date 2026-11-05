@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %} تماس با ما    {% endblock %}
+{% block title %} تماس با ما{% endblock %}
 
 {% block content %}
     <section class="inner-page" id="contact-page">
@@ -33,25 +33,25 @@
                         <div class="row">
                             <div class="col-12 col-lg-5 text-center" id="contact-page-info">
                                 <div class="info">
-                                    {% for i in object_list %}
+
                                     <i class="fa fa-map-marked"></i>
                                     <div class="title">آدرس فروشگاه:</div>
-                                    <div>{{ i.address }}</div>
+                                    <div>{{ store.address }}</div>
                                 </div>
                                 <div class="info">
                                     <i class="fa fa-phone"></i>
                                     <div class="title">تلفن تماس:</div>
 
-                                    <div>{{ i.phone }}</div>
+                                    <div>{{ store.phone }}</div>
 
 
                                 </div>
                                 <div class="info">
                                     <i class="fa fa-envelope"></i>
                                     <div class="title">پست الکترونیک:</div>
-                                    <div>{{ i.email }}</div>
+                                    <div>{{ store.email }}</div>
                                 </div>
-                                 {% endfor %}
+
                             </div>
                             <div class="col-12 col-lg-7 p-4">
                                 <div class="title">ارسال پیام</div>

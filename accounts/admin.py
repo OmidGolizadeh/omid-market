@@ -4,8 +4,13 @@ from django.utils.html import format_html
 from accounts.models import User, Otp, Address, Province, City
 from accounts.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth import get_user_model
+from django.contrib.sessions.models import Session
+from django.contrib.admin.models import LogEntry
+import pprint
 import jdatetime
 
+UserModel = get_user_model()
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
@@ -68,6 +73,60 @@ class City_show(admin.TabularInline):
 class Province_show(admin.ModelAdmin):
     list_display = ['name']
     inlines = (City_show,)
+
+
+@admin.register(Session)
+class SessionAdmin(admin.ModelAdmin):
+    # اضافه شدن نام کاربری و آی‌پی به لیست اصلی
+    list_display = ('session_key', 'get_username', 'get_ip', 'expire_date')
+
+    # اضافه شدن نام کاربری و آی‌پی به صفحه جزئیات (Detail View)
+    readonly_fields = ('get_username', 'get_ip', 'session_data_decoded')
+    search_fields = ('session_key',)
+    date_hierarchy = 'expire_date'
+
+    def get_username(self, obj):
+        """ استخراج آیدی کاربر از نشست و پیدا کردن نام او (Time Complexity: O(1)) """
+        session_data = obj.get_decoded()
+        uid = session_data.get('_auth_user_id')
+        if uid:
+            try:
+                return UserModel.objects.get(pk=uid).username
+            except UserModel.DoesNotExist:
+                return "کاربر حذف شده"
+        return "کاربر مهمان (Guest)"
+
+    get_username.short_description = 'نام کاربری'
+
+    def get_ip(self, obj):
+        """ استخراج آی‌پی ذخیره شده در نشست """
+        session_data = obj.get_decoded()
+        return session_data.get('ip_address', 'نامشخص')
+
+    get_ip.short_description = 'آی‌پی (IP)'
+
+    def session_data_decoded(self, obj):
+        return pprint.pformat(obj.get_decoded())
+
+    session_data_decoded.short_description = 'محتوای کامل نشست'
+
+@admin.register(LogEntry)
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = ('action_time', 'user', 'content_type', 'action_flag', 'object_repr')
+    list_filter = ('action_flag', 'content_type')
+    search_fields = ('user__username', 'object_repr')
+    date_hierarchy = 'action_time'
+    list_select_related = ('user', 'content_type')
+
+    # امنیت: ادمین‌های دیگر نباید بتوانند تاریخچه کارهای انجام شده را دستکاری یا حذف کنند
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 admin.site.unregister(Group)

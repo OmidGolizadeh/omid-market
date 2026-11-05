@@ -6,7 +6,7 @@
             <div class="col-6 col-sm-4 col-lg-2">
                 <div class="title">دسترسی سریع</div>
                 <ul>
-                    <li><a href="">بلاگ آموزشی</a></li>
+                    <li><a href="#">بلاگ آموزشی</a></li>
                     <li><a href="{% url 'home:faq' %}">راهنمای خرید</a></li>
                     <li><a href="{% url 'home:faq' %}">شیوه های پرداخت</a></li>
                     <li><a href="{% url 'home:contact' %}">پیگیری سفارش</a></li>
@@ -29,7 +29,6 @@
                     {% if not request.user.is_authenticated %}
                         <li><a href="{% url 'accounts:login' %}">ورود به سایت</a></li>
                         <li><a href="{% url 'accounts:register' %}">عضویت در سایت</a></li>
-                        <li><a href="{% url '' %}">بازیابی رمز عبور</a></li>
                     {% else %}
                         <li><a href="{% url 'cart:cart_detail' %}">سبد خرید</a></li>
                         <li><a href="{% url 'products:compare' %}">مقایسه محصول</a></li>

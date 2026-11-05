@@ -63,7 +63,7 @@ class Contact(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object_list'] = About_the_store.objects.all()
+        context['store'] = About_the_store.objects.first()
         return context
 
 

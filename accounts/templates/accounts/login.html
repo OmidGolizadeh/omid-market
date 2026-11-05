@@ -12,7 +12,7 @@
                         <div class="row">
                             <div class="col-12 px-0">
                                 <h1>ورود به ناحیه کاربری</h1>
-                                <p>وارد ناحیه کاربری خود در روبیک مارکت شوید.</p>
+                                <p>وارد ناحیه کاربری خود در امید مارکت شوید.</p>
                                 <nav aria-label="breadcrumb">
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="{% url 'home:home' %}">صفحه نخست</a></li>
@@ -39,16 +39,51 @@
                                 <div class="col-12 col-lg-7 pt-5 pt-md-0 align-self-center">
                                     <div class="title">وارد شوید</div>
                                     <p>با عضویت در سایت از همه امکانات سایت بهره مند شوید.</p>
-                                    {% if form.errors %}
-                                        <p class="alert alert-danger">{{ form.errors }}</p>
+                                    {% if form.non_field_errors %}
+                                        {% for error in form.non_field_errors %}
+                                            <div class="alert alert-danger p-2 small">{{ error }}</div>
+                                        {% endfor %}
                                     {% endif %}
+
+                                    {% for field in form %}
+                                        {% if field.errors %}
+                                            {% for error in field.errors %}
+                                                <div class="alert alert-danger p-2 small">
+                                                    <strong>{{ field.label }}:</strong> {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
                                     <div class="form-group">
-                                        <label for="username">نام کاربری :</label>
-                                        {{ form.username }}
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="username_login">@</span>
+                                            {{ form.username }}
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="password">رمز عبور :</label>
-                                        {{ form.password }}
+                                        <div class="input-group position-relative">
+                                            <span class="input-group-text" id="password_login">رمز :</span>
+                                            {{ form.password }}
+                                            <i class="fa fa-eye"
+                                               style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); z-index: 100; cursor: pointer; color: #6c757d;"
+                                               onclick="togglePassword('password', this)">
+                                            </i>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-3 mb-2">
+                                        <div class="input-group">
+                                            <span class="input-group-text font-weight-bold" dir="ltr"
+                                                  style="background-color: #f8f9fa;">
+                                                {{ captcha_question }} =
+                                            </span>
+                                            {{ form.captcha }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-right mt-2 mb-3">
+                                        <a href="{% url 'accounts:forget_password' %}" class="text-primary small"
+                                           style="text-decoration: none;">
+                                            رمز عبور خود را فراموش کرده‌اید؟
+                                        </a>
                                     </div>
                                     <div class="form-group">
                                         <a href=""><input type="submit"
@@ -58,10 +93,30 @@
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+{% endblock %}
+{% block extar_body %}
+    <script>
+        function togglePassword(inputId, iconElement) {
+            // پیدا کردن فیلد ورودی با استفاده از ID
+            const input = document.getElementById(inputId);
+
+            // تغییر نوع فیلد و آیکون
+            if (input.type === "password") {
+                input.type = "text"; // نمایش رمز
+                iconElement.classList.remove("fa-eye");
+                iconElement.classList.add("fa-eye-slash"); // آیکون چشم خط‌خورده
+            } else {
+                input.type = "password"; // مخفی کردن رمز
+                iconElement.classList.remove("fa-eye-slash");
+                iconElement.classList.add("fa-eye"); // آیکون چشم عادی
+            }
+        }
+    </script>
 {% endblock %}

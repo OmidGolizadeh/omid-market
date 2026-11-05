@@ -34,42 +34,32 @@ def stars(score):
 
 
 @register.filter()
-def jalali_date(value):
+def jalali_date(value, with_time=True):
     if not value:
         return ''
 
-    # اگر مقدار از قبل جلالی است
     if isinstance(value, jdatetime.datetime):
         date = value
     else:
-        # اگر میلادی بود، آن را به جلالی تبدیل کن
         date = jdatetime.datetime.fromgregorian(datetime=value)
 
     months = [
-        'فروردین',
-        'اردیبهشت',
-        'خرداد',
-        'تیر',
-        'مرداد',
-        'شهریور',
-        'مهر',
-        'آبان',
-        'آذر',
-        'دی',
-        'بهمن',
-        'اسفند',
+        'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+        'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند',
     ]
 
-    result = (
-        f'{date.day} '
-        f'{months[date.month - 1]} '
-        f'{date.year}، ساعت '
-        f'{date.hour:02d}:{date.minute:02d}'
-    )
-
-    persian_numbers = '۰۱۲۳۴۵۶۷۸۹'
-    english_numbers = '0123456789'
+    result = f'{date.day} {months[date.month - 1]} {date.year}'
+    if with_time:
+        result += f'، ساعت {date.hour:02d}:{date.minute:02d}'
 
     return result.translate(
-        str.maketrans(english_numbers, persian_numbers)
+        str.maketrans('0123456789', '۰۱۲۳۴۵۶۷۸۹')
     )
+
+@register.filter()
+def group4_fa(value):
+    if value is None:
+        return ''
+    s = ''.join(ch for ch in str(value) if ch.isdigit())
+    result = ' '.join(s[i:i + 4] for i in range(0, len(s), 4))
+    return result.translate(str.maketrans('0123456789', '۰۱۲۳۴۵۶۷۸۹'))

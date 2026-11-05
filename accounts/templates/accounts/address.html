@@ -32,87 +32,7 @@
                         <div class="row">
                             <div class="col-12 col-lg-3">
                                 <!-- Side Panel -->
-                                <div class="accordion" id="side-panel">
-                                    <div class="accordion-item menu-container">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button bg-light" type="button"
-                                                    data-bs-toggle="collapse"
-                                                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
-                                                    aria-controls="panelsStayOpen-collapseOne">
-                                            <span class="row">
-                                                <span class="col-3 col-sm-2 col-lg-3">
-                                                    <img src="../assets/images/user-no-image.jpg"
-                                                         class="rounded-circle">
-                                                </span>
-                                                <span class="col-7 col-sm-8 col-lg-7 pt-0 pt-sm-2 pt-md-3 pt-lg-0 align-self-center">
-                                                    <div id="full-name">مصطفی کلانتری</div>
-                                                    <div class="mt-2" id="email-mobile">09351234567</div>
-                                                </span>
-                                            </span>
-                                            </button>
-                                        </h2>
-                                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
-                                             aria-labelledby="panelsStayOpen-headingOne">
-                                            <div class="accordion-body">
-                                                <ul>
-                                                    <li>
-                                                        <a href="personal-info.html" class="active">
-                                                            <div>
-                                                                <div class="icon d-inline-block"><img
-                                                                        src="{% static 'images/icons/profile-menu/profile.webp' %}"
-                                                                        class="pl-2"></div>
-                                                                اطلاعات حساب
-                                                            </div>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="factors.html">
-                                                            <div>
-                                                                <div class="icon d-inline-block"><img
-                                                                        src="{% static 'images/icons/profile-menu/orders.webp' %}"
-                                                                        class="pl-2"></div>
-                                                                سفارش های من
-                                                            </div>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="favorites.html">
-                                                            <div>
-                                                                <div class="icon d-inline-block"><img
-                                                                        src="{% static 'images/icons/profile-menu/favorites.webp' %}"
-                                                                        class="pl-2"></div>
-                                                                علاقه مندی ها
-                                                            </div>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{% url 'accounts:profile_address' %}">
-                                                            <div>
-                                                                <div class="icon d-inline-block"><img
-                                                                        src="{% static 'images/icons/profile-menu/addresses.webp' %}"
-                                                                        class="pl-2"></div>
-                                                                آدرس های من
-                                                            </div>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <hr>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{% url 'accounts:logout' %}">
-                                                            <div>
-                                                                <div class="icon d-inline-block"><img
-                                                                        src="{% static 'images/icons/profile-menu/exit.webp' %}"
-                                                                        class="pl-2"></div>
-                                                                خروج از حساب
-                                                            </div>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {% include 'includes/side_profile.html' %}
                                 <!-- /Side Panel -->
                             </div>
                             <div class="col-12 col-lg-9 pl-lg-0 pr-lg-2 mt-2 mt-lg-0">
@@ -206,34 +126,36 @@
                                     <div class="container">
                                         <div class="row">
                                             {% for address in addresses %}
-                                            <!-- Address Record -->
-                                            <div class="col-12 address py-2">
-                                                <div class="row">
-                                                    <div class="col-12 col-sm-10">
-                                                        <div class="title">{{ address.city.name }}، {{ address.full_address }}</div>
-                                                        <div class="sub-title">{{ address.province.name }}، {{ address.city.name }}</div>
-                                                        <div class="sub-title">{{ address.postal_code }}</div>
-                                                        <div class="sub-title">{{ address.receiver_delivery }}</div>
-                                                        <div class="sub-title">{{ address.mobile_phone_number }}</div>
-                                                    </div>
-                                                    <div class="col-12 col-sm-2 text-lg-end">
-                                                        <a href="{% url 'accounts:profile_address_delete' address.id %}"
+                                                <!-- Address Record -->
+                                                <div class="col-12 address py-2">
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-10">
+                                                            <div class="title">{{ address.city.name }}، {{ address.full_address }}</div>
+                                                            <div class="sub-title">{{ address.province.name }}، {{ address.city.name }}</div>
+                                                            <div class="sub-title">{{ address.postal_code }}</div>
+                                                            <div class="sub-title">{{ address.receiver_delivery }}</div>
+                                                            <div class="sub-title">{{ address.mobile_phone_number }}</div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-2 text-lg-end">
 
-                                                           class="float-right float-sm-left pr-2 pl-sm-2"><i
-                                                                class="fa fa-trash-alt font-weight-normal"></i></a>
-                                                        <a href="#" class="float-right float-sm-left"><i
-                                                                class="fa fa-edit font-weight-normal"></i></a>
-                                                        <a href="#" class="float-right float-sm-left ml-2"
-                                                           title="آدرس پیش فرض"><i class="fa fa-check-circle"
-                                                                                   style="color: #fcb941"></i></a>
+                                                            <form action="{% url 'accounts:profile_address_delete' address.id %}"
+                                                                  method="post"
+                                                                  class="d-inline float-right float-sm-left pr-2 pl-sm-2">
+                                                                {% csrf_token %}
+                                                                <button type="submit"
+                                                                        style="background:none; border:none; padding:0; color: inherit; cursor: pointer;"
+                                                                        title="حذف">
+                                                                    <i class="fa fa-trash-alt font-weight-normal text-danger"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <!-- Address Record -->
+                                                <!-- Address Record -->
                                             {% empty %}
                                                 <div class="col-12 py-3 text-muted">
-                                                هنوز آدرسی ثبت نکرده‌اید.
-                                            </div>
+                                                    هنوز آدرسی ثبت نکرده‌اید.
+                                                </div>
                                             {% endfor %}
                                         </div>
                                     </div>

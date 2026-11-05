@@ -139,35 +139,39 @@
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                         <img src="{% static 'images/icons/profile-menu/profile.webp' %}" alt="profile"
                                              class="menu-avatar" width="20" height="20">
-                                        <span>{{ request.user.full_name|default:request.user.phone_number }}</span>
+                                        <span>{{ request.user.full_name|default:request.user.phone_number|default:'ثبت نشده' }}</span>
                                     </button>
 
                                     <ul class="dropdown-menu user-menu-list">
                                         <li class="user-menu-head">
-                                            <span>{{ request.user.full_name|default:request.user.phone_number }}</span>
-                                            <small>{{ request.user.phone_number }}</small>
+                                            <span>{{ request.user.full_name|default:request.user.phone_number|default:'ثبت نشده' }}</span>
+                                            <small>{{ request.user.phone_number|default:'ثبت نشده' }}</small>
                                         </li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="profile/personal-info.html">
-                                                <img src="{% static 'images/icons/profile-menu/profile.webp' %}"> مشخصات کاربری
+                                            <a class="dropdown-item" href="{% url 'accounts:personal-info' %}">
+                                                <img src="{% static 'images/icons/profile-menu/profile.webp' %}"> مشخصات
+                                                کاربری
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="profile/factors.html">
-                                                <img src="{% static 'images/icons/profile-menu/orders.webp' %}"> سفارش‌ها
+                                            <a class="dropdown-item" href="{% url 'accounts:factors' %}">
+                                                <img src="{% static 'images/icons/profile-menu/orders.webp' %}">
+                                                سفارش‌ها
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="{% url 'accounts:profile_address' %}">
-                                                <img src="{% static 'images/icons/profile-menu/addresses.webp' %}"> آدرس‌ها
+                                                <img src="{% static 'images/icons/profile-menu/addresses.webp' %}">
+                                                آدرس‌ها
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="profile/favorites.html">
-                                                <img src="{% static 'images/icons/profile-menu/favorites.webp' %}"> علاقه‌مندی‌ها
+                                            <a class="dropdown-item" href="{% url 'accounts:favorites' %}">
+                                                <img src="{% static 'images/icons/profile-menu/favorites.webp' %}">
+                                                علاقه‌مندی‌ها
                                             </a>
                                         </li>
                                         <li>
@@ -175,7 +179,8 @@
                                         </li>
                                         <li>
                                             <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
-                                                <img  src="{% static 'images/icons/profile-menu/exit.webp' %}"> خروج از حساب کاربری
+                                                <img src="{% static 'images/icons/profile-menu/exit.webp' %}"> خروج از
+                                                حساب کاربری
                                             </a>
                                         </li>
                                     </ul>
@@ -306,12 +311,11 @@
                                                 <ul style="">
                                                     <li><a href="{% url 'products:compare' %}">مقایسه محصول</a></li>
                                                     <li><a href="{% url 'cart:cart_detail' %}">سبد خرید</a></li>
-                                                    <li class="dm-bottom-separator"></li>
-                                                    <li><a href="reset-password.html">بازگردانی رمز عبور</a></li>
-                                                    <li class="dm-bottom-separator"></li>
+{#                                                    <li class="dm-bottom-separator"></li>#}
+{#                                                    <li class="dm-bottom-separator"></li>#}
                                                 </ul>
                                             </li>
-                                            
+
                                         </ul>
                                     </div>
                                 </div>

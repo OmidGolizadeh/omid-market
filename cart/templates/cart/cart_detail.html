@@ -71,7 +71,7 @@
                                                                          alt="{{ item.product.title }}">
                                                                 </div>
                                                                 <div class="col-10 col-md-8">
-                                                                    <a href="{% url 'products:product_detail' item.product.id %}">
+                                                                    <a href="{% url 'products:product_detail' item.product.slug %}">
                                                                         <div class="title pt-2">{{ item.product.title }}</div>
                                                                     </a>
                                                                     <div class="small text-muted mt-1">

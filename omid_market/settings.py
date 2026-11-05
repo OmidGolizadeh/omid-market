@@ -13,8 +13,6 @@ import os
 from pathlib import Path
 from decouple import config
 
-from decouple import config
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -146,9 +144,87 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
+GHASEDAK_API_KEY = config('GHASEDAK_API_KEY')
+GHASEDAK_TEMPLATE = config('GHASEDAK_TEMPLATE')
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.MultiFieldAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         # "LOCATION": "redis://127.0.0.1:6379",
     }
+}
+
+# ==========================================
+# 1. SESSIONS SETTINGS (تنظیمات امنیتی نشست‌ها)
+# ==========================================
+# استفاده از دیتابیس برای ذخیره نشست‌ها (پایدارترین روش)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# جلوگیری از دسترسی کدهای جاوااسکریپت (XSS) به کوکی نشست
+SESSION_COOKIE_HTTPONLY = True
+
+# با بسته شدن مرورگر کاربر، نشست او به پایان می‌رسد (امنیت بالاتر برای سایت‌های فروشگاهی)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# طول عمر نشست (در صورت عدم بسته شدن مرورگر): ۱۴ روز (بر حسب ثانیه)
+SESSION_COOKIE_AGE = 1209600
+
+# نکته: وقتی سایت را روی هاست واقعی (HTTPS) بردید، این مقدار را حتماً True کنید
+SESSION_COOKIE_SECURE = False
+
+# ==========================================
+# 2. LOGGING SETTINGS (تنظیمات سیستم لاگ‌گیری)
+# ==========================================
+import os
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} | {asctime} | {module} | {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} | {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        # نمایش لاگ‌ها در ترمینال (برای زمان توسعه)
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        # ذخیره لاگ‌های مهم در فایل (برای زمان پروداکشن)
+        'file': {
+            'level': 'WARNING',  # فقط خطاهای هشدار و بحرانی را ذخیره می‌کند تا دیسک پر نشود
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'django_errors.log'),
+            'maxBytes': 1024 * 1024 * 5,  # حداکثر حجم فایل: 5 مگابایت
+            'backupCount': 3,  # نهایتاً 3 فایل بک‌آپ نگه می‌دارد (مدیریت بهینه دیسک)
+            'formatter': 'verbose',
+            'encoding': 'utf-8',
+        },
+    },
+    'loggers': {
+        # لاگر اصلی جنگو
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        # لاگر اختصاصی برای اپلیکیشن حساب کاربری (جهت ثبت پیامک‌ها و غیره)
+        'accounts': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
 }

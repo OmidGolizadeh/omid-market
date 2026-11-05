@@ -148,9 +148,13 @@ class OrderCreate(LoginRequiredMixin, View):
 
 class DiscountCodeView(LoginRequiredMixin, View):
     def post(self, request, pk):
-        code = request.POST.get('discount_code')
-        order = get_object_or_404(Order, id=pk)
-        discount_code = get_object_or_404(DiscountCode, name=code)
+        code = (request.POST.get('discount_code') or '').strip()
+        order = get_object_or_404(Order, id=pk, user=request.user)
+        discount_code = DiscountCode.objects.filter(name=code).first()
+        if not discount_code:
+            messages.error(request, 'کد تخفیف نامعتبر است.')
+            return redirect('cart:order_detail', order.id)
+
         if not discount_code.is_valid():
             messages.error(request, 'این کد تخفیف منقضی شده یا تعداد آن تمام شده است')
             return redirect('cart:order_detail', order.id)
@@ -158,16 +162,15 @@ class DiscountCodeView(LoginRequiredMixin, View):
         if order.code_discount > 0 or request.session.get(f'discount_applied_{order.id}'):
             messages.error(request, 'قبلاً روی این سفارش کد تخفیف اعمال شده است')
             return redirect('cart:order_detail', order.id)
-        discount_amount = order.total_price * discount_code.discount / 100
+
+        discount_amount = order.total_price * discount_code.discount // 100
         order.total_price -= discount_amount
         order.code_discount = discount_amount
         order.discount_code = discount_code
         order.save()
 
+        DiscountCode.objects.filter(pk=discount_code.pk).update(number=F('number') - 1)
         request.session[f'discount_applied_{order.id}'] = True
-
-        discount_code.number -= 1
-        discount_code.save()
         messages.success(request, f'کد تخفیف {discount_code.discount}٪ اعمال شد')
         return redirect('cart:order_detail', order.id)
 
@@ -206,12 +209,17 @@ class VerifyView(LoginRequiredMixin, View):
                 'success': False
             })
         try:
-            order = Order.objects.get(authority=authority)
+            order = Order.objects.get(authority=authority, user=request.user)
         except:
             return render(request, 'cart/payment_result.html', {
                 'message': 'سفارش پیدا نشد.',
                 'success': False
             })
+        if order.is_paid:
+            return render(request, 'cart/payment_result.html',
+                          {'success': True, 'order': order,
+                           'message': 'این سفارش قبلاً پرداخت شده است',
+                           'ref_id': order.ref_id})
         response = pay.verify(request=request, amount=order.total_price)
 
         if response.get('transaction'):
@@ -221,10 +229,13 @@ class VerifyView(LoginRequiredMixin, View):
                 order.paid_at = timezone.now()
                 order.ref_id = response.get('RefID')
                 order.save()
-                for i in order.order_items.all():
-                    Product.objects.filter(id=i.product.id).update(
-                        sales_count=F('sales_count') + i.number
-                    )
+                for item in order.order_items.select_related('product'):
+                    Product.objects.filter(id=item.product_id).update(
+                        sales_count=F('sales_count') + item.number)
+                    ProductColor.objects.filter(
+                        product_id=item.product_id, color__name=item.color
+                    ).update(number=F('number') - item.number)
+                Cart(request).delete_all()
                 return render(request, 'cart/payment_result.html',
                               {'success': True, 'order': order, 'message': 'پرداخت با موفقیت انجام شد',
                                'ref_id': order.ref_id})
