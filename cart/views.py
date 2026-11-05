@@ -209,12 +209,17 @@ class VerifyView(LoginRequiredMixin, View):
                 'success': False
             })
         try:
-            order = Order.objects.get(authority=authority)
+            order = Order.objects.get(authority=authority, user=request.user)
         except:
             return render(request, 'cart/payment_result.html', {
                 'message': 'سفارش پیدا نشد.',
                 'success': False
             })
+        if order.is_paid:
+            return render(request, 'cart/payment_result.html',
+                          {'success': True, 'order': order,
+                           'message': 'این سفارش قبلاً پرداخت شده است',
+                           'ref_id': order.ref_id})
         response = pay.verify(request=request, amount=order.total_price)
 
         if response.get('transaction'):
@@ -224,10 +229,13 @@ class VerifyView(LoginRequiredMixin, View):
                 order.paid_at = timezone.now()
                 order.ref_id = response.get('RefID')
                 order.save()
-                for i in order.order_items.all():
-                    Product.objects.filter(id=i.product.id).update(
-                        sales_count=F('sales_count') + i.number
-                    )
+                for item in order.order_items.select_related('product'):
+                    Product.objects.filter(id=item.product_id).update(
+                        sales_count=F('sales_count') + item.number)
+                    ProductColor.objects.filter(
+                        product_id=item.product_id, color__name=item.color
+                    ).update(number=F('number') - item.number)
+                Cart(request).delete_all()
                 return render(request, 'cart/payment_result.html',
                               {'success': True, 'order': order, 'message': 'پرداخت با موفقیت انجام شد',
                                'ref_id': order.ref_id})

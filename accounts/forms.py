@@ -211,6 +211,13 @@ class AddressForm(forms.ModelForm):
                 province=self.instance.province
             ).order_by('name')
 
+    def clean(self):
+        cd = super().clean()
+        p, c = cd.get('province'), cd.get('city')
+        if p and c and c.province_id != p.id:
+            raise forms.ValidationError('شهر انتخاب‌شده متعلق به این استان نیست.')
+        return cd
+
 
 class UpdatePersonalInfoForm(forms.ModelForm):
     class Meta:
@@ -231,7 +238,7 @@ class UpdatePersonalInfoForm(forms.ModelForm):
     def _digits(self, field, length=None):
         value = self.cleaned_data.get(field)
         if not value:
-            return value
+            return None
         value = value.translate(str.maketrans('۰۱۲۳۴۵۶۷۸۹', '0123456789'))
         if not value.isdigit() or (length and len(value) != length):
             raise forms.ValidationError('مقدار واردشده معتبر نیست.')

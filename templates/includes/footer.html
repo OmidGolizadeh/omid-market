@@ -29,7 +29,6 @@
                     {% if not request.user.is_authenticated %}
                         <li><a href="{% url 'accounts:login' %}">ورود به سایت</a></li>
                         <li><a href="{% url 'accounts:register' %}">عضویت در سایت</a></li>
-                        <li><a href="#">بازیابی رمز عبور</a></li>
                     {% else %}
                         <li><a href="{% url 'cart:cart_detail' %}">سبد خرید</a></li>
                         <li><a href="{% url 'products:compare' %}">مقایسه محصول</a></li>

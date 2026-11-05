@@ -1,10 +1,7 @@
-from lib2to3.fixes.fix_input import context
-
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template.defaultfilters import title
 from django.views.generic import TemplateView, DetailView, View
 from .models import Product, Category, Category_brand, Comment, Like, ProductColor, Rating
-from django.db.models import F, Exists, OuterRef, Q
+from django.db.models import F, Q
 from .forms import CommentForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -114,25 +111,23 @@ def like_view(request, slug, pk):
         return JsonResponse({'response': 'liked'})
 
 
-class Search_view(View):
-    def get(self, request):
-        q = request.GET.get('q')
+class Search_view(ProductFilterMixin, TemplateView):
+    template_name = 'products/product.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        q = self.request.GET.get('q', '').strip()
+        products = self.get_filtered_products()
         if q:
-            products = Product.objects.filter(
-                Q(title__icontains=q) |
-                Q(short_description__icontains=q) |
-                Q(description__icontains=q) |
-                Q(brand__title__icontains=q) |
-                Q(Category__title__icontains=q)
-            ).distinct()
+            products = products.filter(
+                Q(title__icontains=q) | Q(short_description__icontains=q) |
+                Q(description__icontains=q) | Q(brand__title__icontains=q) |
+                Q(Category__title__icontains=q)).distinct()
         else:
-            products = Product.objects.none()
-
-        return render(request, 'products/product.html', {
-            'object_list': products,
-            'q': q,
-        })
+            products = products.none()
+        context.update(self.get_filter_context(products))
+        context['q'] = q
+        return context
 
 
 COMPARE_MAX = 4

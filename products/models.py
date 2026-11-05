@@ -101,10 +101,15 @@ class Product(models.Model):
         verbose_name = 'محصول'
         verbose_name_plural = 'محصول ها'
 
-    def save(self, *args, force_insert=False, force_update=False, using=None, update_fields=None,
-             ):
-        self.slug = slugify(self.title)
-        super(Product, self).save(*args)
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.slug, allow_unicode=True) or 'product'
+            slug, n = base, 1
+            while Product.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                n += 1
+                slug = f'{base}-{n}'
+            self.slug = slug
+        super(Product, self).save(*args, **kwargs)
 
     def warranty_price(self):
         total = self.warranty.get('price')
@@ -224,11 +229,7 @@ class Like(models.Model):
 
 class Rating(models.Model):
     Rating_Number = {
-        (1, '1'),
-        (2, '2'),
-        (3, '3'),
-        (4, '4'),
-        (5, '5'),
+        (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'),
     }
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings', verbose_name='کاربر')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings', verbose_name='محصول')
