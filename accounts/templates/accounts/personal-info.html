@@ -50,7 +50,7 @@
                                                 <div class="row">
                                                     <div class="col-10">
                                                         <div class="title">نام و نام خانوادگی</div>
-                                                        <div class="value">{{ user.full_name }}</div>
+                                                        <div class="value">{{ user.full_name|default:'ثبت نشده' }}</div>
                                                     </div>
                                                     <div class="col-2">
                                                         <a href="{% url 'accounts:profile_edit' %}"
@@ -64,7 +64,7 @@
                                                 <div class="row">
                                                     <div class="col-10">
                                                         <div class="title">کدملی</div>
-                                                        <div class="value">{{ user.national_code }}</div>
+                                                        <div class="value">{{ user.national_code|default:'ثبت نشده' }}</div>
                                                     </div>
                                                     <div class="col-2">
                                                         <a href="{% url 'accounts:profile_edit' %}"
@@ -78,7 +78,7 @@
                                                 <div class="row">
                                                     <div class="col-10">
                                                         <div class="title">شماره تلفن همراه</div>
-                                                        <div class="value">{{ user.phone_number }}</div>
+                                                        <div class="value">{{ user.phone_number|default:'ثبت نشده' }}</div>
                                                     </div>
                                                     <div class="col-2">
                                                         <a href="{% url 'accounts:profile_edit' %}"
@@ -92,7 +92,7 @@
                                                 <div class="row">
                                                     <div class="col-10">
                                                         <div class="title">تلفن ثابت</div>
-                                                        <div class="value">{{ user.landline }}</div>
+                                                        <div class="value">{{ user.landline|default:'ثبت نشده' }}</div>
                                                     </div>
                                                     <div class="col-2">
                                                         <a href="{% url 'accounts:profile_edit' %}"
@@ -106,7 +106,7 @@
                                                 <div class="row">
                                                     <div class="col-10">
                                                         <div class="title">پست الکترونیک</div>
-                                                        <div class="value">{{ user.email }}</div>
+                                                        <div class="value">{{ user.email|default:'ثبت نشده' }}</div>
                                                     </div>
                                                     <div class="col-2">
                                                         <a href="{% url 'accounts:profile_edit' %}"
@@ -120,7 +120,7 @@
                                                 <div class="row">
                                                     <div class="col-10">
                                                         <div class="title">تاریخ تولد</div>
-                                                        <div class="value">{{ user.date_of_birth }}</div>
+                                                        <div class="value">{{ user.date_of_birth|default:'ثبت نشده' }}</div>
                                                     </div>
                                                     <div class="col-2">
                                                         <a href="{% url 'accounts:profile_edit' %}"
@@ -135,7 +135,7 @@
                                                     <div class="col-10">
                                                         <div class="title">شماره کارت جهت مرجوع وجه</div>
                                                         <div class="value"
-                                                             dir="ltr">{{ user.card_number|group4_fa }}</div>
+                                                             dir="ltr">{{ user.card_number|group4_fa|default:'ثبت نشده' }}</div>
                                                     </div>
                                                     <div class="col-2">
                                                         <a href="{% url 'accounts:profile_edit' %}"
@@ -157,33 +157,34 @@
                                         <div class="col-12"><h2>آخرین سفارش ها</h2></div>
                                     </div>
                                 </div>
-                                <div class="custom-container mt-2 order">
-                                    <div class="row pt-2 px-3">
-                                        <div class="col-12 col-sm-6"><h2>سفارش شماره #{{ order.id }}</h2></div>
-                                        <div class="col-12 col-sm-6 text-sm-end">
-                                            <span>{{ order.paid_at|jalali_date:False }}</span> -
-                                            <span>{{ order.get_status_display }}</span>
+                                {% if order %}
+                                    <div class="custom-container mt-2 order">
+                                        <div class="row pt-2 px-3">
+                                            <div class="col-12 col-sm-6"><h2>سفارش شماره #{{ order.id }}</h2></div>
+                                            <div class="col-12 col-sm-6 text-sm-end">
+                                                <span>{{ order.paid_at|jalali_date:False }}</span> -
+                                                <span>{{ order.get_status_display }}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <hr>
-                                    <div class="container">
-                                        <div class="row py-2">
-                                            <div class="col-12">
-                                                <div>
-                                                    <div class="header">
-                                                        <div class="total py-1">
-                                                            <span>کد پیگیری:</span> {{ order.ref_id }}
+                                        <hr>
+                                        <div class="container">
+                                            <div class="row py-2">
+                                                <div class="col-12">
+                                                    <div>
+                                                        <div class="header">
+                                                            <div class="total py-1">
+                                                                <span>کد پیگیری:</span> {{ order.ref_id }}
+                                                            </div>
+                                                            <div class="total py-1">
+                                                                <span>مبلغ کل:</span> {{ order.total_price }} تومان
+                                                            </div>
                                                         </div>
-                                                        <div class="total py-1">
-                                                            <span>مبلغ کل:</span> {{ order.total_price }} تومان
-                                                        </div>
-                                                    </div>
-                                                    <div class="container products px-0">
-                                                        <div class="row">
-                                                            {% for o in order.order_items.all %}
-                                                                <!-- Order Record -->
-                                                                {% if o %}
-                                                                    <span class="col-12 col-sm-6 col-lg-4 col-xl-3 px-1">
+                                                        <div class="container products px-0">
+                                                            <div class="row">
+                                                                {% for o in order.order_items.all %}
+                                                                    <!-- Order Record -->
+                                                                    {% if o %}
+                                                                        <span class="col-12 col-sm-6 col-lg-4 col-xl-3 px-1">
                                                             <a href="{% url 'products:product_detail' o.product.slug %}"
                                                                target="_blank">
                                                                 <div class="encode4326654321vfb">
@@ -197,16 +198,21 @@
                                                                 </div>
                                                             </a>
                                                         </span>
-                                                                    <!-- /Order Record -->
-                                                                {% endif %}
-                                                            {% endfor %}
+                                                                        <!-- /Order Record -->
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                {% else %}
+                                    <div class="custom-container mt-2 p-4 text-center text-muted">
+                                        سفارشی وجود ندارد .
+                                    </div>
+                                {% endif %}
                                 <!-- Latest Orders -->
                             </div>
                         </div>

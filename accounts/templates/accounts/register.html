@@ -35,36 +35,80 @@
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-12 col-lg-5 text-center">
-                                    <img src="{% static 'images/login.png' %}" alt="">
+                                    <img src="{% static 'images/login.png' %}" alt="login.png">
                                 </div>
                                 <div class="col-12 col-lg-7 pt-5 pt-md-0 align-self-center">
-                                    <div class="title">عضویت در روبیک مارکت</div>
+                                    <div class="title">عضویت در امید مارکت</div>
                                     <p>با ورود به ناحیه کاربری خود از همه امکانات سایت بهره مند شوید.</p>
-                                    {% for error in form.non_field_errors %}
-                                        <p class="alert alert-danger">{{ errors }}</p>
-                                    {% endfor %}
-                                    {% if form.errors %}
-                                        <p class="alert alert-danger">{{ form.errors }}</p>
+                                    {% if form.non_field_errors %}
+                                        {% for error in form.non_field_errors %}
+                                            <div class="alert alert-danger p-2 small">{{ error }}</div>
+                                        {% endfor %}
                                     {% endif %}
+
+                                    {% for field in form %}
+                                        {% if field.errors %}
+                                            {% for error in field.errors %}
+                                                <div class="alert alert-danger p-2 small">
+                                                    <strong>{{ field.label }}:</strong> {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
                                     <div class="form-group">
-                                        <label for="username">نام کاربری :</label>
-                                        {{ form.username }}
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="username_register">@</span>
+                                            {{ form.username }}
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="email">پست الکترونیک :</label>
-                                        {{ form.email }}
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="email_register">gmail.com</span>
+                                            {{ form.email }}
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="password1">رمز عبور :</label>
-                                        {{ form.password1 }}
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="email_register">شماره تلفن:</span>
+                                            {{ form.phone_number }}
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="password2">رمز عبور :</label>
-                                        {{ form.password2 }}
+                                        <div class="input-group position-relative">
+                                            <span class="input-group-text" id="password_register_1">رمز :</span>
+                                            {{ form.password1 }}
+                                            <i class="fa fa-eye"
+                                               style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); z-index: 100; cursor: pointer; color: #6c757d;"
+                                               onclick="togglePassword('password1', this)">
+                                            </i>
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <a href=""><input type="submit" value="ثبت نام"
-                                                          class="btn btn-success"></a>
+                                        <div class="input-group position-relative">
+                                            <span class="input-group-text" id="password_register_2"> تکرار رمز :</span>
+                                            {{ form.password2 }}
+                                            <i class="fa fa-eye"
+                                               style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); z-index: 100; cursor: pointer; color: #6c757d;"
+                                               onclick="togglePassword('password2', this)">
+                                            </i>
+                                        </div>
+                                    </div>
+                                    <div class="form-check pb-2" id="rules">
+                                        <input type="checkbox" class="form-check-input"
+                                               id="accept_rules"
+                                               name="accept_rules" value="1" required
+                                               oninvalid="this.setCustomValidity('برای ادامه خرید باید قوانین و مقررات را بپذیرید')"
+                                               oninput="this.setCustomValidity('')">
+                                        <label class="form-check-label" for="accept_rules">
+                                            <a href="{% url 'home:rules' %}" target="_blank">قوانین
+                                                و مقررات</a>
+                                            را خواندم و قبول دارم.
+                                        </label>
+                                    </div>
+
+                                    <!-- اصلاح دکمه ثبت نام (حذف تگ a) -->
+                                    <div class="form-group mt-3">
+                                        <input type="submit" value="ثبت نام" class="btn btn-success px-5">
                                     </div>
                                 </div>
                             </div>
@@ -76,4 +120,24 @@
         </div>
     </section>
 
+{% endblock %}
+
+{% block extar_body %}
+    <script>
+        function togglePassword(inputId, iconElement) {
+            // پیدا کردن فیلد ورودی با استفاده از ID
+            const input = document.getElementById(inputId);
+
+            // تغییر نوع فیلد و آیکون
+            if (input.type === "password") {
+                input.type = "text"; // نمایش رمز
+                iconElement.classList.remove("fa-eye");
+                iconElement.classList.add("fa-eye-slash"); // آیکون چشم خط‌خورده
+            } else {
+                input.type = "password"; // مخفی کردن رمز
+                iconElement.classList.remove("fa-eye-slash");
+                iconElement.classList.add("fa-eye"); // آیکون چشم عادی
+            }
+        }
+    </script>
 {% endblock %}

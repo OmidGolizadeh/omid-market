@@ -146,6 +146,14 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
+GHASEDAK_API_KEY = config('GHASEDAK_API_KEY')
+GHASEDAK_TEMPLATE = config('GHASEDAK_TEMPLATE')
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.MultiFieldAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',

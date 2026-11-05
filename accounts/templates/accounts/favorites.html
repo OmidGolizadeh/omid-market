@@ -61,8 +61,11 @@
                                                                     &nbsp;/&nbsp;
                                                                     <a href="{% url 'products:product' %}?brand={{ i.brand.id }}">{{ i.brand }}</a>
                                                                 </div>
-                                                                <a href="{% url 'products:product_detail' i.slug %}"><h2>{{ i.short_description }}</h2></a>
-                                                                <div class="encode4365gbf265g43d">{{ i.price|toman }} تومان</div>
+                                                                <a href="{% url 'products:product_detail' i.slug %}">
+                                                                    <h2>{{ i.short_description }}</h2></a>
+                                                                <div class="encode4365gbf265g43d">{{ i.price|toman }}
+                                                                    تومان
+                                                                </div>
                                                                 <div class="rate">
                                                                     {{ i.score|stars }}
                                                                     <span class="encode43bf265g43d">({{ i.comment.count }} رای دهنده)</span>
@@ -71,7 +74,12 @@
                                                         </div>
                                                         <!-- /Product Box -->
                                                     </div>
+
                                                 {% endif %}
+                                            {% empty %}
+                                                <div class="custom-container col-12 mt-2 mb-2 p-4 text-center text-muted">
+                                                    هیج محصولی مورد علاقه وجود ندارد .
+                                                </div>
                                             {% endfor %}
                                         </div>
                                     </div>

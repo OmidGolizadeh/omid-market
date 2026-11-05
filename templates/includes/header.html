@@ -139,13 +139,13 @@
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                         <img src="{% static 'images/icons/profile-menu/profile.webp' %}" alt="profile"
                                              class="menu-avatar" width="20" height="20">
-                                        <span>{{ request.user.full_name|default:request.user.phone_number }}</span>
+                                        <span>{{ request.user.full_name|default:request.user.phone_number|default:'ثبت نشده' }}</span>
                                     </button>
 
                                     <ul class="dropdown-menu user-menu-list">
                                         <li class="user-menu-head">
-                                            <span>{{ request.user.full_name|default:request.user.phone_number }}</span>
-                                            <small>{{ request.user.phone_number }}</small>
+                                            <span>{{ request.user.full_name|default:request.user.phone_number|default:'ثبت نشده' }}</span>
+                                            <small>{{ request.user.phone_number|default:'ثبت نشده' }}</small>
                                         </li>
                                         <li>
                                             <hr class="dropdown-divider">

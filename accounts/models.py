@@ -64,7 +64,8 @@ class Otp(models.Model):
     token = models.CharField(max_length=200, null=True, verbose_name='توکن')
     username = models.CharField(max_length=255, verbose_name='نام کاربری')
     email = models.EmailField(max_length=255, null=True, verbose_name='ایمیل')
-    code = models.SmallIntegerField(verbose_name='کد')
+    phone_number = models.CharField(max_length=11, null=True, blank=True, verbose_name='شماره تلفن')
+    code = models.SmallIntegerField(verbose_name='کد', db_index=True)
     password = models.CharField(max_length=255, null=True, verbose_name='رمز')
     expiration_date = jmodels.jDateTimeField(auto_now_add=True, verbose_name='تاریخ')
 

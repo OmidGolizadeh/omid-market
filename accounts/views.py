@@ -1,12 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.urls import reverse_lazy
-from django.utils import timezone
 from django.views.generic import FormView, View, TemplateView, DetailView, UpdateView
-from jdatetime import timedelta
-from .forms import LoginForm, RegisterForm, CheckOtpForm, AddressForm, UpdatePersonalInfoForm
+from .forms import LoginForm, RegisterForm, CheckOtpForm, AddressForm, UpdatePersonalInfoForm, ForgetPasswordForm, \
+    ResetPasswordForm
 from django.contrib.auth import logout, login
 from accounts.models import User, Otp, Address, City
 from django.core.mail import send_mail
@@ -16,15 +15,23 @@ from random import randint
 from cart.models import Order
 from products.models import Product
 from django.db.models import Q
+from .utils import send_otp_sms
+import jdatetime
 import uuid
 
-
-# Create your views here.
 
 class UserLoginView(LoginView):
     template_name = "accounts/login.html"
     authentication_form = LoginForm
     next_page = reverse_lazy('home:home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        num1 = randint(1, 9)
+        num2 = randint(1, 9)
+        self.request.session['captcha_answer'] = num1 + num2
+        context['captcha_question'] = f"{num1} + {num2}"
+        return context
 
     def form_valid(self, form):
         # user = form.get_user()
@@ -51,17 +58,22 @@ class Register(FormView):
     def form_valid(self, form):
         cd = form.cleaned_data
         randcode = randint(1000, 9999)
-        send_mail(
-            subject='کد تأیید ثبت‌نام',
-            message=f'کد تأیید شما: {randcode}',
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[cd['email']],
-            fail_silently=False,
-        )
+        if cd.get('email'):
+            send_mail(
+                subject='کد تأیید ثبت‌نام',
+                message=f'کد تأیید شما: {randcode}',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[cd['email']],
+                fail_silently=False,
+            )
+        elif cd.get('phone_number'):
+            is_sent = send_otp_sms(cd['phone_number'], randcode)
+            if not is_sent:
+                messages.warning(self.request, 'یگ مشکلی از سامانه پیش آمد')
         print(randcode)
         token = uuid.uuid4()
-        Otp.objects.create(username=cd['username'], email=cd['email'], password=cd['password1'], code=randcode,
-                           token=token)
+        Otp.objects.create(username=cd['username'], email=cd.get('email'), phone_number=cd.get('phone_number'),
+                           password=cd['password1'], code=randcode, token=token)
 
         return redirect(reverse('accounts:otp') + f'?token={token}')
 
@@ -70,6 +82,25 @@ class Check_Otp(FormView):
     template_name = 'accounts/check_otp.html'
     form_class = CheckOtpForm
     success_url = reverse_lazy('home:home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        token = self.request.GET.get('token')
+        remaining = 120
+
+        if token:
+            try:
+                otp = Otp.objects.get(token=token)
+                exp_naive = otp.expiration_date.replace(tzinfo=None)
+                now_naive = jdatetime.datetime.now().replace(tzinfo=None)
+
+                elapsed = (now_naive - exp_naive).total_seconds()
+                remaining = max(int(120 - elapsed), 0)
+            except Otp.DoesNotExist:
+                remaining = 0
+
+        context['remaining_time'] = remaining
+        return context
 
     def form_valid(self, form):
         token = self.request.GET.get('token')
@@ -81,7 +112,11 @@ class Check_Otp(FormView):
             form.add_error('code', 'کد وارد شده صحیح نیست.')
             return self.form_invalid(form)
 
-        if timezone.now() - otp.expiration_date > timedelta(minutes=2):
+        exp_naive = otp.expiration_date.replace(tzinfo=None)
+        now_naive = jdatetime.datetime.now().replace(tzinfo=None)
+        elapsed = (now_naive - exp_naive).total_seconds()
+
+        if elapsed > 120:
             otp.delete()
             form.add_error('code', 'اعتبار کد به پایان رسیده است.')
             return self.form_invalid(form)
@@ -89,10 +124,12 @@ class Check_Otp(FormView):
         user = User.objects.create_user(
             username=otp.username,
             email=otp.email,
-            password=otp.password
+            password=otp.password,
+            phone_number=otp.phone_number,
+
         )
 
-        login(self.request, user)
+        login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
         otp.delete()
 
         return super().form_valid(form)
@@ -135,8 +172,8 @@ class LoadCityView(LoginRequiredMixin, View):
 
 
 class AddressDelete(LoginRequiredMixin, View):
-    def get(self, request, id):
-        address = Address.objects.get(id=id)
+    def post(self, request, id):
+        address = get_object_or_404(Address, id=id, user=request.user)
         if address:
             address.delete()
         return redirect('accounts:profile_address')
@@ -186,7 +223,7 @@ class FactorsView(LoginRequiredMixin, TemplateView):
                 selected_q = cond
         context['tabs'] = tabs
         context['current'] = current
-        context['orders'] = Order.objects.filter(selected_q).prefetch_related(
+        context['orders'] = user_order.filter(selected_q).prefetch_related(
             'order_items__product').order_by('-created_at')
         return context
 
@@ -211,4 +248,87 @@ class UpdatePersonalInfoView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         messages.success(self.request, 'اطلاعات با موفقیت ذخیره شد.')
+        return super().form_valid(form)
+
+
+class ForgetPasswordView(FormView):
+    template_name = 'accounts/forget_password.html'
+    form_class = ForgetPasswordForm
+
+    def form_valid(self, form):
+        identity = form.cleaned_data['identity']
+        user = User.objects.get(Q(email=identity) | Q(phone_number=identity))
+        randcode = randint(1000, 9999)
+        token = uuid.uuid4()
+        print(randcode)
+        if user.phone_number:
+            is_sent = send_otp_sms(user.phone_number, randcode)
+            if not is_sent:
+                messages.warning(self.request, 'مشکلی در سامانه پیامکی پیش آمد.')
+            else:
+                masked_phone = f"{user.phone_number[:4]}***{user.phone_number[-4:]}"
+                messages.success(self.request, f'کد تایید به شماره موبایل شما ({masked_phone}) ارسال شد.')
+
+        elif user.email:
+            send_mail(
+                subject='کد تایید تغییر رمز عبور',
+                message=f'کد تایید شما: {randcode}',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+        else:
+            form.add_error('identity', 'برای این حساب کاربری هیچ ایمیل یا شماره موبایلی ثبت نشده است.')
+            return self.form_invalid(form)
+        Otp.objects.create(username=user.username, code=randcode, token=token)
+        return redirect(reverse('accounts:reset_password') + f'?token={token}')
+
+
+class ResetPasswordView(FormView):
+    template_name = 'accounts/reset_password.html'
+    form_class = ResetPasswordForm
+    success_url = reverse_lazy('accounts:login')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        token = self.request.GET.get('token')
+        remaining = 120
+        if token:
+            try:
+                otp = Otp.objects.get(token=token)
+                exp_naive = otp.expiration_date.replace(tzinfo=None)
+                now_naive = jdatetime.datetime.now().replace(tzinfo=None)
+                elapsed = (now_naive - exp_naive).total_seconds()
+                remaining = max(int(120 - elapsed), 0)
+            except Otp.DoesNotExist:
+                remaining = 0
+
+        context['remaining_time'] = remaining
+        return context
+
+    def form_valid(self, form):
+        token = self.request.GET.get('token')
+        cd = form.cleaned_data
+
+        try:
+            otp = Otp.objects.get(code=cd['code'], token=token)
+        except Otp.DoesNotExist:
+            form.add_error('code', 'کد وارد شده صحیح نیست.')
+            return self.form_invalid(form)
+
+        exp_naive = otp.expiration_date.replace(tzinfo=None)
+        now_naive = jdatetime.datetime.now().replace(tzinfo=None)
+        elapsed = (now_naive - exp_naive).total_seconds()
+
+        if elapsed > 120:
+            otp.delete()
+            form.add_error('code', 'اعتبار کد به پایان رسیده است.')
+            return self.form_invalid(form)
+
+        user = User.objects.get(username=otp.username)
+        user.set_password(cd['password1'])
+        user.save()
+
+        otp.delete()
+        messages.success(self.request, 'رمز عبور شما با موفقیت تغییر کرد. اکنون می‌توانید وارد شوید.')
         return super().form_valid(form)

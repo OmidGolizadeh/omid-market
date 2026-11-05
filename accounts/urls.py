@@ -23,4 +23,6 @@ urlpatterns = [
     path('profile/factors', views.FactorsView.as_view(), name='factors'),
     path('invoice/<int:pk>/', views.InvoiceView.as_view(), name='invoice'),
     path('profile/edit/', views.UpdatePersonalInfoView.as_view(), name='profile_edit'),
+    path('forget-password/', views.ForgetPasswordView.as_view(), name='forget_password'),
+    path('reset-password/', views.ResetPasswordView.as_view(), name='reset_password'),
 ]

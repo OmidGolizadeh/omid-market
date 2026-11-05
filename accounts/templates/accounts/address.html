@@ -137,15 +137,17 @@
                                                             <div class="sub-title">{{ address.mobile_phone_number }}</div>
                                                         </div>
                                                         <div class="col-12 col-sm-2 text-lg-end">
-                                                            <a href="{% url 'accounts:profile_address_delete' address.id %}"
 
-                                                               class="float-right float-sm-left pr-2 pl-sm-2"><i
-                                                                    class="fa fa-trash-alt font-weight-normal"></i></a>
-                                                            <a href="#" class="float-right float-sm-left"><i
-                                                                    class="fa fa-edit font-weight-normal"></i></a>
-                                                            <a href="#" class="float-right float-sm-left ml-2"
-                                                               title="آدرس پیش فرض"><i class="fa fa-check-circle"
-                                                                                       style="color: #fcb941"></i></a>
+                                                            <form action="{% url 'accounts:profile_address_delete' address.id %}"
+                                                                  method="post"
+                                                                  class="d-inline float-right float-sm-left pr-2 pl-sm-2">
+                                                                {% csrf_token %}
+                                                                <button type="submit"
+                                                                        style="background:none; border:none; padding:0; color: inherit; cursor: pointer;"
+                                                                        title="حذف">
+                                                                    <i class="fa fa-trash-alt font-weight-normal text-danger"></i>
+                                                                </button>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
