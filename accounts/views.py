@@ -20,6 +20,14 @@ import jdatetime
 import uuid
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
 class UserLoginView(LoginView):
     template_name = "accounts/login.html"
     authentication_form = LoginForm
@@ -34,9 +42,10 @@ class UserLoginView(LoginView):
         return context
 
     def form_valid(self, form):
-        # user = form.get_user()
+        response = super().form_valid(form)
+        self.request.session['ip_address'] = get_client_ip(self.request)
         messages.success(self.request, 'کاربر وارد شد')
-        return super().form_valid(form)
+        return response
 
     def form_invalid(self, form):
         messages.warning(self.request, 'یک مشکل به وجود امد دوباره تلاش کنید')
@@ -130,6 +139,7 @@ class Check_Otp(FormView):
         )
 
         login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
+        self.request.session['ip_address'] = get_client_ip(self.request)
         otp.delete()
 
         return super().form_valid(form)
