@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %} {% endblock %}
+
+{% block content %}
+    <section class="inner-page blog-inner-page" id="blog-page">
+        <div class="container-fluid" id="page-hero">
+            <div class="row">
+                <div class="col-12">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 px-0">
+                                <h1>آموزش نصب قالب وردپرسی روبیک مارکت</h1>
+                                <p>در این آموزش یاد میگیرید که چگونه قالب وردپرسی روبیک مارکت را نصب کنید.</p>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="{% url 'home:home' %}">صفحه نخست</a></li>
+                                        <li class="breadcrumb-item"><a href="{% url 'blog:blog' %}">بلاگ آموزشی</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">{{ article.title }}</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-12 col-lg-9">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="blog-container">
+                                            <div class="row pt-2 px-3" id="post-title">
+                                                <div class="col-12 col-md-8">
+                                                    <h1>{{ article.title }}</h1>
+                                                </div>
+                                                <div class="col-12 col-md-4 text-start text-md-end"><span class="date">ارسال شده در {{ article.created_at|jalali_date:False }}</span>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row py-0 px-3" id="post-details">
+                                                <div class="col-8">
+                                                    <span>دسته بندی: <a
+                                                            href="{% url 'blog:blog' %}?category={{ article.category.id }}">{{ article.category.title }}</a></span>
+                                                </div>
+                                                <div class="col-4 text-end">
+                                                    <span>{{ article.views }} بازدید | {{ article.comments.count }} نظر</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 pt-2 text-justify" id="post-html">
+                                                    <div class="text-center pt-2 pb-3"><img
+                                                            src="{{ article.image.url }}"
+                                                            alt="{{ article.title }}"></div>
+                                                    <p>{{ article.body|linebreaksbr }}</p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <hr>
+                                                    <div id="keywords">
+                                                        <span>برچسب ها:</span>
+                                                        {% if article.label.all %}
+                                                            {% for label in article.label.all %}
+                                                                <a href="{% url 'blog:blog' %}?label={{ label.id }}"><span
+                                                                        class="keyword">{{ label.title }}</span></a>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <!-- Comments -->
+                                            <div class="row pt-3 pb-4 pb-lg-0">
+                                                <div class="col-12 text-justify" id="comments">
+                                                    <h2>نظرات کاربران</h2>
+                                                    <div class="comments-container">
+                                                        <div class="container px-0">
+                                                            <div class="row">
+                                                                {% if article.comments.all %}
+                                                                    {% for comment in article.comments.all %}
+                                                                        {% if comment.parent == None %}
+                                                                            <div class="col-12 pt-2">
+                                                                                <!-- Show Comments -->
+                                                                                <div class="comment p-3 my-2">
+                                                                                    <div class="sender-details">
+                                                                                        <div class="row">
+                                                                                            <div class="col-3 col-sm-2 col-md-1 pl-md-0 pl-lg-2 pl-xl-3">
+                                                                                                {% if comment.user.image %}
+                                                                                                    <img src="{{ comment.user.image.url }}"
+                                                                                                         alt="{{ comment.user.username }}"
+                                                                                                         class="rounded">
+                                                                                                {% else %}
+                                                                                                    <img src="{% static 'images/icons/profile-icon.webp' %}"
+                                                                                                         alt="{{ comment.user.username }}"
+                                                                                                         class="rounded">
+                                                                                                {% endif %}
+                                                                                            </div>
+                                                                                            <div class="col-9 col-sm-10 col-md-11 pr-0 pr-md-2 pr-xl-0 pt-0 pt-lg-1">
+                                                                                                <div class="name">
+                                                                                                    {{ comment.user.full_name }}
+                                                                                                </div>
+                                                                                                <div class="date">
+                                                                                                    ارسال شده
+                                                                                                    در {{ comment.created_at|date:'Y/m/d' }}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-12">
+                                                                                                <p> {{ comment.body }} </p>
+                                                                                                <a href="javascript:void(0);"
+                                                                                                   onclick="set_value({{ comment.id }})">
+                                                                            <span class="reply"><img
+                                                                                    src="{% static 'images/comment-reply.png' %}"
+                                                                                    alt=""> ارسال پاسخ</span>
+                                                                                                </a>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <!-- Comment Reply -->
+                                                                                    {% for reply in comment.replies.all %}
+                                                                                        <div class="row justify-content-end">
+                                                                                            <div class="col-11 pt-2 pr-0">
+                                                                                                <div class="comment p-3">
+                                                                                                    <div class="sender-details">
+                                                                                                        <div class="row">
+                                                                                                            <div class="col-3 col-sm-2 col-md-1 pl-md-0 pl-lg-2 pl-xl-3">
+                                                                                                                {% if reply.user.image %}
+                                                                                                                    <img src="{{ reply.user.image.url }}"
+                                                                                                                         alt="{{ reply.user.username }}"
+                                                                                                                         class="rounded">
+                                                                                                                {% else %}
+                                                                                                                    <img src="{% static 'images/icons/profile-icon.webp' %}"
+                                                                                                                         alt="{{ reply.user.username }}"
+                                                                                                                         class="rounded">
+                                                                                                                {% endif %}
+                                                                                                            </div>
+                                                                                                            <div class="col-9 col-sm-10 col-md-11 pr-0 pr-md-2 pr-xl-0 pt-0 pt-lg-1">
+                                                                                                                <div class="name">
+                                                                                                                    {{ reply.user.full_name }}
+                                                                                                                </div>
+                                                                                                                <div class="date">
+                                                                                                                    ارسال
+                                                                                                                    شده
+                                                                                                                    در
+                                                                                                                    {{ reply.created_at|date:'Y/m/d' }}
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div class="col-12">
+                                                                                                                <p>{{ reply.body }}</p>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    {% endfor %}
+                                                                                    <!-- /Comment Reply -->
+                                                                                </div>
+                                                                                <!-- /Show Comments -->
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    <div class="alert alert-warning text-center col-12 my-4">
+                                                                        <p class="mb-2 text-danger">برای این وبلاگ هیج
+                                                                            نظری ثبت نشده .</p>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Send Comment Form -->
+                                                    <div class="comments-container">
+                                                        <div class="row pt-4">
+                                                            <div class="col-12"><h2>دیدگاه خود را ارسال کنید</h2></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-12 py-3">
+                                                                {% if request.user.is_authenticated %}
+                                                                    <form method="post" name="comment">
+                                                                        {% csrf_token %}
+                                                                        <div id="send-comment-form">
+                                                                            <p>نظر خود را برای این مطلب ارسال کنید.
+                                                                                نشانی
+                                                                                ایمیل شما منتشر نخواهد شد.</p>
+                                                                            <div class="row">
+                                                                                <div class="col-12 px-3 pl-md-1 col-md-6">
+                                                                                    <div class="form-group my-1">
+                                                                                        {{ comments_form.parent }}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12 px-3">
+                                                                                    <div class="form-group my-1">
+                                                                                        {{ comments_form.body }}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                    <div class="form-group my-1">
+                                                                                        <input type="submit"
+                                                                                               value="ارسال دیدگاه"
+                                                                                               class="btn btn-success px-5">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                {% else %}
+                                                                    <div class="col-12 w-100">
+                                                                        <div class="alert alert-warning text-center my-4">
+                                                                            <a href="{% url 'accounts:login' %}"
+                                                                               class="btn btn-sm btn-outline-secondary">
+                                                                                برای اینکه کامنت گزاری اول وارد حساب شوید.
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- /Send Comment Form -->
+                                                </div>
+                                            </div>
+                                            <!-- /Comments -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <div class="row">
+                                    <!-- Side Panel -->
+                                    <div class="col-12 col-sm-6 col-lg-12 px-lg-2">
+                                        <div class="blog-side-panel">
+                                            <div class="row pt-2 px-3">
+                                                <div class="col">
+                                                    <div class="title">پربازدیدترین محصولات</div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="container">
+                                                <div class="row">
+                                                    {% for product in most_viewed_products %}
+                                                        <!-- Side Panel Product -->
+                                                        <div class="col-12 col-lg-12 px-0 mt-2">
+                                                            <a href="{% url 'products:product_detail' product.slug %}">
+                                                                <div class="side-blog-product">
+                                                                    <div class="row pl-3">
+                                                                        <div class="col-4 pl-2">
+                                                                            <div class="image"
+                                                                                 style="background-image: url({{ product.images.url }})"></div>
+                                                                        </div>
+                                                                        <div class="col-8 px-0">
+                                                                            <h2>{{ product.short_description|truncatewords:10 }}</h2>
+                                                                            <div class="row">
+                                                                                <div class="col-8 pl-0">
+                                                                                    <span class="encode4365gbf265g43d">{{ product.price|toman }} تومان</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                        <!-- /Side Panel Product -->
+                                                    {% endfor %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-lg-12 px-lg-2">
+                                        <div class="blog-side-panel">
+                                            <div class="row pt-4 pt-sm-2 px-3">
+                                                <div class="col">
+                                                    <div class="title">پربازدیدترین مطالب</div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="container">
+                                                <div class="row">
+                                                    {% for blog in most_viewed_blog %}
+                                                        <!-- Side Panel Post -->
+                                                        <div class="col-12 col-lg-12 px-0 mt-2">
+                                                            <div class="side-blog-post">
+                                                                <div class="row pl-3">
+                                                                    <div class="col-4 pl-2">
+                                                                        <a href="{% url 'blog:blog_detail' blog.slug %}">
+                                                                            <div class="image"
+                                                                                 style="background-image: url({{ blog.image.url }})"></div>
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="col-8 px-0">
+                                                                        <a href="{% url 'blog:blog_detail' blog.slug %}">
+                                                                            <h2>{{ blog.title }}</h2></a>
+                                                                        <div class="row">
+                                                                            <div class="col-12 col-xl-6 pl-0">
+                                                                            <span class="category">دسته بندی: <a
+                                                                                    href="{% url 'blog:blog' %}?category={{ blog.category.slug }}">{{ blog.category|default:'وجود ندارد' }}</a></span>
+                                                                            </div>
+                                                                            <div class="col-12 col-xl-6 pr-0 text-start text-xl-end d-none d-xl-block">
+                                                                                <span class="date">{{ blog.created_at|jalali_date:False }}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /Side Panel Post -->
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /Side Panel -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block extar_body %}
+    <script>
+        document.getElementById('body').placeholder = 'متن کامنت';
+
+        function set_value(id) {
+            document.getElementById('id_parent').value = id;
+            window.location.href = '#body'
+
+        }
+    </script>
+{% endblock %}

@@ -51,10 +51,14 @@ class Team(models.Model):
 
 
 class Link(models.Model):
-    Link_title = {
-        ('FACEBOOK', 'فیس‌بوک'), ('LINKEDIN', 'لینکدین'), ('X', 'ایکس'),
-        ('YOUTUBE', 'یوتیوب'), ('INSTA', 'اینستا'), ('TELEGRAM', 'تلگرام'),
-    }
+    Link_title = (
+        ('FACEBOOK', 'فیس‌بوک'),
+        ('LINKEDIN', 'لینکدین'),
+        ('X', 'ایکس'),
+        ('YOUTUBE', 'یوتیوب'),
+        ('INSTA', 'اینستا'),
+        ('TELEGRAM', 'تلگرام'),
+    )
     title = models.CharField(max_length=25, choices=Link_title, verbose_name='عنوان')
     url = models.URLField(blank=True, null=True, verbose_name='لینک شبکه های اجتمایی')
 

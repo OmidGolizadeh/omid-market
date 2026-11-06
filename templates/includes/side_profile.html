@@ -19,7 +19,8 @@
                                                 </span>
                                                 <span class="col-7 col-sm-8 col-lg-7 pt-0 pt-sm-2 pt-md-3 pt-lg-0 align-self-center">
                                                     <div id="full-name">{{ user.username|default:'ثبت نشده' }}</div>
-                                                    <div class="mt-2" id="email-mobile">{{ user.phone_number|default:'ثبت نشده' }}</div>
+                                                    <div class="mt-2"
+                                                         id="email-mobile">{{ user.phone_number|default:'ثبت نشده' }}</div>
                                                 </span>
                                             </span>
             </button>
@@ -69,6 +70,17 @@
                                         src="{% static 'images/icons/profile-menu/addresses.webp' %}"
                                         class="pl-2"></div>
                                 آدرس های من
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'accounts:forget_password' %}"
+                                {% if request.resolver_match.url_name == 'forget_password' %} class="active"{% endif %}>
+                            <div>
+                                <div class="icon d-inline-block"><img
+                                        src="{% static 'images/icons/profile-menu/Password Recovery.svg' %}"
+                                        class="pl-2"></div>
+                                بازیابی رمز عبور
                             </div>
                         </a>
                     </li>

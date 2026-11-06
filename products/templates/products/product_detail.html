@@ -462,6 +462,10 @@
                                                                                     </div>
                                                                                 {% endif %}
                                                                             {% endfor %}
+                                                                        {% else %}
+                                                                            <div class="alert alert-warning text-center col-12 my-4">
+                                                                                <p class="mb-2 text-danger">برای این محصول هیج نظری ثبت نشده .</p>
+                                                                            </div>
                                                                         {% endif %}
 
                                                                     </div>
@@ -470,75 +474,88 @@
 
                                                             <!-- Send Comment Form -->
                                                             <div class="comments-container">
-                                                                <form method="post"
-                                                                      action="{% url 'products:product_detail' product.slug %}"
-                                                                      name="comment">
-                                                                    <div class="row pt-4">
-                                                                        <div class="col-12">
-                                                                            <h2>امتیاز خود را وارد کنید</h2>
-                                                                        </div>
-                                                                        <div class="col-12">
-
-                                                                            <div class="rating-pagination"
-                                                                                 id="rating-container"
-                                                                                 data-initial-score="{{ user_rating.score|default:4 }}">
-                                                                                <button type="button"
-                                                                                        class="rating-item"
-                                                                                        data-value="1">۱
-                                                                                </button>
-                                                                                <button type="button"
-                                                                                        class="rating-item"
-                                                                                        data-value="2">۲
-                                                                                </button>
-                                                                                <button type="button"
-                                                                                        class="rating-item"
-                                                                                        data-value="3">۳
-                                                                                </button>
-                                                                                <button type="button"
-                                                                                        class="rating-item"
-                                                                                        data-value="4">۴
-                                                                                </button>
-                                                                                <button type="button"
-                                                                                        class="rating-item"
-                                                                                        data-value="5">۵
-                                                                                </button>
+                                                                {% if request.user.is_authenticated %}
+                                                                    <form method="post"
+                                                                          action="{% url 'products:product_detail' product.slug %}"
+                                                                          name="comment">
+                                                                        <div class="row pt-4">
+                                                                            <div class="col-12">
+                                                                                <h2>امتیاز خود را وارد کنید</h2>
                                                                             </div>
+                                                                            <div class="col-12">
+
+                                                                                <div class="rating-pagination"
+                                                                                     id="rating-container"
+                                                                                     data-initial-score="{{ user_rating.score|default:4 }}">
+                                                                                    <button type="button"
+                                                                                            class="rating-item"
+                                                                                            data-value="1">۱
+                                                                                    </button>
+                                                                                    <button type="button"
+                                                                                            class="rating-item"
+                                                                                            data-value="2">۲
+                                                                                    </button>
+                                                                                    <button type="button"
+                                                                                            class="rating-item"
+                                                                                            data-value="3">۳
+                                                                                    </button>
+                                                                                    <button type="button"
+                                                                                            class="rating-item"
+                                                                                            data-value="4">۴
+                                                                                    </button>
+                                                                                    <button type="button"
+                                                                                            class="rating-item"
+                                                                                            data-value="5">۵
+                                                                                    </button>
+                                                                                </div>
 
 
-                                                                            <input type="hidden" name="score"
-                                                                                   id="id_score"
-                                                                                   value="{{ user_rating.score|default:4 }}">
+                                                                                <input type="hidden" name="score"
+                                                                                       id="id_score"
+                                                                                       value="{{ user_rating.score|default:4 }}">
+                                                                            </div>
+                                                                            <div class="col-12">
+                                                                                <h2>دیدگاه خود را ارسال کنید</h2>
+                                                                            </div>
                                                                         </div>
-                                                                        <div class="col-12">
-                                                                            <h2>دیدگاه خود را ارسال کنید</h2>
+                                                                        <div class="row">
+                                                                            <div class="col-12 py-3">
+
+                                                                                {% csrf_token %}
+                                                                                <div id="send-comment-form">
+                                                                                    <p>نظر خود را برای این مطلب ارسال
+                                                                                        کنید.
+                                                                                        نشانی ایمیل شما منتشر نخواهد
+                                                                                        شد.</p>
+                                                                                    <div class="row">
+                                                                                        {{ commentForm.parent }}
+                                                                                    </div>
+
+                                                                                    <div class="col-12">
+                                                                                        <div class="form-group my-1">
+                                                                                            {{ commentForm.body }}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-12">
+                                                                                        <div class="form-group my-1">
+                                                                                            <input type="submit"
+                                                                                                   value="ارسال دیدگاه"
+                                                                                                   class="btn btn-success px-5">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                    </form>
+                                                                {% else %}
+                                                                    <div class="col-12 w-100">
+                                                                        <div class="alert alert-warning text-center my-4">
+                                                                            <a href="{% url 'accounts:login' %}"
+                                                                               class="btn btn-sm btn-outline-secondary">
+                                                                                برای اینکه کامنت گزاری اول وارد حساب شوید.
+                                                                                </a>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="row">
-                                                                        <div class="col-12 py-3">
-
-                                                                            {% csrf_token %}
-                                                                            <div id="send-comment-form">
-                                                                                <p>نظر خود را برای این مطلب ارسال کنید.
-                                                                                    نشانی ایمیل شما منتشر نخواهد شد.</p>
-                                                                                <div class="row">
-                                                                                    {{ commentForm.parent }}
-                                                                                </div>
-
-                                                                                <div class="col-12">
-                                                                                    <div class="form-group my-1">
-                                                                                        {{ commentForm.body }}
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-12">
-                                                                                    <div class="form-group my-1">
-                                                                                        <input type="submit"
-                                                                                               value="ارسال دیدگاه"
-                                                                                               class="btn btn-success px-5">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                </form>
+                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                     </div>
