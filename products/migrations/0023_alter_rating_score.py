@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='rating',
             name='score',
-            field=models.IntegerField(choices=[(5, '5'), (1, '1'), (2, '2'), (4, '4'), (3, '3')], verbose_name='امتیاز'),
+            field=models.IntegerField(choices=[(1, '1'), (2, '2'),(3, '3'),  (4, '4'), (5, '5') ], verbose_name='امتیاز'),
         ),
     ]

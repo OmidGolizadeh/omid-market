@@ -228,9 +228,13 @@ class Like(models.Model):
 
 
 class Rating(models.Model):
-    Rating_Number = {
-        (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'),
-    }
+    Rating_Number = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings', verbose_name='کاربر')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings', verbose_name='محصول')
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True, related_name='ratings',

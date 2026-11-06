@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %} وبلاگ{% endblock %}
+
+{% block style_css %}
+    <style>
+        /* استایل‌های اختصاصی تم سایت برای صفحه‌بندی */
+        .custom-pagination .page-link {
+            color: #FCB941;
+        }
+
+        .custom-pagination .page-link:hover {
+            color: #d99c2b; /* یک درجه تیره‌تر برای زیبایی در حالت هاور */
+            background-color: #f8f9fa;
+        }
+
+        .custom-pagination .page-item.active .page-link {
+            background-color: #FCB941;
+            border-color: #FCB941;
+            color: #ffffff; /* رنگ سفید برای خوانایی روی پس‌زمینه زرد/نارنجی */
+        }
+
+        .custom-pagination .page-item.active .page-link:hover {
+            color: #ffffff;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <section class="inner-page" id="blog-page">
+        <div class="container-fluid" id="page-hero">
+            <div class="row">
+                <div class="col-12">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 px-0">
+                                <h1>بلاگ</h1>
+                                <p>بلاگ آموزشی روبیک مارکت</p>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="{% url 'home:home' %}">صفحه نخست</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">بلاگ آموزشی</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-12 col-lg-9">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="blog-container">
+                                            <div class="row py-2 px-3">
+                                                <div class="col"><h1 class="title">مرکز آموزش امید مارکت</h1></div>
+                                            </div>
+                                            <div class="container px-2 pb-3">
+                                                <div class="row row-cols-1 row-cols-md-2">
+                                                    {% for blog in articles %}
+                                                        <!-- Blog Post -->
+                                                        <div class="col">
+                                                            <div class="encode43bdsf23da" data-aos="fade-up"
+                                                                 data-aos-duration="1000">
+                                                                <a href="{% url 'blog:blog_detail' blog.slug %}">
+                                                                    <div class="post-image"
+                                                                         style="background-image: url({{ blog.image.url }})"></div>
+                                                                </a>
+                                                                <div class="details py-3 px-4">
+                                                                    <div class="post-date">ارسال
+                                                                        شده {{ blog.created_at|jalali_date:False }}
+                                                                    </div>
+                                                                    <a href="{% url 'blog:blog_detail' blog.slug %}">
+                                                                        <h2 class="post-title">{{ blog.title }}</h2>
+                                                                    </a>
+                                                                    <a href="{% url 'blog:blog_detail' blog.slug %}">
+                                                                        <div class="encode43bbfb">
+                                                                            {{ blog.short_description|linebreaksbr }}
+                                                                        </div>
+                                                                    </a>
+                                                                    <div class="read-more"><a
+                                                                            href="{% url 'blog:blog_detail' blog.slug %}"
+                                                                            class="hvr-icon-back">بیشتر
+                                                                        خوانید <i class="fa fa-arrow-left hvr-icon"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Blog Post -->
+                                                    {% empty %}
+                                                        <div class="col-12 w-100">
+                                                    <div class="alert alert-warning text-center my-4">
+                                                        <p class="mb-2">هیچ وبلاگی وجود ندارد.</p>
+                                                    </div>
+                                                </div>
+                                                    {% endfor %}
+
+                                                </div>
+                                            </div>
+                                            <!-- شروع بخش صفحه‌بندی -->
+                                            {% if is_paginated %}
+
+                                                <div class="row mt-4 mb-5">
+                                                    <div class="col-12">
+                                                        <nav aria-label="Page navigation">
+                                                            <ul class="pagination justify-content-center custom-pagination"
+                                                                dir="ltr">
+                                                                <!-- دکمه صفحه قبلی -->
+                                                                {% if page_obj.has_previous %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link"
+                                                                           href="?page={{ page_obj.previous_page_number }}">قبلی</a>
+                                                                    </li>
+                                                                {% else %}
+                                                                    <li class="page-item disabled">
+                                                                        <span class="page-link">قبلی</span>
+                                                                    </li>
+                                                                {% endif %}
+
+                                                                <!-- شماره صفحات -->
+                                                                {% for i in paginator.page_range %}
+                                                                    {% if page_obj.number == i %}
+                                                                        <li class="page-item active"
+                                                                            aria-current="page">
+                                                                            <span class="page-link">{{ i }}</span>
+                                                                        </li>
+                                                                    {% else %}
+                                                                        <li class="page-item">
+                                                                            <a class="page-link"
+                                                                               href="?page={{ i }}">{{ i }}</a>
+                                                                        </li>
+                                                                    {% endif %}
+                                                                {% endfor %}
+
+                                                                <!-- دکمه صفحه بعدی -->
+                                                                {% if page_obj.has_next %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link"
+                                                                           href="?page={{ page_obj.next_page_number }}">بعدی</a>
+                                                                    </li>
+                                                                {% else %}
+                                                                    <li class="page-item disabled">
+                                                                        <span class="page-link">بعدی</span>
+                                                                    </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                            <!-- پایان بخش صفحه‌بندی -->
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-3">
+                                <div class="row">
+                                    <!-- Side Panel -->
+                                    <div class="col-12 col-sm-6 col-lg-12 px-lg-2">
+                                        <div class="blog-side-panel">
+                                            <div class="row pt-2 px-3">
+                                                <div class="col">
+                                                    <div class="title">پربازدیدترین محصولات</div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="container">
+                                                <div class="row">
+                                                    {% for product in most_viewed_products %}
+                                                        <!-- Side Panel Product -->
+                                                        <div class="col-12 col-lg-12 px-0 mt-2">
+                                                            <a href="{% url 'products:product_detail' product.slug %}">
+                                                                <div class="side-blog-product">
+                                                                    <div class="row pl-3">
+                                                                        <div class="col-4 pl-2">
+                                                                            <div class="image"
+                                                                                 style="background-image: url({{ product.images.url }})"></div>
+                                                                        </div>
+                                                                        <div class="col-8 px-0">
+                                                                            <h2>{{ product.short_description|truncatewords:10 }}</h2>
+                                                                            <div class="row">
+                                                                                <div class="col-8 pl-0">
+                                                                                    <span class="encode4365gbf265g43d">{{ product.price|toman }} تومان</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                        <!-- /Side Panel Product -->
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-lg-12 px-lg-2">
+                                        <div class="blog-side-panel">
+                                            <div class="row pt-4 pt-sm-2 px-3">
+                                                <div class="col">
+                                                    <div class="title">پربازدیدترین مطالب</div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="container">
+                                                <div class="row">
+                                                    {% for blog in most_viewed_blog %}
+                                                        <!-- Side Panel Post -->
+                                                        <div class="col-12 col-lg-12 px-0 mt-2">
+                                                            <div class="side-blog-post">
+                                                                <div class="row pl-3">
+                                                                    <div class="col-4 pl-2">
+                                                                        <a href="{% url 'blog:blog_detail' blog.slug %}">
+                                                                            <div class="image"
+                                                                                 style="background-image: url({{ blog.image.url }})"></div>
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="col-8 px-0">
+                                                                        <a href="{% url 'blog:blog_detail' blog.slug %}">
+                                                                            <h2>{{ blog.title }}</h2></a>
+                                                                        <div class="row">
+                                                                            <div class="col-12 col-xl-6 pl-0">
+                                                                            <span class="category">دسته بندی:
+                                                                                <a href="{% url 'blog:blog' %}?category={{ blog.category.slug }}">{{ blog.category|default:'وجود ندارد' }}</a>
+                                                                            </span>
+                                                                            </div>
+                                                                            <div class="col-12 col-xl-6 pr-0 text-start text-xl-end d-none d-xl-block">
+                                                                                <span class="date">{{ blog.created_at|jalali_date:False }}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /Side Panel Post -->
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /Side Panel -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

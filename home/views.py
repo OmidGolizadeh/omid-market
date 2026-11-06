@@ -5,6 +5,7 @@ from .models import Team, About_the_store, BannerLink
 from .forms import Contact_Form
 from products.models import Product, Category, Like
 from django.db.models import Count
+from blog.models import Article
 
 
 class Home(TemplateView):
@@ -30,6 +31,7 @@ class Home(TemplateView):
         context['banner_second_md8'] =BannerLink.objects.filter(second_banner=True, order=2).order_by('order', 'id')[:1]
         context['banner_second_md4'] =BannerLink.objects.filter(second_banner=True, order=3).order_by('order', 'id')[:1]
         context['home_links'] = BannerLink.objects.filter(second_url=True).order_by('order', 'id')
+        context['recent_articles'] = Article.objects.all().order_by('-created_at')[:3]
         if self.request.user.is_authenticated:
             context['liked_products'] = set(
                 Like.objects.filter(user=self.request.user, product__in=products).values_list(
